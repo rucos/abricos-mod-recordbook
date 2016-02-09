@@ -1,0 +1,34 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "fieldcode": {
+      "type": "string",
+      "json": "fc"
+    },
+    "field": {
+      "type": "string",
+      "json": "fd"
+    },
+    "frmstudy": {
+      "type": "string",
+      "json": "bd"
+    },
+    "qual": {
+      "type": "string",
+      "json": "qual"
+    },
+     "depart": {
+      "type": "string",
+      "json": "dep"
+    },
+    "remove": {
+      "type": "int",
+      "json": "rem"
+    }
+  }
+}

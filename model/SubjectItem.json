@@ -1,0 +1,38 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "namesubject": {
+      "type": "string",
+      "json": "ns"
+    },
+    "formcontrol": {
+      "type": "string",
+      "json": "fc"
+    },
+    "numcrs": {
+      "type": "int",
+      "json": "nc"
+    },
+    "semestr": {
+      "type": "int",
+      "json": "sm"
+    },
+     "numhours": {
+      "type": "int",
+      "json": "nh"
+    },
+    "project": {
+      "type": "int",
+      "json": "pr"
+    },
+    "remove": {
+      "type": "int",
+      "json": "rem"
+    }
+  }
+}

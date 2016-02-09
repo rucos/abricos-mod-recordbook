@@ -1,0 +1,101 @@
+<!--{widget}-->
+<div>
+    <ul class="nav nav-pills">
+		  <li>
+		  	<button id="{i#ochForm}" data-value="ochForm" data-click="showGroupList" class="btn btn-default">Очная форма</button>
+		  </li>
+		  <li>
+		  	<button id="{i#zaochForm}" data-value="zaochForm"  data-click="showGroupList" class="btn btn-default">Заочная форма</button>
+		  </li>
+	</ul>
+	<hr>
+	<div id="{i#groupList}" class="hide">
+	        <div class="row">
+	      			<div class="col-md-8">
+	      				<input id="{i#findGroup}"  type="text" class="form-control" placeholder="Введите номер группы"/>
+	      			</div>
+	         		<div class="col-md-1">
+	          			<button data-click="find" type="button" class="btn btn-default" data-wait="disable">
+		        	    Найти
+	      				</button>
+					</div>
+	   				<div class="col-md-3">
+	      				<button id="{i#allGroup}" data-click="showAllGroup" type="button" class="hide btn btn-success" data-wait="disable">
+			          	  Показать весь список
+	      				</button>
+	    			</div>
+	     	</div>
+	    <div id="{i#list}"></div>
+	    <hr>
+	     <div id="{i#pag}"></div>
+	</div>
+</div>
+
+<!--{table}-->
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+	   	 <th>№группы</th>
+	   	 <th>Направление</th>
+	     <th>Список группы</th>
+	     <th>Ведомости</th>
+	     <th></th>
+	     <th></th>
+    </tr>
+    </thead>
+    <tbody>{v#rows}</tbody>
+</table>
+
+<!--{row}-->
+<tr class="{v#success}">
+    <td>{v#numgroup}({v#numcrs})</td>
+    <td>{v#field}{v#label}</td>
+    <td>
+    	 <button data-click="showListGroup" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+            Список группы
+        </button>
+    </td>
+    <td>
+    	<button data-click="showSheet" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    		Ведомости
+    	</button>
+    </td>
+    <td>
+        <button data-click="edit" data-id="{v#id}"  class="btn btn-default btn-xs" data-wait="disable">
+            Править
+        </button>
+    </td>
+    <td>
+         <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs"
+                data-id="{v#id}" data-wait="disable">
+            Удалить
+        </button>
+	         <div id="{i#removegroup}-{v#id}"  class="btn-group hide">
+	            <button data-click="remove"type="button" class="btn btn-danger btn-xs" data-id="{v#id}" 
+	            		data-wait="disable">
+	                Удалить?
+	            </button>
+	            <button data-click="remove-cancel" type="button" class="btn btn-default btn-xs" data-id="{v#id}"
+	                    data-wait="disable">
+	                Отмена
+	            </button>
+	        </div>
+    </td>
+</tr>
+
+<!--{label}-->
+<span class="label label-danger">Удален</span>
+
+<!--{paginator}-->
+<div>
+<ul class="pagination">
+  <li style="display: {v#dp};"><a href="" data-click="changePage" data-type="first" data-page="{v#firstpage}">&laquo;&laquo;</a></li>
+  <li style="display: {v#dp};"><a href="" data-click="changePage" data-type="prev">&lt;&mdash;prev</a></li>
+	{v#lipage}
+  <li style="display: {v#dn};"><a href="" data-click="changePage" data-type="next">next&mdash;&gt;</a></li>
+  <li style="display: {v#dn};"><a href="" data-click="changePage" data-type="last" data-page="{v#lastpage}">&raquo;&raquo;</a></li>
+</ul>
+</div>
+
+<!--{liPagePagin}-->
+<li class="{v#active}" style="display: {v#dli};"><a href="" data-click="changePage" data-page="{v#cnt}" data-type="curent">{v#cnt}</a></li>

@@ -1,0 +1,50 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "subjectid": {
+      "type": "int",
+      "json": "sid"
+    },
+    "formcontrol": {
+      "type": "string",
+      "json": "fc"
+    },
+    "namesubject": {
+      "type": "string",
+      "json": "ns"
+    },
+    "firstattproc": {
+      "type": "int",
+      "json": "fap"
+    },
+    "secondattproc": {
+      "type": "int",
+      "json": "sap"
+    },
+    "thirdattproc": {
+      "type": "int",
+      "json": "tap"
+    },
+    "date": {
+      "type": "int",
+      "json": "dt"
+    },
+    "type": {
+      "type": "int",
+      "json": "ts"
+    },
+    "fioteacher": {
+      "type": "string",
+      "json": "ft"
+    },
+    "remove": {
+      "type": "int",
+      "json": "rem"
+    }
+  }
+}

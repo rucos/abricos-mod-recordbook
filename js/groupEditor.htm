@@ -1,0 +1,57 @@
+<!--{widget}-->
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<div class="row">
+            <div class="col-md-7">
+                <h3 class="panel-title">Редактор группы</h3>
+            </div>
+            <div class="col-md-5">
+                <div class="btn-toolbar pull-right">
+                    <button data-click="saveGroup" type="button" class=" btn btn-default" data-wait="disable">
+                        Сохранить изменения
+                    </button>
+           			<button data-click="cancel" type="button" class="btn btn-default" data-wait="disable">
+                        Отмена
+                    </button>
+                </div>
+
+                <span data-wait="show" class="pull-right">
+                    <img src="/images/loading.gif"/>
+                </span>
+            </div>
+        </div>
+	</div>
+	<div class="panel-body">
+	
+		<div class="row">
+			<div class="col-lg-3">
+					<div class="input-group">
+					  <span class="input-group-addon">Номер группы</span>
+					  	<input id="{i#numgroup}" type="text" class="form-control">
+					</div>
+					<div class="input-group">
+					  <span class="input-group-addon">Номер курса</span>
+					  	<input id="{i#numcrs}" type="number" min="1" max="5" class="form-control"  maxlength="1">
+					</div>
+			</div>
+			<div class="col-lg-9">
+		    <div class="input-group">
+		      <div class="input-group-btn">
+		     		<div id="{i#list}"></div>
+		      </div>
+		      <input type="text" class="form-control" id={i#inpfield} disabled>
+		    </div>
+		  </div>
+		 </div>
+		 <div id="{i#listStud}"></div>
+	</div>
+</div>
+
+<!--{ulField}-->
+<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Направление <span class="caret"></span></button>
+<ul class="dropdown-menu">
+{v#li}
+</ul>
+
+<!--{liField}-->
+<li><a href="" data-click="add" data-id="{v#id}" data-value="{v#value}">{v#value}</a></li>

@@ -1,0 +1,18 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "numgroup": {
+      "type": "string",
+      "json": "ng"
+    },
+    "numcrs": {
+      "type": "int",
+      "json": "nc"
+    }
+  }
+}

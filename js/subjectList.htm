@@ -1,0 +1,180 @@
+<!--{widget}-->
+<div>
+	<div>
+		<div>
+			<h3>Список предметов</h3>
+		</div>
+		<div class="row">
+            <div class="col-md-10">
+           		<div class="row">
+           			<div class="col-md-8">
+           				<input id="{i#findSubject}"  type="text" class="form-control" placeholder="Введите название предмета"/>
+           					<div class="row">
+           						 <div class="col-md-4">
+           						 
+           						 </div>
+           						 <div class="col-md-4">
+           						 
+           						 </div>
+           						 <div class="col-md-4">
+           						 
+           						 </div>
+           					</div>
+           			</div>
+           			<div class="col-md-1">
+	           			<button data-click="find" type="button" class="btn btn-default" data-wait="disable">
+			        	    Найти
+	       				</button>
+	       				
+       				</div>
+       				<div class="col-md-3">
+	       				<button id="{i#allSubject}" data-click="allSubject" type="button" class="hide btn btn-success" data-wait="disable">
+			          	  Показать весь список
+	       				</button>
+       				</div>
+       			</div>
+            </div>
+            <div class="col-md-2">
+				<button data-click="addSubject-show" type="button" class="btn btn-primary ">
+	                +Добавить предмет
+	            </button>
+            </div>
+		</div>
+		
+	</div>
+	<hr>
+    <div id="{i#list}"></div>
+    <hr>
+    		<div id="{i#pag}"></div>
+</div>
+
+<!--{table}-->
+<table id="{i#tblsub}" class="table table-striped table-hover">
+    <thead>
+    <tr>
+   	 	<th>Название предмета</th>
+        <th>Форма контроля</th>
+        <th>Курс</th>
+        <th>Семместр</th>
+        <th>Кол-во часов</th>
+        <th>Кур работа/проект</th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>{v#rows}</tbody>
+</table>
+
+<!--{row}-->
+<tr data-id="{v#id}" class="{v#cl}">
+    <td>{v#namesubject} {v#rem}</td>
+    <td>{v#formcontrol}</td>
+    <td>{v#numcrs}</td>
+    <td>{v#semestr}</td>
+    <td>{v#numhours}</td>
+    <td>{v#project}</td>
+    <td>
+        <button data-click="editSubject-show" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+            Править
+        </button>
+    </td>
+    <td>
+         <button id="{i#remove}-{v#id}" data-click="{v#event}" type="button" class="btn btn-default btn-xs"
+                data-id="{v#id}" data-wait="disable">
+            {v#act}
+        </button>
+         <div id="{i#removegroup}-{v#id}"  class="btn-group hide">
+            <button data-click="remove" type="button" class="btn btn-danger btn-xs" data-id="{v#id}" 
+            		data-wait="disable">
+                Удалить?
+            </button>
+            <button data-click="remove-cancel" type="button" class="btn btn-default btn-xs" data-id="{v#id}"
+                    data-wait="disable">
+                Отмена
+            </button>
+        </div>
+    </td>
+</tr>
+
+<!--{label}-->
+<span class="label label-danger">Удален</span>
+
+<!--{rowAct}-->
+<tr>
+    <td><input id="{i#namesubject}" type="text" class="form-control" value="{v#namesubject}"/></td>
+    <td width="17%">
+		<div class="input-group">
+			<input id="{i#formcontrol}" type="text" class="form-control" value="{v#formcontrol}"/>
+			  <div class="input-group-btn" id="{i#divFormControl}">
+			    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+			    	<span class="caret"></span>
+			    	<span class="sr-only">Toggle Dropdown</span>
+			   	</button>
+			   	<ul class="dropdown-menu dropdown-menu-right">
+			   		<li>
+			   			<a href="" data-click="chooseFormControl" data-value="Экзамен">Экзамен</a>
+			   		</li>
+			   		<li>
+			   			<a href="" data-click="chooseFormControl" data-value="Зачет">Зачет</a>
+			   		</li>
+			   		<li>
+			   			<a href="" data-click="chooseFormControl" data-value="Зачет с оценкой">Зачет с оценкой</a>
+			   		</li>
+			   	</ul>
+			  </div>
+		</div>
+    </td>
+    <td width="8%">
+    	<input id="{i#numcrs}" type="number" class="form-control" min="1" max="5" value="{v#numcrs}" maxlength="1"/>
+    </td>
+    <td width="13%">
+    	<div class="input-group">
+			<input id="{i#semestr}" type="text" class="form-control" value="{v#semestr}"/>
+			  <div class="input-group-btn" id="{i#divSemestr}">
+			    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
+			    	<span class="caret"></span>
+			    	<span class="sr-only">Toggle Dropdown</span>
+			   	</button>
+			   	<ul class="dropdown-menu dropdown-menu-right">
+			   		<li>
+			   			<a href="" data-click="chooseSemestr" data-value="1">Осенний</a>
+			   		</li>
+			   		<li>
+			   			<a href="" data-click="chooseSemestr" data-value="2">Весенний</a>
+			   		</li>
+			   	</ul>
+			  </div>
+		</div>
+    </td>
+    <td width="8%">
+    	<input id="{i#numhours}" type="text" class="form-control" value="{v#numhours}"/>
+    </td>    
+    <td width="8%">
+    	<input id="{i#project}" type="checkbox" value="{v#val}"/>
+    </td>
+    <td width="8%"> 
+    	<button data-click="actSubject" class="btn btn-default btn-xs" data-wait="disable">
+            {v#act}
+        </button>
+   	</td>
+    <td width="8%">
+	    <button data-click="showSubject-cancel" class="btn btn-default btn-xs" data-wait="disable">
+	            Отмена
+	    </button>
+    </td>
+</tr>
+
+<!--{paginator}-->
+<div>
+<ul class="pagination">
+  <li style="display: {v#dp};"><a href="" data-click="changePage" data-type="first" data-page="{v#firstpage}">&laquo;&laquo;</a></li>
+  <li style="display: {v#dp};"><a href="" data-click="changePage" data-type="prev">&lt;&mdash;prev</a></li>
+	{v#lipage}
+  <li style="display: {v#dn};"><a href="" data-click="changePage" data-type="next">next&mdash;&gt;</a></li>
+  <li style="display: {v#dn};"><a href="" data-click="changePage" data-type="last" data-page="{v#lastpage}">&raquo;&raquo;</a></li>
+</ul>
+</div>
+
+<!--{liPagePagin}-->
+<li class="{v#active}" style="display: {v#dli};"><a href="" data-click="changePage" data-page="{v#cnt}" data-type="curent">{v#cnt}</a></li>
+

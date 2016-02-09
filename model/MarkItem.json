@@ -1,0 +1,46 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "fio": {
+      "type": "string",
+      "json": "fio"
+    },
+    "numbook": {
+      "type": "string",
+      "json": "nb"
+    },
+    "firstatt": {
+      "type": "int",
+      "json": "fa"
+    },
+    "secondatt": {
+      "type": "int",
+      "json": "sa"
+    },
+    "thirdatt": {
+      "type": "int",
+      "json": "ta"
+    },
+    "prliminary": {
+      "type": "int",
+      "json": "pr"
+    },
+    "additional": {
+      "type": "int",
+      "json": "ad"
+    },
+    "debts": {
+      "type": "int",
+      "json": "dt"
+    },
+    "mark": {
+      "type": "int",
+      "json": "mk"
+    }
+  }
+}

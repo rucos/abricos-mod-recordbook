@@ -100,7 +100,8 @@ Component.entryPoint = function(NS){
         			numcrs: this.get('currentCourse'),
         			semestr: this.get('currentSemestr'),
         			fieldid: groupItem.get('fieldid'),
-        			type: curType
+        			type: curType,
+        			from: 'sheetEditorWidget'
         		};
         	
         	this.set('waiting', true);

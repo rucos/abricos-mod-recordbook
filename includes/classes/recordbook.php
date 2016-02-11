@@ -118,7 +118,6 @@ class RecordBook extends AbricosApplication {
 		    	
 		    		while (($d = $this->db->fetch_array($rows))){
 		    			$list->Add($this->models->InstanceClass('FieldItem', $d));
-		    				
 		    		}
 		    		return $this->_cache['FieldList'] = $list;
 	    }
@@ -189,10 +188,15 @@ class RecordBook extends AbricosApplication {
     	}
     	
     	public function SubjectListToJSON($d){
-    		if(isset($d->type)){
-    			$res = $this->SubjectListSheet($d);
-    		} else {
-    			$res = $this->SubjectList($d->fieldid, $d->pageSub);
+    		
+    		
+    		switch($d->from){
+    			case 'subjectListWidget': 
+    				$res = $this->SubjectList($d->fieldid, $d->pageSub);  
+    					break;
+    			case 'sheetEditorWidget': 
+    				$res = $this->SubjectListSheet($d);
+    					break;
     		}
     		return $this->ResultToJSON('subjectList', $res);
     	}
@@ -216,7 +220,7 @@ class RecordBook extends AbricosApplication {
        		$d->fieldid = intval($d->fieldid);
        		$d->numcrs = intval($d->numcrs);
        		$d->semestr = intval($d->semestr);
-       		$d->type = intval($d->type);
+       		$d->type = intval($d->type);//тип ведомости
        		
        		if (isset($this->_cache['SubjectListSheet'])){
        			return $this->_cache['SubjectListSheet'];

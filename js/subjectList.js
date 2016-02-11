@@ -35,7 +35,8 @@ Component.entryPoint = function(NS){
         	if(!find){
 	        	var data = {
 	        		  	fieldid: this.get('fieldid'),
-	            		pageSub: this.get('currentPage')
+	            		pageSub: this.get('currentPage'),
+	            		from: 'subjectListWidget'
 	        	}; 
 	        	
 	        	this.set('waiting', true);

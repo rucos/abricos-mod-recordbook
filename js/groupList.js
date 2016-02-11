@@ -277,6 +277,13 @@ Component.entryPoint = function(NS){
         				
         			this.showGroupList();
         		}
+        	},
+        	showProgress: {
+        		event: function(e){
+        			var groupid = e.target.getData('id');
+        			
+        			this.go('group.progressView', groupid);
+        		}
         	}
         }
     });

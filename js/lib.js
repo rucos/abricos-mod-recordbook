@@ -197,6 +197,9 @@ Component.entryPoint = function(NS){
         		},
         		sheetEditor: function(groupid){
         			return this.getURL('ws') + 'sheetEditor/SheetEditorWidget/' + groupid + '/';
+        		},
+        		progressView: function(groupid){
+        			return this.getURL('ws') + 'progressView/ProgressViewWidget/' + groupid + '/';
         		}
         	}
         }

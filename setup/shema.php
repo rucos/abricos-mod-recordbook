@@ -90,7 +90,7 @@ if ($updateManager->isInstall('0.1.4')){
 				CREATE TABLE IF NOT EXISTS ".$pfx."rb_marks(
 					markid int(10) unsigned NOT NULL auto_increment,
 					sheetid int(10) unsigned NOT NULL default 0 COMMENT 'номер ведомости',
-					numbook varchar(10) default NULL COMMENT 'Номер зачетной книжки',
+					studid int(10) unsigned NOT NULL default 0 COMMENT 'id студента',
 					firstatt tinyint(3) unsigned NOT NULL default 0 COMMENT '1 аттестация',
 					secondatt tinyint(3) unsigned NOT NULL default 0 COMMENT '2 аттестация',
 					thirdatt tinyint(3) unsigned NOT NULL default 0 COMMENT '3 аттестация',

@@ -189,7 +189,6 @@ class RecordBook extends AbricosApplication {
     	
     	public function SubjectListToJSON($d){
     		
-    		
     		switch($d->from){
     			case 'subjectListWidget': 
     				$res = $this->SubjectList($d->fieldid, $d->pageSub);  
@@ -197,12 +196,17 @@ class RecordBook extends AbricosApplication {
     			case 'sheetEditorWidget': 
     				$res = $this->SubjectListSheet($d);
     					break;
+    			case 'progressViewWidget':
+    				$res = $this->SubjectListProgress($d);
+    					break;
     		}
     		return $this->ResultToJSON('subjectList', $res);
     	}
     	
     	public function SubjectList($fieldid, $pageSub){
-    	
+    		$fieldid = intval($fieldid);
+    		$pageSub = intval($pageSub);
+    		
     		if (isset($this->_cache[$fieldid][$pageSub]['SubjectList'])){
     			return $this->_cache[$fieldid][$pageSub]['SubjectList'];
     		}
@@ -234,6 +238,25 @@ class RecordBook extends AbricosApplication {
        		}
        		return $this->_cache['SubjectListSheet'] = $list;
        	}
+       	
+       	public function SubjectListProgress($d){
+       		$d->fieldid = intval($d->fieldid);
+       		$d->numcrs = intval($d->numcrs);
+       		$d->semestr = intval($d->semestr);
+       		 
+       		if (isset($this->_cache[$d->fieldid][$d->numcrs][$d->semestr]['SubjectListProgress'])){
+       			return $this->_cache['SubjectListProgress'];
+       		}
+       		$list = $this->models->InstanceClass('SubjectList');
+       	
+       		$rows = RecordBookQuery::SubjectListProgress($this->db, $d);
+       		 
+       		while (($dd = $this->db->fetch_array($rows))){
+       			$list->Add($this->models->InstanceClass('SubjectItem', $dd));
+       		}
+       		return $this->_cache[$d->fieldid][$d->numcrs][$d->semestr]['SubjectListProgress'] = $list;
+       	}
+       	
        	
        	public function SubjectSaveToJSON($d){
        		
@@ -434,6 +457,9 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function SheetAdd($d){
+       		if($d->idSubject === 0) {
+       			return false;
+       		}
        		$d->idSubject = intval($d->idSubject);
        		$d->date = intval($d->date);
        		$d->groupid = intval($d->groupid);
@@ -444,8 +470,8 @@ class RecordBook extends AbricosApplication {
        		$d->fioteacher = $utmf->Parser($d->fioteacher);
        		
        		if($d->typeSheet === 2){
-       			foreach($d->numBookStud as $val){
-       				$val = $utmf->Parser($val);
+       			foreach($d->arrStudId as $val){
+       				$val = intval($val);
        			}
        		}
        		

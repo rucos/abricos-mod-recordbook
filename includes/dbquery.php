@@ -416,12 +416,12 @@ class RecordBookQuery {
     		$valIns = "";
     		
     		if($d->typeSheet === 2 || $d->typeSheet === 4){
-    			$arrStud = $d->numBookStud;
+    			$arrStud = $d->arrStudId;
     			$arrCount = count($arrStud);
     			
     		} else {
     			$sql = "
-    				SELECT numbook
+    				SELECT id
     				FROM ".$db->prefix."rb_students
     				WHERE groupid=".bkint($d->groupid)." AND transferal = 0
     			";
@@ -442,7 +442,7 @@ class RecordBookQuery {
 		    			}
 		    		}
 		    		$sql = "
-							INSERT INTO ".$db->prefix."rb_marks (sheetid, numbook)
+							INSERT INTO ".$db->prefix."rb_marks (sheetid, studid)
 							VALUES ".$valIns."
 						";
 		    		$db->query_write($sql);
@@ -485,7 +485,8 @@ class RecordBookQuery {
 			SELECT
     				m.markid as id,
     				s.fio,
-    				m.numbook,
+    				s.numbook,
+    				m.studid,
     				m.firstatt,
     				m.secondatt,
     				m.thirdatt,
@@ -494,7 +495,7 @@ class RecordBookQuery {
     				m.debts,
     				m.mark
     		FROM ".$db->prefix."rb_marks m
-    		INNER JOIN ".$db->prefix."rb_students s ON s.numbook = m.numbook
+    		INNER JOIN ".$db->prefix."rb_students s ON s.id = m.studid
     		WHERE m.sheetid = ".bkint($id)."
 		";
     	return $db->query_read($sql);
@@ -633,6 +634,23 @@ class RecordBookQuery {
 			WHERE id = ".bkint($d->studid)."
 			LIMIT 1
 		";
+    	return $db->query_read($sql);
+    }
+    
+    public static function SubjectListProgress(Ab_Database $db, $d){
+    	
+    	$sql = "
+			SELECT
+					subjectid as id,
+					namesubject,
+					formcontrol
+			FROM ".$db->prefix."rb_subject
+			WHERE fieldid = ".bkint($d->fieldid)." 
+						AND numcrs = ".bkint($d->numcrs)."
+							AND semestr = ".bkint($d->semestr)."
+			ORDER BY formcontrol DESC
+		";
+    	 
     	return $db->query_read($sql);
     }
 }

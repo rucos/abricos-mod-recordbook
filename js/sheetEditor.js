@@ -151,7 +151,7 @@ Component.entryPoint = function(NS){
         		stud = id ? 
         					tp.gel('rowEditSheet.studList').children :
         						tp.gel('rowAddSheet.studList').children,
-        		numBookStud = [],
+        		arrStudId = [],
         		lib = this.get('appInstance'),
         		fioteacher = id ? 
     							tp.getValue('rowEditSheet.inpFioteacher') :
@@ -161,23 +161,26 @@ Component.entryPoint = function(NS){
     							
         	if(type == 2 || type == 4){
             	for(var i = 0; i < stud.length; i++){
-            		var val = stud[i].value;
-    	        		if(val && stud[i].checked){
-    	       				numBookStud.push(val);
+            		var id = stud[i].id;
+    	        		if(id && stud[i].checked){
+    	        			arrStudId.push(id);
     	        		}
             	}
         	}
-        					
+        	
 			var objData = {
 	        			idSubject: this.get('currentSubject'),
 	        			date: lib.getDate(valDate),//получить в мсек
 	        			groupid: this.get('groupid'),
 	        			idSheet: id ? id : 0,
 	        			typeSheet: this.get('currentType'),
-	        			numBookStud: numBookStud,
+	        			arrStudId: arrStudId,
 	        			fioteacher: fioteacher
 	        		};
-        
+				if(!objData.idSubject){
+					alert('Укажите предмет');
+						return false;
+				}
 	        	this.set('waiting', true);
 	        	lib.sheetSave(objData, function(err, result){
 	        		this.set('waiting', false);

@@ -230,8 +230,6 @@ Component.entryPoint = function(NS){
         		form = this.parseFormControl(obj.formControl),
         		table = obj.frmStudy == 'очная' ? this.renderTableOch() : this.renderTableZaoch(form);
         		
-        		this.set('currentFormControl', form);
-        		
         	tp.setHTML('tablMark', tp.replace('tableMarkStud', {
         		nameSubj: obj.subj,
         		formcontrol: form,
@@ -276,6 +274,8 @@ Component.entryPoint = function(NS){
 	    		num = 0,
 	    		self = this,
 	    		formControl = this.get('currentFormControl');
+        	
+    	console.log(formControl);
     	
 		    	markList.each(function(mark){
 		    		var markValue = mark.get('mark');
@@ -634,6 +634,7 @@ Component.entryPoint = function(NS){
         			
         			tp.toggleView(true, 'markPanel' ,'sheetPanel');
         			
+        			this.set('currentFormControl', this.parseFormControl(obj.formControl));
         			this.reqMarkList(obj);
         		}
         	},

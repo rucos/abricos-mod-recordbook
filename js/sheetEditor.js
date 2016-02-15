@@ -177,6 +177,7 @@ Component.entryPoint = function(NS){
 	        			arrStudId: arrStudId,
 	        			fioteacher: fioteacher
 	        		};
+			
 				if(!objData.idSubject){
 					alert('Укажите предмет');
 						return false;
@@ -228,7 +229,9 @@ Component.entryPoint = function(NS){
         	var tp = this.template,
         		form = this.parseFormControl(obj.formControl),
         		table = obj.frmStudy == 'очная' ? this.renderTableOch() : this.renderTableZaoch(form);
-
+        		
+        		this.set('currentFormControl', form);
+        		
         	tp.setHTML('tablMark', tp.replace('tableMarkStud', {
         		nameSubj: obj.subj,
         		formcontrol: form,
@@ -271,11 +274,19 @@ Component.entryPoint = function(NS){
 	    		lst = "",
 	    		table = "",
 	    		num = 0,
-	    		self = this;
+	    		self = this,
+	    		formControl = this.get('currentFormControl');
     	
 		    	markList.each(function(mark){
+		    		var markValue = mark.get('mark');
+		    		
+		    		if(formControl == 'Зачет'){
+		    			markValue = markValue == 101 ? 'Зачтено' : 'Не зачтено'
+		    		}
+		    		
 		    		lst += tp.replace('rowMarkStudOch', [{
-		    			n: ++num
+		    			n: ++num,
+		    			mark: markValue
 		    		}, mark.toJSON()]);
 		    	});
 		    	
@@ -380,8 +391,9 @@ Component.entryPoint = function(NS){
         calcMark: function(row, update){
         	var tp = this.template,
         		arrRow = row.cells,
-        		danger = tp.gel('tableMarkOch.sumProc').className;
-        		
+        		danger = tp.gel('tableMarkOch.sumProc').className,
+        		formControl = this.get('currentFormControl');
+        			
         	if(danger.indexOf('danger') == -1){
         			var a1 = tp.gel('tableMarkOch.inpAtt1').value,
             			a2 = tp.gel('tableMarkOch.inpAtt2').value,
@@ -398,7 +410,13 @@ Component.entryPoint = function(NS){
         					alert( 'Окончательная оценка c учетом доп баллов > 100' );
         						arrRow[7].firstChild.value = 0;
         			}
+        			
         			arrRow[6].firstChild.innerHTML = result;
+        			
+        			if(formControl == 'Зачет'){
+        				resultAdd = this.calcTradMark(resultAdd);
+        			}
+        			
         			arrRow[9].firstChild.innerHTML = resultAdd;
         				if(update){
         					var d = this.parseRowData(row);
@@ -410,33 +428,45 @@ Component.entryPoint = function(NS){
         		alert( 'сумма аттестаций < 100' );
         	}
         },
+        calcTradMark: function(result){
+        	return result >= 51 ? "Зачтено" : "Не зачтено";
+        },
         calcMarkAdd: function(row){
         	var tp = this.template,
     			arrRow = row.cells,
     			a1 = +arrRow[6].firstChild.innerHTML,
     			a2 = +arrRow[7].firstChild.value,
-    			sum = a1 + a2;
+    			sum = a1 + a2,
+    			formControl = this.get('currentFormControl');
         	
         	if(sum > 100){
         		alert( 'Окончательная оценка c учетом доп баллов > 100' );
         			arrRow[7].firstChild.value = 0;
         				sum = a1;
         	}
-        		arrRow[9].firstChild.innerHTML = sum;
+        		arrRow[9].firstChild.innerHTML = formControl == 'Зачет' ? this.calcTradMark(sum) : sum;
 				this.reqMark(this.parseRowData(row));
         },
         parseRowData: function(row){
         	var arrRow = row.cells,
-	    		objData = {
-	        		id: row.id, 
+        		formControl = this.get('currentFormControl'),
+        		mark = arrRow[9].firstChild.innerHTML;
+        	
+        	if(formControl == 'Зачет'){
+        		mark = arrRow[9].firstChild.innerHTML == 'Зачтено' ? 101 : 102;
+        	} 
+        	
+        	var objData = {
+	        		id: row.id,
 	        		firstatt: arrRow[3].firstChild.value,
 	        		secondatt: arrRow[4].firstChild.value,
 	        		thirdatt: arrRow[5].firstChild.value,
 	        		prliminary: arrRow[6].firstChild.innerHTML,
 	        		additional: arrRow[7].firstChild.value,
 	        		debts: arrRow[8].firstChild.value,
-	        		mark: arrRow[9].firstChild.innerHTML
+	        		mark: mark
 	        	};
+        	
         	return objData;
         },
         markZaochUpdate: function(id, value){
@@ -496,7 +526,8 @@ Component.entryPoint = function(NS){
             currentIdSheet: {value: 0},
             currentAttProc: {value: ''},
             currentType: {value: 0},
-            studList: {value: null}
+            studList: {value: null},
+            currentFormControl: {value: null}
         },
         CLICKS: {
         	'addSheet-show': {
@@ -600,6 +631,7 @@ Component.entryPoint = function(NS){
         			
         			this.set('currentIdSheet', idSheet);
         			this.set('currentAttProc', attProc);
+        			
         			tp.toggleView(true, 'markPanel' ,'sheetPanel');
         			
         			this.reqMarkList(obj);

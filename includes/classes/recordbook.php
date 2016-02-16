@@ -24,13 +24,15 @@ class RecordBook extends AbricosApplication {
 				'MarkItem' => 'MarkItem',
 				'MarkList' => 'MarkList',
 				'GroupModalItem' => 'GroupModalItem',
-				'GroupModalList' => 'GroupModalList'
+				'GroupModalList' => 'GroupModalList',
+				'MarkItemStat' => 'MarkItemStat',
+				'MarkListStat' => 'MarkListStat'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat';
 	}
 
 	public function ResponseToJSON($d){
@@ -88,6 +90,8 @@ class RecordBook extends AbricosApplication {
             	return  $this->FillModalToJSON($d->data);
             case "transitStud": 
             	return $this->TransitStudToJSON($d->data);
+            case "markListStat":
+            	return $this->MarkListStatToJSON($d->data);
         }
         return null;
     }
@@ -226,37 +230,38 @@ class RecordBook extends AbricosApplication {
        		$d->semestr = intval($d->semestr);
        		$d->type = intval($d->type);//тип ведомости
        		
-       		if (isset($this->_cache['SubjectListSheet'])){
+       		if (isset($this->_cache['SubjectListSheet'][$d->fieldid])){
        			return $this->_cache['SubjectListSheet'];
        		}
-       		$list = $this->models->InstanceClass('SubjectList');
-       		 
-       		$rows = RecordBookQuery::SubjectListSheet($this->db, $d);
        		
-       		while (($dd = $this->db->fetch_array($rows))){
-       			$list->Add($this->models->InstanceClass('SubjectItem', $dd));
-       		}
-       		return $this->_cache['SubjectListSheet'] = $list;
+			$list = $this->SubjectListModels('SubjectListSheet', $d);
+			
+       		return $this->_cache['SubjectListSheet'][$d->fieldid] = $list;
        	}
        	
        	public function SubjectListProgress($d){
        		$d->fieldid = intval($d->fieldid);
        		$d->numcrs = intval($d->numcrs);
        		$d->semestr = intval($d->semestr);
+       		$d->groupid = intval($d->groupid);
        		 
-       		if (isset($this->_cache[$d->fieldid][$d->numcrs][$d->semestr]['SubjectListProgress'])){
-       			return $this->_cache['SubjectListProgress'];
+       		if (isset($this->_cache['SubjectListProgress'][$d->fieldid])){
+       			return $this->_cache['SubjectListProgress'][$d->fieldid];
        		}
-       		$list = $this->models->InstanceClass('SubjectList');
-       	
-       		$rows = RecordBookQuery::SubjectListProgress($this->db, $d);
-       		 
-       		while (($dd = $this->db->fetch_array($rows))){
-       			$list->Add($this->models->InstanceClass('SubjectItem', $dd));
-       		}
-       		return $this->_cache[$d->fieldid][$d->numcrs][$d->semestr]['SubjectListProgress'] = $list;
+			$list = $this->SubjectListModels('SubjectListProgress', $d);
+			
+       		return $this->_cache['SubjectListProgress'][$d->fieldid] = $list;
        	}
        	
+       	public function SubjectListModels($query, $d){
+       		
+       		$list = $this->models->InstanceClass('SubjectList');
+       		$rows = RecordBookQuery::$query($this->db, $d);
+	       		while (($dd = $this->db->fetch_array($rows))){
+	       			$list->Add($this->models->InstanceClass('SubjectItem', $dd));
+	       		}
+       		return $list;
+       	}
        	
        	public function SubjectSaveToJSON($d){
        		
@@ -555,7 +560,7 @@ class RecordBook extends AbricosApplication {
        	public function MarkUpdate($d){
        			foreach($d as $key => $val){
        				$val = intval($val);
-	       				if($key !== 'id'){
+	       				if($key !== 'id' && $key !== 'mark'){
 		       					if($val < 0 || $val > 100){
 		       						return false;
 		       					}
@@ -706,6 +711,40 @@ class RecordBook extends AbricosApplication {
        		
        	}
        	
+       	public function MarkListStatToJSON($d){
+       		$res = $this->MarkListStat($d);
+       		
+       		$list = $this->ImplodeJSON(
+       				$this->SubjectListToJSON($d),
+       				$this->StudListToJSON($d->groupid)
+       		);
+       		
+       		return $this->ImplodeJSON(
+       				$this->ResultToJSON('markListStat', $res),
+       				$list
+       		); 
+       	}
+       	
+       	public function MarkListStat($d){
+       		
+       		$d->groupid = intval($d->groupid);
+       		$d->fieldid = intval($d->fieldid);
+       		$d->numcrs = intval($d->numcrs);
+       		$d->semestr = intval($d->semestr);
+       		
+       		if (isset($this->_cache['markListStat'][$d->groupid])){
+       			return $this->_cache['markListStat'][$d->groupid];
+       		}
+       		
+       		$rows = RecordBookQuery::MarkListStat(Abricos::$db, $d);
+       		
+       		$list = $this->models->InstanceClass('MarkListStat');
+       		while (($dd = $this->db->fetch_array($rows))){
+       			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
+       		}
+       		
+       		return $this->_cache['markListStat'][$d->groupid] = $list;
+       	}
        	
 }
 

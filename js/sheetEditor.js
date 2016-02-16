@@ -471,18 +471,16 @@ Component.entryPoint = function(NS){
         		id: id,
         		mark: value
         	};
-        	console.log(data);
         	this.set('waiting', true);
 	        	this.get('appInstance').markUpdateZaoch(data, function(err, result){
 	        		this.set('waiting', false);
 	        	}, this);
         },
         reqMark: function(objData){
-        	console.log(objData);
-//	        	this.set('waiting', true);
-//	        	this.get('appInstance').markUpdate(objData, function(err, result){
-//	        		this.set('waiting', false);
-//	        	}, this);
+	        	this.set('waiting', true);
+	        	this.get('appInstance').markUpdate(objData, function(err, result){
+	        		this.set('waiting', false);
+	        	}, this);
         },
         setTradMark: function(val){
         	switch(val){

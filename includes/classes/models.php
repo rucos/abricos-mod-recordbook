@@ -61,6 +61,15 @@ class MarkList extends AbricosModelList {
 
 }
 
+class MarkListStat extends AbricosModelList {
+
+}
+
+class MarkItemStat extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'MarkItemStat';
+}
+
 class GroupModalItem extends AbricosModel {
 	protected $_structModule = 'recordbook';
 	protected $_structName = 'GroupModalItem';

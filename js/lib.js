@@ -143,6 +143,10 @@ Component.entryPoint = function(NS){
     		},
     		transitStud: {
     			args: ['data']
+    		},
+    		markListStat: {
+    			args: ['data'],
+    			type: 'modelList:MarkListStat'
     		}
         },
         ATTRS: {
@@ -156,6 +160,7 @@ Component.entryPoint = function(NS){
         	SheetList: {value: NS.SheetList},
         	SheetItem: {value: NS.SheetItem},
         	MarkList: {value: NS.MarkList},
+        	MarkListStat: {value: NS.MarkListStat},
         	MarkItem: {value: NS.MarkItem},
         	GroupModalList: {value: NS.GroupModalList},
         	currentPageGroup: {value: 1},

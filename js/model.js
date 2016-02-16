@@ -57,6 +57,14 @@ Component.entryPoint = function(NS){
         appItem: NS.MarkItem
     });
     
+    NS.MarkItemStat = Y.Base.create('markItemStat', SYS.AppModel, [], {
+        structureName: 'MarkItemStat'
+    });
+    
+    NS.MarkListStat = Y.Base.create('markListStat', SYS.AppModelList, [], {
+        appItem: NS.MarkItemStat
+    });
+    
     NS.GroupModalItem = Y.Base.create('groupModalItem', SYS.AppModel, [], {
         structureName: 'GroupModalItem'
     });

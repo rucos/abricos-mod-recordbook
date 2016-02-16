@@ -1,5 +1,4 @@
 var Component = new Brick.Component();
-console.log();
 Component.requires = {
     mod: [
         {name: '{C#MODNAME}', files: ['lib.js']}

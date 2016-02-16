@@ -19,6 +19,69 @@
         </div>
 	</div>
 	<div class="panel-body">
-		
+		<div id="{i#groupInfo}"></div>
 	</div>
 </div>
+
+
+<!--{groupInfo}-->
+<h5>Номер группы: <span>{v#numgroup}</span></h5>
+	<h5>Направление: <span>{v#fieldcode} {v#field}</span></h5>
+	<h5>Форма обучения: <span>{v#frmstudy}</span></h5>
+		<div class="row">
+			<div class="col-md-2">
+			 	<div class="input-group"> 
+					<div class="input-group-btn" id="{i#div_course}">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Курс <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+									<li><a href="" data-click="choiceCourse" data-course="1">1</a></li>
+									<li><a href="" data-click="choiceCourse" data-course="2">2</a></li>
+									<li><a href="" data-click="choiceCourse" data-course="3">3</a></li>
+									<li><a href="" data-click="choiceCourse" data-course="4">4</a></li>
+									<li><a href="" data-click="choiceCourse" data-course="5">5</a></li>
+								</ul>
+					</div>
+						<input type="text" class="form-control" id="{i#inp_course}" value="{v#numcrs}" disabled>
+				</div>
+			</div>
+			<div class="col-md-3">
+				<div class="input-group"> 
+					<div class="input-group-btn" id="{i#div_semestr}">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Семестр <span class="caret"></span></button>
+								<ul class="dropdown-menu">
+									<li><a href="" data-click="choiceSemestr" data-semestr="осенний">осенний</a></li>
+									<li><a href="" data-click="choiceSemestr" data-semestr="весенний">весенний</a></li>
+								</ul>
+					</div>
+						<input type="text" class="form-control" id="{i#inp_semestr}" disabled>
+				</div>
+			</div>
+		</div>
+			<div id="{i#markTable}"></div>
+
+<!--{markTable}-->
+<table class="table table-striped table-hover">
+    <thead>
+	    <tr>
+	   	 	<th>№</th>
+	        <th>ФИО студента</th>
+	        <th>№ зач. книжки</th>
+	        {v#th}
+	    </tr>
+    </thead>
+    <tbody>{v#rows}</tbody>
+</table>
+
+<!--{markSubj}-->
+<th>{v#namesubject}</th>
+
+<!--{rowMarkTable}-->
+<tr id="{i#stud}-{v#id}">
+    <td>{v#n}</td>
+    <td>{v#fio}</td>
+    <td>{v#numbook}</td>
+    {v#td}
+</tr>
+
+<!--{markTd}-->
+<td id="{v#id}" ></td>

@@ -291,6 +291,7 @@ class RecordBookQuery {
     		FROM ".$db->prefix."rb_students
     		WHERE groupid=".bkint($groupid)." 
     					AND transferal=0
+    		ORDER BY fio ASC
 		";
     	return $db->query_read($sql);
     }
@@ -436,7 +437,7 @@ class RecordBookQuery {
     		if($arrCount === 0) return false;
     		
 		    		foreach($arrStud as $key => $val){
-		    			$valIns .= "(".$idSheet.",'".$val."')";
+		    			$valIns .= "(".$idSheet.",".$val.")";
 		    			if($key < $arrCount - 1){
 		    				$valIns .= ",";
 		    			}
@@ -650,8 +651,43 @@ class RecordBookQuery {
 							AND semestr = ".bkint($d->semestr)."
 			ORDER BY formcontrol DESC
 		";
-    	 
-    	return $db->query_read($sql);
+    	 return $db->query_read($sql);
+    	
+    }
+    
+    public static function MarkListStat(Ab_Database $db, $d){
+    	
+    	$sql = "
+    		SELECT
+    				sh.sheetid
+    		FROM ".$db->prefix."rb_sheet sh
+    		INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = sh.subjectid
+    		WHERE sh.groupid = ".bkint($d->groupid)."
+    				AND sj.fieldid = ".bkint($d->fieldid)."
+    					AND sj.numcrs = ".bkint($d->numcrs)."
+							AND sj.semestr = ".bkint($d->semestr)."
+									AND sh.type < 3
+    	";
+    	$rows = $db->query_read($sql);
+    	$sheet = '';
+	    	while (($dd = $db->fetch_array($rows))){
+	    		$sheet .= $dd["sheetid"].',';
+	    	}
+	    
+		   if(strlen($sheet) > 0){
+			   	$sql = "
+			    		SELECT
+			    				m.markid as id,
+			    				sh.subjectid,
+			   					m.studid,
+			    				MAX(m.mark) as mark
+			    		FROM ".$db->prefix."rb_marks m
+			    		INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid
+			    		WHERE m.sheetid IN (".substr($sheet, 0, -1).")
+			    		GROUP BY sh.subjectid,m.studid
+			    	";
+			   	return $rows = $db->query_read($sql);
+		   }
     }
 }
 

@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "subjectid": {
+      "type": "int",
+       "json": "sid"
+    },
+    "studid": {
+      "type": "int",
+       "json": "stid"
+    },
+    "mark": {
+      "type": "int",
+      "json": "mk"
+    }
+  }
+}

@@ -97,7 +97,7 @@ if ($updateManager->isInstall('0.1.4')){
 					prliminary tinyint(3) unsigned NOT NULL default 0 COMMENT 'Предварительная оценка',
 					additional tinyint(3) unsigned NOT NULL default 0 COMMENT 'Дополнительные баллы',
 					debts tinyint(3) unsigned NOT NULL default 0 COMMENT 'Количество долгов',
-					mark tinyint(3) unsigned NOT NULL default 0 COMMENT 'Оценка/101 - зачтено/102-105 для заочной',
+					mark tinyint(3) unsigned NOT NULL default 0 COMMENT 'Оценка/102 - зачтено/103-105 для заочной',
 					PRIMARY KEY (markid)
 			)".$charset
 		);

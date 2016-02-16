@@ -275,13 +275,11 @@ Component.entryPoint = function(NS){
 	    		self = this,
 	    		formControl = this.get('currentFormControl');
         	
-    	console.log(formControl);
-    	
 		    	markList.each(function(mark){
 		    		var markValue = mark.get('mark');
 		    		
 		    		if(formControl == 'Зачет'){
-		    			markValue = markValue == 101 ? 'Зачтено' : 'Не зачтено'
+		    			markValue = markValue == 102 ? 'Зачтено' : 'Не зачтено'
 		    		}
 		    		
 		    		lst += tp.replace('rowMarkStudOch', [{
@@ -453,9 +451,8 @@ Component.entryPoint = function(NS){
         		mark = arrRow[9].firstChild.innerHTML;
         	
         	if(formControl == 'Зачет'){
-        		mark = arrRow[9].firstChild.innerHTML == 'Зачтено' ? 101 : 102;
+        		mark = arrRow[9].firstChild.innerHTML == 'Зачтено' ? 102 : 101;
         	} 
-        	
         	var objData = {
 	        		id: row.id,
 	        		firstatt: arrRow[3].firstChild.value,
@@ -474,21 +471,23 @@ Component.entryPoint = function(NS){
         		id: id,
         		mark: value
         	};
+        	console.log(data);
         	this.set('waiting', true);
 	        	this.get('appInstance').markUpdateZaoch(data, function(err, result){
 	        		this.set('waiting', false);
 	        	}, this);
         },
         reqMark: function(objData){
-	        	this.set('waiting', true);
-	        	this.get('appInstance').markUpdate(objData, function(err, result){
-	        		this.set('waiting', false);
-	        	}, this);
+        	console.log(objData);
+//	        	this.set('waiting', true);
+//	        	this.get('appInstance').markUpdate(objData, function(err, result){
+//	        		this.set('waiting', false);
+//	        	}, this);
         },
         setTradMark: function(val){
         	switch(val){
-        		case 101: return 'зачтено';
-        		case 102: return 'не явка';
+        		case 101: return 'не явка';
+        		case 102: return 'зачтено';
         		case 103: return 'удовлетворительно';
         		case 104: return 'хорошо';
         		case 105: return 'отлично';

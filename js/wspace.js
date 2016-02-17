@@ -12,7 +12,21 @@ Component.entryPoint = function(NS){
 
     NS.WorkspaceWidget = Y.Base.create('workspaceWidget', SYS.AppWidget, [
         SYS.AppWorkspace
-    ], {}, {
+    ], {
+    	setActive: function(idLi){
+    		var tp = this.template,
+    			arr = ['fieldsLi', 'groupsLi', 'configLi'];
+    		
+    			for(var i = 0; i < 3; i++){
+    				var li = 'widget.' + arr[i];
+	    				if(arr[i] == idLi){
+	    					tp.addClass(li, 'active');
+	    				} else {
+	    					tp.removeClass(li, 'active');
+	    				}
+    			}
+    	}
+    }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget'},
@@ -29,16 +43,19 @@ Component.entryPoint = function(NS){
         			var idManager = e.target.getData('id'),
         				tp = this.template;
         			
-        			if(idManager == 'fieldsA'){
-        				tp.removeClass('widget.groupsLi', 'active');
-        				tp.addClass('widget.fieldsLi', 'active');
-        					this.go("manager.view");
-        					
-        			} else if(idManager == 'groupsA'){
-        				tp.removeClass('widget.fieldsLi', 'active');
-        				tp.addClass('widget.groupsLi', 'active');
-        					this.go("managerGroups.view");
-        			}
+	        		switch(idManager){
+	        			case "fieldsA" : 
+	        				this.setActive('fieldsLi');
+	        					this.go("manager.view");
+	        						break;
+	        			case "groupsA": 
+	        				this.setActive('groupsLi');
+	        					this.go("managerGroups.view");
+	        						break;
+	        			case "configA":
+	        				this.setActive('configLi');
+	        					break;
+	        		}
         		}
         	}
         }

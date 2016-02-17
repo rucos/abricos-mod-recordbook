@@ -147,6 +147,12 @@ Component.entryPoint = function(NS){
     		markListStat: {
     			args: ['data'],
     			type: 'modelList:MarkListStat'
+    		},
+    		configSave: {
+    			args: ['data']
+    		},
+    		config: {
+    			type: 'model:Config'
     		}
         },
         ATTRS: {
@@ -166,18 +172,25 @@ Component.entryPoint = function(NS){
         	currentPageGroup: {value: 1},
         	findGroup: {value: false},
         	findGroupVal: {value: ''},
-        	frmstudy: {value: 0}
+        	frmstudy: {value: 0},
+        	Config: {value: NS.Config}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
         	manager: {
         		view: function(){
+        			
         			 return this.getURL('ws') + 'manager/ManagerWidget';
         		}
         	},
         	managerGroups: {
         		view: function(){
         			return this.getURL('ws') + 'managerGroups/ManagerWidgetGroups';
+        		}
+        	},
+        	managerConfig: {
+        		view: function(){
+        			return this.getURL('ws') + 'managerConfig/ManagerWidgetConfig';
         		}
         	},
         	field: {

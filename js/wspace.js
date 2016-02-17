@@ -54,7 +54,8 @@ Component.entryPoint = function(NS){
 	        						break;
 	        			case "configA":
 	        				this.setActive('configLi');
-	        					break;
+	        					this.go("managerConfig.view");	
+	        						break;
 	        		}
         		}
         	}

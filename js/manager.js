@@ -14,6 +14,7 @@ Component.entryPoint = function(NS){
     NS.ManagerWidget = Y.Base.create('managerWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
             var tp = this.template;
+            
             this.listWidget = new NS.FieldListWidget({
                 srcNode: tp.gel('list')
             });

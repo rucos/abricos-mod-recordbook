@@ -26,16 +26,21 @@ class RecordBook extends AbricosApplication {
 				'GroupModalItem' => 'GroupModalItem',
 				'GroupModalList' => 'GroupModalList',
 				'MarkItemStat' => 'MarkItemStat',
-				'MarkListStat' => 'MarkListStat'
+				'MarkListStat' => 'MarkListStat',
+				'Config' => 'RecordBookConfig'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config';
 	}
 
 	public function ResponseToJSON($d){
+		if (!$this->manager->IsAdminRole()){
+			return 403;
+		}
+		
 		switch ($d->do){
             case "fieldList":
                 return $this->FieldListToJSON($d->widget);
@@ -92,6 +97,10 @@ class RecordBook extends AbricosApplication {
             	return $this->TransitStudToJSON($d->data);
             case "markListStat":
             	return $this->MarkListStatToJSON($d->data);
+            case "configSave":
+            	return $this->ConfigSaveToJSON($d->data);
+            case "config":
+            	return $this->ConfigToJSON();
         }
         return null;
     }
@@ -745,6 +754,47 @@ class RecordBook extends AbricosApplication {
        		
        		return $this->_cache['markListStat'][$d->groupid] = $list;
        	}
+       	
+       	public function ConfigSaveToJSON($d){
+       		$res = $this->ConfigSave($d);
+       		return $this->ResultToJSON('configSave', $res);
+       	}
+       	
+       	public function ConfigSave($d){
+       		$utmf = Abricos::TextParser(true);
+       		$d->fullname = $utmf->Parser($d->fullname);
+       		$d->shortname = $utmf->Parser($d->shortname);
+       		$d->manager = $utmf->Parser($d->manager);
+       		
+       		$phs = RecordBookModule::$instance->GetPhrases();
+       		$phs->Set("fullname", $d->fullname);
+       		$phs->Set("shortname", $d->shortname);
+       		$phs->Set("manager", $d->manager);
+       		
+       		Abricos::$phrases->Save();
+       	}
+       	
+       	public function ConfigToJSON(){
+       		$res = $this->Config();
+       		return $this->ResultToJSON('config', $res);
+       	}
+       	
+       	
+       	public function Config(){
+       		if (isset($this->_cache['Config'])){
+       			return $this->_cache['Config'];
+       		}
+       		
+       		$phrases = RecordBookModule::$instance->GetPhrases();
+       		$d = array();
+       		for ($i = 0; $i < $phrases->Count(); $i++){
+       			$ph = $phrases->GetByIndex($i);
+       			$d[$ph->id] = $ph->value;
+       		}
+       		
+       		return $this->_cache['Config'] = $this->models->InstanceClass('Config', $d);
+       	}
+       	
        	
 }
 

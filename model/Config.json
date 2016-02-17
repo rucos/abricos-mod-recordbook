@@ -1,0 +1,16 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "fullname": {
+      "type": "string"
+    },
+    "shortname": {
+      "type": "string"
+    },
+    "manager": {
+      "type": "string"
+    }
+  }
+}

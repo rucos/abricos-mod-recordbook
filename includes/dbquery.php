@@ -498,6 +498,7 @@ class RecordBookQuery {
     		FROM ".$db->prefix."rb_marks m
     		INNER JOIN ".$db->prefix."rb_students s ON s.id = m.studid
     		WHERE m.sheetid = ".bkint($id)."
+    		ORDER BY s.fio ASC
 		";
     	return $db->query_read($sql);
     }

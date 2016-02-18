@@ -1,0 +1,40 @@
+#vert{width:10%;}
+#vert td{text-align:center;padding:10px 0;}
+.vert-text{
+	-ms-transform: rotate(90deg);
+	-moz-transform: rotate(90deg);
+	-webkit-transform: rotate(90deg);
+	transform: rotate(90deg);
+	
+	-ms-transform-origin: left top 0;
+	-moz-transform-origin: left top 0;
+	-webkit-transform-origin: left top 0;
+	transform-origin: left top 0;
+	
+	margin-left: 50px;
+	padding: 0;
+	float: left;
+	font-size: 9pt;
+	text-align: center;
+	width: 200px;
+}
+
+#markTable th{
+	text-align: center;
+	vertical-align: middle;
+}
+
+#markTable .td-mark{
+	text-align: center;
+}
+
+#markTable .markSubj{
+	height:200px;
+	width:50px;
+}
+
+#scroll {
+	width:auto; 
+	height:auto; 
+	overflow:auto
+}

@@ -57,31 +57,38 @@
 				</div>
 			</div>
 		</div>
-			<div id="{i#markTable}"></div>
+		<hr>
+				<div id="{i#markTable}"></div>
 
 <!--{markTable}-->
-<table class="table table-striped table-hover">
+<div id="scroll" contentEditable="false">
+<table id="markTable" class="table table-bordered table-condensed">
     <thead>
 	    <tr>
 	   	 	<th>№</th>
 	        <th>ФИО студента</th>
-	        <th>№ зач. книжки</th>
-	        {v#th}
+	        <th >№ зач. книжки</th>
+			 {v#th}
 	    </tr>
     </thead>
     <tbody>{v#rows}</tbody>
 </table>
+</div>
 
 <!--{markSubj}-->
-<th>{v#namesubject}</th>
+<th>
+	<div class="markSubj">
+		<div class="vert-text">{v#namesubject}</div>
+	</div>
+</th>
 
 <!--{rowMarkTable}-->
 <tr id="{i#stud}-{v#id}">
-    <td>{v#n}</td>
-    <td>{v#fio}</td>
-    <td>{v#numbook}</td>
+    <td width="2%">{v#n}</td>
+    <td width="15%">{v#fio}</td>
+    <td width="10%">{v#numbook}</td>
     {v#td}
 </tr>
 
 <!--{markTd}-->
-<td id="{v#id}" ></td>
+<td id="{v#id}" class="td-mark"></td>

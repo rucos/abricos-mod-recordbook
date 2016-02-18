@@ -52,7 +52,6 @@ Component.entryPoint = function(NS){
         			from: 'progressViewWidget'
         		};
           	this.set('waiting', true);
-          	
 	          this.get('appInstance').markListStat(data, function(err, result){
 	    			this.set('waiting', false);
 	    				if(!err){
@@ -122,7 +121,7 @@ Component.entryPoint = function(NS){
         	if(val <= 100){
         		if(val < 51){
         			return '';
-        		} else if(val >=51 && val < 71){
+        		} else if(val >= 51 && val < 71){
         			return '3';
         		} else if(val >= 71 && val < 86){
         			return '4';

@@ -143,22 +143,19 @@ Component.entryPoint = function(NS){
         	});
         	tp.setHTML('rowAddSheet.studList', lst);
         },
-        actSheet: function(id){
+        actSheet: function(id, blockName){
         	var tp = this.template,
-        		valDate = id ? 
-        					tp.getValue('rowEditSheet.inpDate').split('-') :
-        						tp.getValue('rowAddSheet.inpDate').split('-'),
+        		valDate = tp.getValue(blockName+'.inpDate').split('-'),
         		stud = id ? 
         					tp.gel('rowEditSheet.studList').children :
         						tp.gel('rowAddSheet.studList').children,
         		arrStudId = [],
         		lib = this.get('appInstance'),
-        		fioteacher = id ? 
-    							tp.getValue('rowEditSheet.inpFioteacher') :
-    								tp.getValue('rowAddSheet.inpFioteacher');
+        		fioteacher = tp.getValue(blockName+'.inpFioteacher'),
+    			nameSubject = tp.getValue(blockName+'.inpSubject');
     		
     		var type = this.get('currentType');
-    							
+    		
         	if(type == 2 || type == 4){
             	for(var i = 0; i < stud.length; i++){
             		var id = stud[i].id;
@@ -172,16 +169,17 @@ Component.entryPoint = function(NS){
 	        			idSubject: this.get('currentSubject'),
 	        			date: lib.getDate(valDate),//получить в мсек
 	        			groupid: this.get('groupid'),
-	        			idSheet: id ? id : 0,
+	        			idSheet: id,
 	        			typeSheet: this.get('currentType'),
 	        			arrStudId: arrStudId,
 	        			fioteacher: fioteacher
 	        		};
 			
-				if(!objData.idSubject){
+				if(!nameSubject){
 					alert('Укажите предмет');
 						return false;
 				}
+				
 	        	this.set('waiting', true);
 	        	lib.sheetSave(objData, function(err, result){
 	        		this.set('waiting', false);
@@ -592,12 +590,12 @@ Component.entryPoint = function(NS){
         	},
         	saveAddSheet: {
         		event: function(e){
-        			this.actSheet();
+        			this.actSheet(0, 'rowAddSheet');
         		}
         	},
         	saveEditSheet: {
         		event: function(e){
-        			this.actSheet(e.target.getData('id'));
+        			this.actSheet(e.target.getData('id'), 'rowEditSheet');
         		}
         	},
         	removeSheet: {

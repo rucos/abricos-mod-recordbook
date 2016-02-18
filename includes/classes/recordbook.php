@@ -471,9 +471,6 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function SheetAdd($d){
-       		if($d->idSubject === 0) {
-       			return false;
-       		}
        		$d->idSubject = intval($d->idSubject);
        		$d->date = intval($d->date);
        		$d->groupid = intval($d->groupid);

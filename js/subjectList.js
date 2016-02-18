@@ -112,9 +112,8 @@ Component.entryPoint = function(NS){
         renderSubjectRow: function(row){
         	var tp = this.template,
         		lst = "";
-        	
         			lst += tp.replace('rowAct', {
-			     		'namesubject': row ? row.cells[0].innerHTML : '',
+			     		'namesubject': row ? row.cells[0].childNodes[0].textContent : '',
 		        		'formcontrol': row ? row.cells[1].innerHTML : '',
 		        		'numcrs': row ? row.cells[2].innerHTML : '',
 		        		'semestr':  row ? row.cells[3].innerHTML : '',

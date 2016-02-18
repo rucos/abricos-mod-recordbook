@@ -2,12 +2,15 @@
 <div>
     <ul class="nav nav-pills">
 		  <li>
-		  	<button id="{i#ochForm}" data-value="ochForm" data-click="showGroupList" class="btn btn-default">Очная форма</button>
+		  	<button id="{i#ochForm}" data-value="ochForm" data-click="showGroupList" class="btn btn-default" data-wait="disable">Очная форма</button>
 		  </li>
 		  <li>
-		  	<button id="{i#zaochForm}" data-value="zaochForm"  data-click="showGroupList" class="btn btn-default">Заочная форма</button>
+		  	<button id="{i#zaochForm}" data-value="zaochForm"  data-click="showGroupList" class="btn btn-default" data-wait="disable">Заочная форма</button>
 		  </li>
 	</ul>
+        <span data-wait="show" class="pull-right">
+            <img src="/images/loading.gif"/>
+        </span>
 	<hr>
 	<div id="{i#groupList}" class="hide">
 	        <div class="row">

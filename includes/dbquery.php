@@ -650,6 +650,7 @@ class RecordBookQuery {
 			WHERE fieldid = ".bkint($d->fieldid)." 
 						AND numcrs = ".bkint($d->numcrs)."
 							AND semestr = ".bkint($d->semestr)."
+								AND remove=0	
 			ORDER BY formcontrol DESC
 		";
     	 return $db->query_read($sql);
@@ -667,15 +668,16 @@ class RecordBookQuery {
     				AND sj.fieldid = ".bkint($d->fieldid)."
     					AND sj.numcrs = ".bkint($d->numcrs)."
 							AND sj.semestr = ".bkint($d->semestr)."
-									AND sh.type < 3
+								AND sh.type < 3
+										
     	";
     	$rows = $db->query_read($sql);
     	$sheet = '';
 	    	while (($dd = $db->fetch_array($rows))){
 	    		$sheet .= $dd["sheetid"].',';
 	    	}
-	    
 		   if(strlen($sheet) > 0){
+		   		$rowid = substr($sheet, 0, -1);
 			   	$sql = "
 			    		SELECT
 			    				m.markid as id,
@@ -684,7 +686,7 @@ class RecordBookQuery {
 			    				MAX(m.mark) as mark
 			    		FROM ".$db->prefix."rb_marks m
 			    		INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid
-			    		WHERE m.sheetid IN (".substr($sheet, 0, -1).")
+			    		WHERE m.sheetid IN (".$rowid.")
 			    		GROUP BY sh.subjectid,m.studid
 			    	";
 			   	return $rows = $db->query_read($sql);

@@ -99,22 +99,25 @@ Component.entryPoint = function(NS){
         		return lstTd;
         },
         renderMarkListStat: function(){
-        	var markListStat= this.get('markListStat'),
+        	var markListStat = this.get('markListStat'),
         		tp = this.template,
         		idRow = 'rowMarkTable.stud-';
         	
         	markListStat.each(function(mark){
         		var id = idRow + mark.get('studid'),
-        			row = tp.one(id).getDOMNode(),
-        			tdRow = row.cells,
-        			len = tdRow.length;
+        			row = tp.one(id);
         		
-        		for(var i = 3; i < len; i++){
-        			if(tdRow[i].id == mark.get('subjectid')){
-        				tdRow[i].innerHTML = this.calcMark(mark.get('mark'));
-        					break;
-        			}
-        		}
+	        		if(row){
+	        			var tdRow = row.getDOMNode().cells,
+	        				len = tdRow.length;
+	        			
+		        		for(var i = 3; i < len; i++){
+		        			if(tdRow[i].id == mark.get('subjectid')){
+		        				tdRow[i].innerHTML = this.calcMark(mark.get('mark'));
+		        					break;
+		        			}
+		        		}
+	        		}
         	}, this);
         },
         calcMark: function(val){

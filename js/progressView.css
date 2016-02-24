@@ -19,16 +19,16 @@
 	width: 200px;
 }
 
-#markTable th{
+.markTable th{
 	text-align: center;
 	vertical-align: middle;
 }
 
-#markTable .td-mark{
+.markTable .td-mark{
 	text-align: center;
 }
 
-#markTable .markSubj{
+.markTable .markSubj{
 	height:200px;
 	width:50px;
 }

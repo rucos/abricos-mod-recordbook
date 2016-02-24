@@ -669,7 +669,6 @@ class RecordBookQuery {
     					AND sj.numcrs = ".bkint($d->numcrs)."
 							AND sj.semestr = ".bkint($d->semestr)."
 								AND sh.type < 3
-										
     	";
     	$rows = $db->query_read($sql);
     	$sheet = '';

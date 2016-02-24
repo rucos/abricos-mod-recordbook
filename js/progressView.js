@@ -140,6 +140,26 @@ Component.entryPoint = function(NS){
         			case 105: return '5';
         		}
         	}
+        },
+        lightRow: function(rowIndex, cellIndex){
+        	var tp = this.template,
+        		table = tp.gel('markTable.markTable'),
+        		rows = table.rows,
+        		rowLen = rows.length,
+        		cellLen = rows[0].cells.length;
+        	
+        	for(var i = 0; i < rowLen; i++){
+        		for(var j = 0; j < cellLen; j++){
+        			if(i == rowIndex && j <= cellIndex){
+        				rows[i].cells[j].classList.add('success');
+        			} else {
+        				rows[i].cells[j].classList.remove('success');
+        			}
+	        	}
+	        		if(i < rowIndex){
+	        			rows[i].cells[cellIndex].classList.add('success');
+	        		}
+        	}
         }
     }, {
         ATTRS: {
@@ -167,6 +187,16 @@ Component.entryPoint = function(NS){
         	choiceSemestr: {
         		event: function(e){
         			this.renderDropdown(e.target.getData('semestr'), 'semestr');
+        		}
+        	},
+        	lightRow: {
+        		event: function(e){
+        			var targ = e.target,
+        				node = targ.getDOMNode();
+        			
+        			if(targ.hasClass('td-mark')){
+        				this.lightRow(node.parentNode.sectionRowIndex + 1, node.cellIndex);
+        			}
         		}
         	}
         }

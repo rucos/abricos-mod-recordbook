@@ -15,16 +15,16 @@ Component.entryPoint = function(NS){
     ], {
     	setActive: function(idLi){
     		var tp = this.template,
-    			arr = ['fieldsLi', 'groupsLi', 'configLi'];
+    			obj = tp.idMap.widget;
     		
-    			for(var i = 0; i < 3; i++){
-    				var li = 'widget.' + arr[i];
-	    				if(arr[i] == idLi){
-	    					tp.addClass(li, 'active');
-	    				} else {
-	    					tp.removeClass(li, 'active');
-	    				}
-    			}
+    		for(var i in obj){
+				var li = 'widget.' + i;
+					if(i == idLi){
+						tp.addClass(li, 'active');
+					} else {
+						tp.removeClass(li, 'active');
+					}
+    		}
     	}
     }, {
         ATTRS: {

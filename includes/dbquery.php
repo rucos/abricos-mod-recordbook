@@ -691,6 +691,43 @@ class RecordBookQuery {
 			   	return $rows = $db->query_read($sql);
 		   }
     }
+    
+    public static function ExpeledGroupList(Ab_Database $db){
+    	 
+    	$sql = "
+			SELECT 
+    			DISTINCT groupid
+    		FROM ".$db->prefix."rb_students
+    		WHERE transferal = 1
+		";
+        $rows = $db->query_read($sql);
+    	$group = '';
+    	
+	    	while (($dd = $db->fetch_array($rows))){
+	    		$group .= $dd["groupid"].',';
+	    	}
+	    	
+	    	if(strlen($group) > 0){
+	    		$rowid = substr($group, 0, -1);
+	    		$sql = "
+			    		SELECT
+	    						g.groupid as id,
+			    				g.numgroup,
+			    				g.numcrs,
+			    				g.dateline,
+			    				f.field,
+			    				f.fieldid,
+			    				f.fieldcode,
+			    				f.frmstudy,
+			    				f.remove
+			    		FROM ".$db->prefix."rb_groups g
+			    		INNER JOIN ".$db->prefix."rb_fieldstudy f ON g.fieldid = f.fieldid
+			    		WHERE g.fieldid IN (".$rowid.")
+			    	";
+	    		return $rows = $db->query_read($sql);
+	    	}
+	    	
+    }
 }
 
 ?>

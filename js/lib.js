@@ -153,6 +153,9 @@ Component.entryPoint = function(NS){
     		},
     		config: {
     			type: 'model:Config'
+    		},
+    		expeledGroupList: {
+    			type: 'modelList:GroupList'
     		}
         },
         ATTRS: {
@@ -191,6 +194,11 @@ Component.entryPoint = function(NS){
         	managerConfig: {
         		view: function(){
         			return this.getURL('ws') + 'managerConfig/ManagerWidgetConfig';
+        		}
+        	},
+        	managerExpeled: {
+        		view: function(){
+        			return this.getURL('ws') + 'managerExpeled/ManagerWidgetExpeled';
         		}
         	},
         	field: {

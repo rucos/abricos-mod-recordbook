@@ -101,6 +101,9 @@ class RecordBook extends AbricosApplication {
             	return $this->ConfigSaveToJSON($d->data);
             case "config":
             	return $this->ConfigToJSON();
+            case "expeledGroupList":
+            	return $this->ExpeledGroupListToJSON();
+            	
         }
         return null;
     }
@@ -792,6 +795,26 @@ class RecordBook extends AbricosApplication {
        		return $this->_cache['Config'] = $this->models->InstanceClass('Config', $d);
        	}
        	
+       	public function ExpeledGroupListToJSON(){
+       		$res = $this->ExpeledGroupList();
+       		return $this->ResultToJSON('expeledGroupList', $res);
+       	}
+       	
+       	public function ExpeledGroupList(){
+       		if (isset($this->_cache['ExpeledGroupList'])){
+       			return $this->_cache['ExpeledGroupList'];
+       		}
+       		 
+       		$list = $this->models->InstanceClass('GroupList');
+       	
+       		$rows = RecordBookQuery::ExpeledGroupList($this->db);
+       	
+       		while (($dd = $this->db->fetch_array($rows))){
+       			$list->Add($this->models->InstanceClass('GroupItem', $dd));
+       		}
+       	
+       		return $this->_cache['ExpeledGroupList'] = $list;
+       	}
        	
 }
 

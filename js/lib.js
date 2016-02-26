@@ -84,7 +84,7 @@ Component.entryPoint = function(NS){
     		},
     		studList: {
     			attribute: false,
-    			args: ['groupid'],
+    			args: ['data'],
     			type: 'modelList:StudList'
     		},
     		studSave: {

@@ -15,12 +15,22 @@ Component.entryPoint = function(NS){
  
     NS.StudListWidget = Y.Base.create('studListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
+        	var expeled = this.get('expeled'),
+        		tp = this.template;
+        	
+        	if(expeled){
+        		tp.addClass('head', 'hide');
+        	}
+        	
         	this.reloadList();
         },
         reloadList: function(){
-        	var groupid = this.get('groupid');
+        	var data = {
+        		groupid: this.get('groupid'),
+        		expeled: this.get('expeled') ? 1 : 0
+        	};
         	this.set('waiting', true);
-        	this.get('appInstance').studList(groupid, function(err, result){
+        	this.get('appInstance').studList(data, function(err, result){
         		this.set('waiting', false);
 	        		if(!err){
 	        			this.set('studList', result.studList);
@@ -271,7 +281,8 @@ Component.entryPoint = function(NS){
             findVal: {value: ''},
             modalFieldList: {value: null},
             modalGroupList: {value: null},
-            modalCurField: {value: null}
+            modalCurField: {value: null},
+            expeled: {value: false}
         },
         CLICKS: {
            	'remove-show': {

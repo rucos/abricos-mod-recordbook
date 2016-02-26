@@ -65,7 +65,7 @@ class RecordBook extends AbricosApplication {
             case "groupRemove":
             	return $this->GroupRemoveToJSON($d->groupid);
             case "studList":
-            	return $this->StudListToJSON($d->groupid);
+            	return $this->StudListToJSON($d->data);
             case "studSave":
             	return $this->StudSaveToJSON($d->studs);
             case "studRemove":
@@ -392,24 +392,31 @@ class RecordBook extends AbricosApplication {
        		RecordBookQuery::GroupRemove(Abricos::$db, $groupid);
        	}
        	
-       	public function StudListToJSON($groupid){
-       		$res = $this->StudList($groupid);
+       	public function StudListToJSON($d){
+       		if(is_object($d)){
+       			$res = $this->StudList($d->groupid, $d->expeled);
+       		} else {
+       			$res = $this->StudList($d);
+       		}
+       		
        		return $this->ResultToJSON('studList', $res);
        	}
        	 
-       	public function StudList($groupid){
-       		 
-       		if (isset($this->_cache['StudList'][$groupid])){
-       			return $this->_cache['StudList'][$groupid];
+       	public function StudList($groupid, $expeled){
+       		$d->groupid = intval($d->groupid);
+       		$d->expeled = intval($d->expeled);
+       		
+       		if (isset($this->_cache['StudList'][$d->expeled][$d->groupid])){
+       			return $this->_cache['StudList'][$d->expeled][$d->groupid];
        		}
        		$list = $this->models->InstanceClass('StudList');
        		 
-       		$rows = RecordBookQuery::StudList($this->db, $groupid);
+       		$rows = RecordBookQuery::StudList($this->db, $d);
        	
-       		while (($d = $this->db->fetch_array($rows))){
-       			$list->Add($this->models->InstanceClass('StudItem', $d));
+       		while (($dd = $this->db->fetch_array($rows))){
+       			$list->Add($this->models->InstanceClass('StudItem', $dd));
        		}
-       		return $this->_cache['StudList'][$groupid] = $list;
+       		return $this->_cache['StudList'][$d->expeled][$d->groupid] = $list;
        	}
        	
        	public function StudSaveToJSON($stud){

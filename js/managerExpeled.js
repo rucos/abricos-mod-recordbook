@@ -19,7 +19,8 @@ Component.entryPoint = function(NS){
                 srcNode: tp.gel('group')
             });
 	            this.listStud = new NS.StudListWidget({
-	                srcNode: tp.gel('stud')
+	                srcNode: tp.gel('stud'),
+	                expeled: true
 	            });
         },
         destructor: function(){
@@ -27,12 +28,6 @@ Component.entryPoint = function(NS){
                 this.listWidget.destroy();
                 this.listStud.destroy();
             }
-        },
-        renderStudWidget: function(groupId){
-        	
-        	var tp = this.template;
-        	
-
         }
     }, {
         ATTRS: {

@@ -278,8 +278,8 @@ class RecordBookQuery {
     	return $db->query_read($sql);
     }
     
-    public static function StudList(Ab_Database $db, $groupid){
-    	 
+    public static function StudList(Ab_Database $db, $d){
+    	
     	$sql = "
 			SELECT
 					id as id,
@@ -289,8 +289,8 @@ class RecordBookQuery {
     				datebirth,
     				preveducation
     		FROM ".$db->prefix."rb_students
-    		WHERE groupid=".bkint($groupid)." 
-    					AND transferal=0
+    		WHERE groupid=".bkint($d->groupid)." 
+    					AND transferal=".bkint($d->expeled)."
     		ORDER BY fio ASC
 		";
     	return $db->query_read($sql);

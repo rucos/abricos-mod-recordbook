@@ -13,8 +13,8 @@ Component.entryPoint = function(NS){
     
     NS.ManagerWidgetExpeled = Y.Base.create('managerWidgetExpeled', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
-        	
             var tp = this.template;
+            
             this.listWidget = new NS.ExpeledGruopListWidget({
                 srcNode: tp.gel('group')
             });
@@ -22,6 +22,7 @@ Component.entryPoint = function(NS){
 	                srcNode: tp.gel('stud'),
 	                expeled: true
 	            });
+	            
         },
         destructor: function(){
             if (this.listWidget){
@@ -37,6 +38,10 @@ Component.entryPoint = function(NS){
         CLICKS: {
         	choiceGroup: {
         		event: function(e){
+        			var tp = this.template;
+        			
+        			tp.toggleClass('divStud', 'hide', false);
+        			
         			this.listStud.set('groupid', e.target.getData('id'));
         			this.listStud.reloadList();
         		}

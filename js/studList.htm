@@ -1,9 +1,10 @@
 <!--{widget}-->
 <div>
+	<div id="{i#head}">
 		<div>
 			<h3>Список группы</h3>
 		</div>
-		<div class="row" id="{i#head}">
+		<div class="row">
 	      			<div class="col-md-6">
 	      				<input id="{i#findStud}"  type="text" class="form-control" placeholder="Введите ФИО студента"/>
 	      			</div>
@@ -23,7 +24,8 @@
            	 			</button>
            			</div>
 	    </div>
- 	<hr>
+	</div>
+	<hr>
     <div id="{i#list}"></div>
     <div id="{i#modal}"></div>
 </div>
@@ -130,12 +132,12 @@
     <td>
          <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs"
                 data-id="{v#id}" data-wait="disable">
-            Отчислить
+            {v#actremove}
         </button>
          <div id="{i#removegroup}-{v#id}"  class="btn-group hide">
             <button data-click="remove" type="button" class="btn btn-danger btn-xs" data-id="{v#id}" 
             		data-wait="disable">
-                Отчислить?
+                {v#actremove}?
             </button>
             <button data-click="remove-cancel" type="button" class="btn btn-default btn-xs" data-id="{v#id}"
                     data-wait="disable">

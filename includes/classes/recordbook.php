@@ -69,7 +69,7 @@ class RecordBook extends AbricosApplication {
             case "studSave":
             	return $this->StudSaveToJSON($d->studs);
             case "studRemove":
-            	return  $this->StudRemoveToJSON($d->studid);
+            	return  $this->StudRemoveToJSON($d->data);
             case "sheetList":
             	return  $this->SheetListToJSON($d->objData);
             case "sheetSave":
@@ -103,6 +103,8 @@ class RecordBook extends AbricosApplication {
             	return $this->ConfigToJSON();
             case "expeledGroupList":
             	return $this->ExpeledGroupListToJSON();
+            case "expeledStudList":
+            	return $this->ExpeledStudListToJSON($d->groupid);
             	
         }
         return null;
@@ -384,7 +386,7 @@ class RecordBook extends AbricosApplication {
        	
        	public function GroupRemoveToJSON($groupid){
        		$res = $this->GroupRemove($groupid);
-       		return $this->ResultToJSON('fieldRemove', $res);
+       		return $this->ResultToJSON('groupRemove', $res);
        	}
        	
        	public function GroupRemove($groupid){
@@ -398,7 +400,7 @@ class RecordBook extends AbricosApplication {
        	}
        	 
        	public function StudList($groupid){
-       		 
+       		$groupid = intval($groupid);
        		if (isset($this->_cache['StudList'][$groupid])){
        			return $this->_cache['StudList'][$groupid];
        		}
@@ -436,14 +438,15 @@ class RecordBook extends AbricosApplication {
        		}
        	}
        	
-       	public function StudRemoveToJSON($studid){
-       		$res = $this->StudRemove($studid);
+       	public function StudRemoveToJSON($d){
+       		$res = $this->StudRemove($d);
        		return $this->ResultToJSON('studRemove', $res);
        	}
        	
-       	public function StudRemove($studid){
-       		$studid = intval($studid);
-       		RecordBookQuery::StudRemove(Abricos::$db, $studid);
+       	public function StudRemove($d){
+       		$d->studid = intval($d->studid);
+       		$d->remove = intval($d->remove);
+       		RecordBookQuery::StudRemove(Abricos::$db, $d);
        	}
        	
        	public function SheetListToJSON($d){
@@ -814,6 +817,27 @@ class RecordBook extends AbricosApplication {
        		}
        	
        		return $this->_cache['ExpeledGroupList'] = $list;
+       	}
+       	
+       	public function ExpeledStudListToJSON($groupid){
+       		$res = $this->ExpeledStudList($groupid);
+       		return $this->ResultToJSON('studList', $res);
+       	}
+       	 
+       	public function ExpeledStudList($groupid){
+       		$groupid = intval($groupid);
+       		
+       		if (isset($this->_cache['ExpeledStudList'][$groupid])){
+       			return $this->_cache['ExpeledStudList'][$groupid];
+       		}
+       		$list = $this->models->InstanceClass('StudList');
+       	
+       		$rows = RecordBookQuery::ExpeledStudList($this->db, $groupid);
+       	
+       		while (($d = $this->db->fetch_array($rows))){
+       			$list->Add($this->models->InstanceClass('StudItem', $d));
+       		}
+       		return $this->_cache['ExpeledStudList'][$groupid] = $list;
        	}
        	
 }

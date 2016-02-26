@@ -1,6 +1,6 @@
 <!--{widget}-->
 <div>
-	<div>
+	<div id="{i#head}">
 		<div>
 			<h3>Список группы</h3>
 		</div>
@@ -132,12 +132,12 @@
     <td>
          <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs"
                 data-id="{v#id}" data-wait="disable">
-            Отчислить
+            {v#actremove}
         </button>
          <div id="{i#removegroup}-{v#id}"  class="btn-group hide">
             <button data-click="remove" type="button" class="btn btn-danger btn-xs" data-id="{v#id}" 
             		data-wait="disable">
-                Отчислить?
+                {v#actremove}?
             </button>
             <button data-click="remove-cancel" type="button" class="btn btn-default btn-xs" data-id="{v#id}"
                     data-wait="disable">

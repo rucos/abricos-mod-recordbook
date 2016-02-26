@@ -327,12 +327,12 @@ class RecordBookQuery {
     	$db->query_write($sql);
     }
     
-    public static function StudRemove(Ab_Database $db, $id){
+    public static function StudRemove(Ab_Database $db, $d){
     	$sql = "
 				UPDATE ".$db->prefix."rb_students
 				SET
-					transferal = 1
-    			WHERE id=".bkint($id)."
+					transferal = ".bkint($d->remove)."
+    			WHERE id=".bkint($d->studid)."
     			LIMIT 1
 		";
     	$db->query_write($sql);
@@ -727,6 +727,24 @@ class RecordBookQuery {
 	    		return $rows = $db->query_read($sql);
 	    	}
 	    	
+    }
+    
+    public static function ExpeledStudList(Ab_Database $db, $groupid){
+    
+    	$sql = "
+			SELECT
+					id as id,
+    				groupid,
+    				numbook,
+    				fio,
+    				datebirth,
+    				preveducation
+    		FROM ".$db->prefix."rb_students
+    		WHERE groupid=".bkint($groupid)."
+    					AND transferal=1
+    		ORDER BY fio ASC
+		";
+    	return $db->query_read($sql);
     }
 }
 

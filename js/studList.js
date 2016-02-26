@@ -15,24 +15,40 @@ Component.entryPoint = function(NS){
  
     NS.StudListWidget = Y.Base.create('studListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
+        	var tp = this.template,
+        		expeled = this.get('expeled');
+        	
+        	if(expeled){
+        		tp.addClass('head', 'hide');
+        	}
         	this.reloadList();
         },
         reloadList: function(){
-        	var groupid = this.get('groupid');
-        	this.set('waiting', true);
-        	this.get('appInstance').studList(groupid, function(err, result){
-        		this.set('waiting', false);
-	        		if(!err){
-	        			this.set('studList', result.studList);
-	        				this.renderList();
-	        		}
-        	}, this);
+        	var groupid = this.get('groupid'),
+        		expeled = this.get('expeled'),
+        		lib = this.get('appInstance');
+        	
+        		this.set('waiting', true);
+        			if(expeled){
+        				lib.expeledStudList(groupid, this.callBackStudList, this);
+        			} else {
+        				lib.studList(groupid, this.callBackStudList, this);
+        			}
+        },
+        callBackStudList: function(err, result){
+
+        	this.set('waiting', false);
+    		if(!err){
+    			this.set('studList', result.studList);
+    				this.renderList();
+    		}
         },
         renderList: function(){
         	var studList = this.get('studList'),
         		lst = "",
         		tp = this.template,
-        		findStud = this.get('findStud');
+        		findStud = this.get('findStud'),
+        		expeled = this.get('expeled');
         	
         	if(findStud){
         		tp.removeClass('allStud', 'hide');
@@ -43,7 +59,8 @@ Component.entryPoint = function(NS){
         	studList.each(function(stud){
         		lst += tp.replace('row', [{
         			datebirth: Brick.dateExt.convert(stud.get('datebirth'), 2),
-        			success: findStud ? 'class="success"' : ""
+        			success: findStud ? 'class="success"' : "",
+        			actremove: expeled ? 'восстановить' : 'Отчислить'
         		},stud.toJSON()]);
         	});
         	tp.setHTML('list', tp.replace('table', {rows: lst}));
@@ -117,11 +134,15 @@ Component.entryPoint = function(NS){
 	        	}, this);
         	}
         },
-        remove: function(studid){
-        	var findStud = this.get('findStud');
-        	
+        remove: function(studid, remove){
+        	var findStud = this.get('findStud'),
+        		data = {
+        			studid: studid,
+        			remove: remove
+        		}
+
         	this.set('waiting', true);
-	        	this.get('appInstance').studRemove(studid, function(err, result){
+	        	this.get('appInstance').studRemove(data, function(err, result){
 	        		this.set('waiting', false);
 	        		if(!err){
 	        			if(findStud){
@@ -271,7 +292,8 @@ Component.entryPoint = function(NS){
             findVal: {value: ''},
             modalFieldList: {value: null},
             modalGroupList: {value: null},
-            modalCurField: {value: null}
+            modalCurField: {value: null},
+            expeled: {value: false}
         },
         CLICKS: {
            	'remove-show': {
@@ -334,8 +356,11 @@ Component.entryPoint = function(NS){
         	},
         	remove: {
         		event: function(e){
-        			var studid = e.target.getData('id');
-        				this.remove(studid);
+        			var studid = e.target.getData('id'),
+        				expeled = this.get('expeled'),
+        				remove = expeled ? 0 : 1;
+        			
+        				this.remove(studid, remove);
         		}
         	},
         	find: {

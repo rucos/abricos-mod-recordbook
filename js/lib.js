@@ -91,7 +91,7 @@ Component.entryPoint = function(NS){
     			args: ['studs']
     		},
     		studRemove: {
-    			args: ['studid']
+    			args: ['data']
     		},
     		sheetList: {
     			attribute: false,
@@ -156,6 +156,10 @@ Component.entryPoint = function(NS){
     		},
     		expeledGroupList: {
     			type: 'modelList:GroupList'
+    		},
+    		expeledStudList: {
+    			args: ['groupid'],
+    			type: 'modelList:StudList'
     		}
         },
         ATTRS: {

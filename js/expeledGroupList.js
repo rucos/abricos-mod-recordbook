@@ -40,9 +40,6 @@ Component.entryPoint = function(NS){
         	component: {value: COMPONENT},
             templateBlockName: {value: 'widget, ulSubject, liSubject'},
             groupList: {value: null}
-        },
-        CLICKS: {
-
         }
     });
 };

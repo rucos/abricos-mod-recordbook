@@ -18,6 +18,7 @@ Component.entryPoint = function(NS){
             this.listWidget = new NS.ExpeledGruopListWidget({
                 srcNode: tp.gel('group')
             });
+            
 	            this.listStud = new NS.StudListWidget({
 	                srcNode: tp.gel('stud'),
 	                expeled: true

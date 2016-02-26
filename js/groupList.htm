@@ -51,7 +51,7 @@
 </table>
 
 <!--{row}-->
-<tr class="{v#success}">
+<tr class="{v#success} {v#danger}">
     <td>{v#numgroup}({v#numcrs})</td>
     <td>{v#field}{v#label}</td>
     <td>
@@ -76,8 +76,8 @@
     </td>
     <td>
          <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs"
-                data-id="{v#id}" data-wait="disable">
-            Удалить
+                data-id="{v#id}" data-wait="disable" data-act="{v#remove}">
+            {v#remove}
         </button>
 	         <div id="{i#removegroup}-{v#id}"  class="btn-group hide">
 	            <button data-click="remove"type="button" class="btn btn-danger btn-xs" data-id="{v#id}" 

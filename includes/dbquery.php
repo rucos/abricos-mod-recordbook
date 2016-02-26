@@ -170,6 +170,7 @@ class RecordBookQuery {
     				g.numgroup,
     				g.numcrs,
     				g.dateline,
+    				g.remove as grRemove,
     				f.field,
     				f.fieldid,
     				f.fieldcode,
@@ -177,7 +178,7 @@ class RecordBookQuery {
     				f.remove
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
-    		WHERE f.frmstudy = '".bkstr($d->frmstudy)."' AND g.remove = 0
+    		WHERE f.frmstudy = '".bkstr($d->frmstudy)."'
     		ORDER BY id DESC
     		LIMIT ".$from.",".$limit."
 		";
@@ -190,7 +191,7 @@ class RecordBookQuery {
 			SELECT COUNT( g.groupid ) as cnt
 			FROM ".$db->prefix."rb_groups g
 			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
-			WHERE f.frmstudy = '".bkstr($frmstudy)."' AND g.remove = 0
+			WHERE f.frmstudy = '".bkstr($frmstudy)."'
 		";
     	$row = $db->query_first($sql);
     	return $row['cnt'];
@@ -245,13 +246,13 @@ class RecordBookQuery {
     	$db->query_write($sql);
     }
     
-    public static function GroupRemove(Ab_Database $db, $groupid){
+    public static function GroupRemove(Ab_Database $db, $d){
     
     	$sql = "
 			UPDATE ".$db->prefix."rb_groups
 			SET
-				remove = 1
-			WHERE groupid=".bkint($groupid)."
+				remove=".bkint($d->remove)."
+			WHERE groupid=".bkint($d->groupid)."
 			LIMIT 1
 		";
     	 
@@ -274,6 +275,7 @@ class RecordBookQuery {
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
     		WHERE g.numgroup LIKE '".bkstr($d->value)."%' 
     				AND f.frmstudy = '".bkstr($d->frmstudy)."'
+    						AND g.remove = 0
 		";
     	return $db->query_read($sql);
     }
@@ -723,6 +725,7 @@ class RecordBookQuery {
 			    		FROM ".$db->prefix."rb_groups g
 			    		INNER JOIN ".$db->prefix."rb_fieldstudy f ON g.fieldid = f.fieldid
 			    		WHERE g.fieldid IN (".$rowid.")
+			    					AND g.remove=0
 			    	";
 	    		return $rows = $db->query_read($sql);
 	    	}

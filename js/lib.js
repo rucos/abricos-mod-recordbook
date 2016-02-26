@@ -80,7 +80,7 @@ Component.entryPoint = function(NS){
     			type: 'model:GroupItem'
     		},
     		groupRemove: {
-    			args: ['groupid']
+    			args: ['data']
     		},
     		studList: {
     			attribute: false,

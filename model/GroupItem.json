@@ -18,6 +18,10 @@
       "type": "int",
       "json": "dl"
     },
+    "grRemove": {
+      "type": "int",
+      "json": "grrem"
+    },
     "field": {
       "type": "string",
       "json": "fi"
@@ -36,7 +40,7 @@
     },
     "remove": {
       "type": "int",
-      "json": "rem"
+      "json": "fldrem"
     }
   }
 }

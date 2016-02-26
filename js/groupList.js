@@ -84,7 +84,9 @@ Component.entryPoint = function(NS){
         		lst += tp.replace('row', [{
         			field:  group.get('fieldcode') + " " +  group.get('field') + " " + group.get('frmstudy'),
         			success: find ? 'success' : '',
-        			label: group.get('remove') ? tp.replace('label') : ""
+        			label: group.get('remove') ? tp.replace('label') : "",
+        			danger: group.get('grRemove') ? 'danger' : '',
+        			remove: group.get('grRemove') ? 'Восстановить' : 'Удалить'
         		},group.toJSON()]);
         	});
         		tp.setHTML('list', tp.replace('table', {rows: lst}));
@@ -95,22 +97,26 @@ Component.entryPoint = function(NS){
         				this.renderPaginator();
         			}
         },
-        remove: function(groupid){
+        remove: function(groupid, remove){
         	var lib = this.get('appInstance'),
         		find = lib.get('findGroup'),
-        		tp = this.template;
+        		tp = this.template,
+        		data = {
+        			groupid: groupid,
+        			remove: remove
+        		};
         	
-          	this.set('waiting', true);
-          	lib.groupRemove(groupid, function(err, result){
-        		this.set('waiting', false);
-	        		if(!err){
-	        				if(!find){
-	        					this.countGroup();	
-	        				} else {
-	        					this.find(tp.getValue('findGroup'));
-	        				}
-	        		}
-        	}, this);
+        	this.set('waiting', true);
+	          	lib.groupRemove(data, function(err, result){
+	        		this.set('waiting', false);
+		        		if(!err){
+		        				if(!find){
+		        					this.countGroup();	
+		        				} else {
+		        					this.find(tp.getValue('findGroup'));
+		        				}
+		        		}
+	        	}, this);
         },
         getId: function(e){
         	return e.target.getData('id');
@@ -182,7 +188,12 @@ Component.entryPoint = function(NS){
             'remove-show': {
                 event: function(e){
                 	var groupid = this.getId(e);
-                	this.template.toggleView(true, 'row.removegroup-' + groupid, 'row.remove-' + groupid);
+                	
+                	if(e.target.getData('act') === 'Восстановить'){
+                		this.remove(this.getId(e), 0);
+                	} else {
+                		this.template.toggleView(true, 'row.removegroup-' + groupid, 'row.remove-' + groupid);
+                	}
                 }
             },
             'remove-cancel': {
@@ -198,7 +209,7 @@ Component.entryPoint = function(NS){
         	},
         	remove: {
         		event: function(e){
-       				this.remove(this.getId(e));
+       				this.remove(this.getId(e), 1);
         		}
         	},
         	showListGroup: {

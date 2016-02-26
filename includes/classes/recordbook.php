@@ -63,7 +63,7 @@ class RecordBook extends AbricosApplication {
             case "groupItem":
             	return $this->GroupItemToJSON($d->groupid);
             case "groupRemove":
-            	return $this->GroupRemoveToJSON($d->groupid);
+            	return $this->GroupRemoveToJSON($d->data);
             case "studList":
             	return $this->StudListToJSON($d->groupid);
             case "studSave":
@@ -384,14 +384,15 @@ class RecordBook extends AbricosApplication {
        		return $this->_cache['GroupItem'][$groupid] = $group;
        	}
        	
-       	public function GroupRemoveToJSON($groupid){
-       		$res = $this->GroupRemove($groupid);
+       	public function GroupRemoveToJSON($d){
+       		$res = $this->GroupRemove($d);
        		return $this->ResultToJSON('groupRemove', $res);
        	}
        	
-       	public function GroupRemove($groupid){
-       		$groupid = intval($groupid);
-       		RecordBookQuery::GroupRemove(Abricos::$db, $groupid);
+       	public function GroupRemove($d){
+       		$d->groupid = intval($d->groupid);
+       		$d->remove = intval($d->remove);
+       		RecordBookQuery::GroupRemove(Abricos::$db, $d);
        	}
        	
        	public function StudListToJSON($groupid){

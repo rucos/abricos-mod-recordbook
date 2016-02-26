@@ -634,7 +634,8 @@ class RecordBookQuery {
     	$sql = "
 			UPDATE ".$db->prefix."rb_students
 			SET
-				groupid = ".bkint($d->groupid)."
+				groupid = ".bkint($d->groupid).",
+				transferal=0
 			WHERE id = ".bkint($d->studid)."
 			LIMIT 1
 		";

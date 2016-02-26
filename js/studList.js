@@ -418,7 +418,6 @@ Component.entryPoint = function(NS){
         					groupid = targ.getData('id');
         				
         				this.reqTransitionStud(studid, groupid);
-        				
         			}
         			
         		}

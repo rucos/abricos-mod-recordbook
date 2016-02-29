@@ -18,25 +18,30 @@ Component.entryPoint = function(NS){
     	renderPaginator: function(){
         	var tp = this.template,
 	    		count = this.get('countRow'),
-	    		countPage = Math.ceil(count / 15),
+	    		limit = 15,
+	    		countPage = Math.ceil(count / limit),
 	    		page = this.get('currentPage'),
 	    		lst = "",
 	    		start = Math.max(1, page - 2),
 	    		end = Math.min(+page + 2, countPage);
     		
-			    	for(var i = start; i <= end; i++){
-			    		lst += tp.replace('liPagePagin', {
-			    			cnt: i,
-			    			active: i == page ? 'active' : ''
-			    		});
-			    	}
-			    	tp.setHTML('pag', tp.replace('paginator', {
-			    		lipage: lst,
-			    		dp: page == 1 ? 'none' : '',
-			    		dn: page == countPage ? 'none' : '',
-			    		lastpage: countPage,
-			    		firstpage: 1
-			    	}));
+	        	if(count > limit){
+		        	for(var i = start; i <= end; i++){
+		        		lst += tp.replace('liPagePagin', {
+		        			cnt: i,
+		        			active: i == page ? 'active' : ''
+		        		});
+		        	}
+		        	tp.setHTML('pag', tp.replace('paginator', {
+		        		lipage: lst,
+		        		dp: page == 1 ? 'none' : '',
+		        		dn: page == countPage ? 'none' : '',
+		        		lastpage: countPage,
+		        		firstpage: 1
+		        	}));
+	        	} else {
+	        		tp.setHTML('pag', '');
+	        	}
     	}
     }, {
         ATTRS: {

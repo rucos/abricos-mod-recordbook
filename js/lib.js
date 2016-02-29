@@ -176,7 +176,6 @@ Component.entryPoint = function(NS){
         	MarkListStat: {value: NS.MarkListStat},
         	MarkItem: {value: NS.MarkItem},
         	GroupModalList: {value: NS.GroupModalList},
-        	currentPageGroup: {value: 1},
         	findGroup: {value: false},
         	findGroupVal: {value: ''},
         	frmstudy: {value: 0},

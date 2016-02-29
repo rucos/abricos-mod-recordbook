@@ -1,7 +1,8 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: '{C#MODNAME}', files: ['lib.js']}
+        {name: '{C#MODNAME}', files: ['lib.js']},
+        {name: '{C#MODNAME}', files: ['pagination.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -16,12 +17,24 @@ Component.entryPoint = function(NS){
         	var lib = this.get('appInstance'),
         		tp = this.template,
         		frmstudy = lib.get('frmstudy');
+        	
+            this.pagination = new NS.PaginationWidget({
+                srcNode: tp.gel('pag'),
+                parent: this
+            });
 
         	if(frmstudy){
         		this.setColorButton(frmstudy);
         		this.showGroupList();
         		tp.show('groupList');
+        		
+
         	}
+        },
+        destructor: function(){
+            if (this.pagination){
+                this.pagination.destroy();
+            }
         },
         showGroupList: function(){
         	var lib = this.get('appInstance'),
@@ -47,14 +60,14 @@ Component.entryPoint = function(NS){
           	this.set('waiting', true);
           		lib.countPaginator(data, function(err, result){
 	    			this.set('waiting', false);
-	    				this.set('countGroup', result.countPaginator);
+	    				this.pagination.set('countRow', result.countPaginator);
 	    				this.reloadList();
 	    		}, this);
         },
         reloadList: function(){
         	var lib = this.get('appInstance'),
         		data = {
-        			page: lib.get('currentPageGroup'),
+        			page: this.pagination.get('currentPage'),
         			frmstudy: lib.get('frmstudy')
         		};
         		
@@ -63,7 +76,7 @@ Component.entryPoint = function(NS){
         		this.set('waiting', false);
         		if(!err){
         			if(result.groupList.size() === 0 && data.page !== 1){
-        				lib.set('currentPageGroup', --data.page);
+        				this.pagination.set('currentPage', --data.page);
         					this.reloadList();
         			} else {
         				this.set('groupList', result.groupList);
@@ -94,7 +107,7 @@ Component.entryPoint = function(NS){
         			if(find){
         				tp.setHTML('pag', '');
         			} else {
-        				this.renderPaginator();
+        				this.pagination.renderPaginator();
         			}
         },
         remove: function(groupid, remove){
@@ -110,44 +123,16 @@ Component.entryPoint = function(NS){
 	          	lib.groupRemove(data, function(err, result){
 	        		this.set('waiting', false);
 		        		if(!err){
-		        				if(!find){
-		        					this.countGroup();	
-		        				} else {
+		        				if(find){
 		        					this.find(tp.getValue('findGroup'));
+		        				} else {
+		        					this.reloadList();
 		        				}
 		        		}
 	        	}, this);
         },
         getId: function(e){
         	return e.target.getData('id');
-        },
-        renderPaginator: function(){
-        	var tp = this.template,
-        		count = this.get('countGroup'),
-        		limit = 15,
-        		countPage = Math.ceil(count / limit),
-        		page = this.get('appInstance').get('currentPageGroup'),
-        		lst = "",
-        		start = Math.max(1, page - 2),
-        		end = Math.min(+page + 2, countPage);
-        	
-        	if(count > limit){
-	        	for(var i = start; i <= end; i++){
-	        		lst += tp.replace('liPagePagin', {
-	        			cnt: i,
-	        			active: i == page ? 'active' : ''
-	        		});
-	        	}
-	        	tp.setHTML('pag', tp.replace('paginator', {
-	        		lipage: lst,
-	        		dp: page == 1 ? 'none' : '',
-	        		dn: page == countPage ? 'none' : '',
-	        		lastpage: countPage,
-	        		firstpage: 1
-	        	}));
-        	} else {
-        		tp.setHTML('pag', '');
-        	}
         },
         find: function(val){
         	var lib = this.get('appInstance'),
@@ -180,7 +165,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,table,row,paginator,liPagePagin,label'},
+            templateBlockName: {value: 'widget,table,row,label'},
             groupList: {value: null},
             countGroup: {value: 0}
         },
@@ -223,22 +208,6 @@ Component.entryPoint = function(NS){
         			this.go('group.sheetEditor', groupid);
         		}
         	},
-        	changePage: {
-        		event: function(e){
-                   	var page =  0,
-            		type = e.target.getData('type'),
-            		lib = this.get('appInstance');
-        	
-		        	switch(type){
-		        		case 'prev': page = lib.get('currentPageGroup'); lib.set('currentPageGroup', --page); break;
-		        		case 'next': page = lib.get('currentPageGroup'); lib.set('currentPageGroup', ++page); break;
-		        		case 'curent': 
-		        		case 'first': 
-		        		case 'last': page = e.target.getData('page'); lib.set('currentPageGroup', page); break;
-		        	}
-        			this.reloadList();
-        		}
-        	},
         	find: {
         		event: function(e){
         			var tp = this.template,
@@ -249,6 +218,8 @@ Component.entryPoint = function(NS){
         				lib.set('findGroup', true);
             			lib.set('findGroupVal', val);
             			tp.show('allGroup');
+            			
+            			tp.hide('pagination');
             			
         				this.find(tp.getValue('findGroup'));
         			} else {
@@ -264,6 +235,7 @@ Component.entryPoint = function(NS){
         			
         			tp.setValue('findGroup', '');
         			tp.hide('allGroup');
+        			tp.show('pagination');
         			lib.set('findGroup', false);
         			lib.set('findGroupVal', '');
         				this.countGroup();

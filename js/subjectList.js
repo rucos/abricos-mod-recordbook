@@ -3,7 +3,8 @@ console.log();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js']}
+        {name: '{C#MODNAME}', files: ['lib.js']},
+        {name: '{C#MODNAME}', files: ['pagination.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -15,8 +16,20 @@ Component.entryPoint = function(NS){
  
     NS.SubjectListWidget = Y.Base.create('subjectListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
+        	var tp = this.template;
+        	
+            this.pagination = new NS.PaginationWidget({
+                srcNode: tp.gel('pag'),
+                parent: this
+            });
+            
         	this.countSubject();
         	this.reloadList();
+        },
+        destructor: function(){
+            if (this.pagination){
+                this.pagination.destroy();
+            }
         },
         countSubject: function(){
         	var data = {
@@ -26,16 +39,16 @@ Component.entryPoint = function(NS){
           	this.set('waiting', true);
 	    		this.get('appInstance').countPaginator(data, function(err, result){
 	    			this.set('waiting', false);
-	    				this.set('countSubject', result.countPaginator);
+	    				this.pagination.set('countRow', result.countPaginator);
 	    		}, this);
         },
         reloadList: function(){
         	var find = this.get('find');
-
+        	
         	if(!find){
 	        	var data = {
 	        		  	fieldid: this.get('fieldid'),
-	            		pageSub: this.get('currentPage'),
+	            		pageSub: this.pagination.get('currentPage'),
 	            		from: 'subjectListWidget'
 	        	}; 
 	        	
@@ -46,7 +59,7 @@ Component.entryPoint = function(NS){
 	        					this.set('subjectList', result.subjectList);
 	        						this.renderList();
 	        				} else {
-	        					this.set('currentPage', Math.max(1, data.pageSub - 1));
+	        					this.pagination.set('currentPage', Math.max(1, data.pageSub - 1));
 	        						this.reloadList();
 	        				}
 	        		}, this);
@@ -88,7 +101,7 @@ Component.entryPoint = function(NS){
         	 tp.setHTML('list', tp.replace('table', {rows: lst}));
         	 	this.set('dataTable', lst);
         	 		this.set('subjectid', 0);
-        	 			if(!find) this.renderPaginator();
+        	 			if(!find) this.pagination.renderPaginator();
         },
         subjectShow: function(id, parentRow){
         	var tp = this.template,
@@ -181,29 +194,6 @@ Component.entryPoint = function(NS){
         		}, this);
         		this.set('subjectid', 0);
         },
-        renderPaginator: function(){
-	        	var tp = this.template,
-	        		count = this.get('countSubject'),
-	        		countPage = Math.ceil(count / 15),
-	        		page = this.get('currentPage'),
-	        		lst = "",
-	        		start = Math.max(1, page - 2),
-	        		end = Math.min(+page + 2, countPage);
-	        		
-	        	for(var i = start; i <= end; i++){
-	        		lst += tp.replace('liPagePagin', {
-	        			cnt: i,
-	        			active: i == page ? 'active' : ''
-	        		});
-	        	}
-	        	tp.setHTML('pag', tp.replace('paginator', {
-	        		lipage: lst,
-	        		dp: page == 1 ? 'none' : '',
-	        		dn: page == countPage ? 'none' : '',
-	        		lastpage: countPage,
-	        		firstpage: 1
-	        	}));
-        },
         find: function(val){
         	var data = {
         		fieldid: this.get('fieldid'),
@@ -224,13 +214,11 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, table, row, rowAct, paginator, liPagePagin, label'},
+            templateBlockName: {value: 'widget, table, row, rowAct, label'},
             fieldid: {value: 0},
             subjectList: {value: null},
             dataTable: {value: ''},
             subjectid: {value: 0},
-            currentPage: {value: 1},
-            countSubject: {value: 0},
             find: {value: false}
         },
         CLICKS: {
@@ -292,28 +280,13 @@ Component.entryPoint = function(NS){
 	    			tp.removeClass('rowAct.divSemestr', 'open');
         		}
         	},
-        	changePage: {
-        		event: function(e){
-                	var page =  0,
-	            		type = e.target.getData('type');
-            	
-            	switch(type){
-            		case 'prev': page = this.get('currentPage'); this.set('currentPage', --page); break;
-            		case 'next': page = this.get('currentPage'); this.set('currentPage', ++page); break;
-            		case 'curent': 
-            		case 'first': 
-            		case 'last': page = e.target.getData('page'); this.set('currentPage', page); break;
-            	}
-            			this.reloadList();
-        		}
-        	},
         	find: {
         		event: function(e){
         			var tp = this.template,
         				val = tp.gel('findSubject').value;
         			
         			tp.show('allSubject');
-        			tp.hide('pag');
+        			tp.hide('pagination');
         			
         			this.set('find', true);
         			this.find(val);
@@ -325,7 +298,7 @@ Component.entryPoint = function(NS){
         			var tp = this.template;
         			
         			tp.hide('allSubject');
-        			tp.show('pag');
+        			tp.show('pagination');
         			
         			this.set('find', false);
         			this.reloadList();

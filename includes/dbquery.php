@@ -709,7 +709,6 @@ class RecordBookQuery {
 	    	while (($dd = $db->fetch_array($rows))){
 	    		$group .= $dd["groupid"].',';
 	    	}
-	    	
 	    	if(strlen($group) > 0){
 	    		$rowid = substr($group, 0, -1);
 	    		$sql = "
@@ -725,7 +724,7 @@ class RecordBookQuery {
 			    				f.remove
 			    		FROM ".$db->prefix."rb_groups g
 			    		INNER JOIN ".$db->prefix."rb_fieldstudy f ON g.fieldid = f.fieldid
-			    		WHERE g.fieldid IN (".$rowid.")
+			    		WHERE g.groupid IN (".$rowid.")
 			    					AND g.remove=0
 			    	";
 	    		return $rows = $db->query_read($sql);

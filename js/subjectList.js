@@ -168,9 +168,6 @@ Component.entryPoint = function(NS){
 	        			this.set('waiting', false);
 	        			
 		    			if(!err){
-		    					if(!data.subjectid){//пересчетать count если добавили новую запись
-		    						this.countSubject();
-		    					}
 		    					this.reloadList();
 		    			}
 		    		}, this);

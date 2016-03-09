@@ -38,6 +38,10 @@
       "type": "string",
       "json": "fs"
     },
+    "note": {
+      "type": "string",
+      "json": "nt"
+    },
     "remove": {
       "type": "int",
       "json": "fldrem"

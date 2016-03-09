@@ -60,7 +60,8 @@ Component.entryPoint = function(NS){
         		 	field: tp.getValue('field'),
         		 	frmstudy: tp.getValue('frmstudy'),
         		 	qual: tp.getValue('qual'),
-        		 	depart: tp.getValue('depart')
+        		 	depart: tp.getValue('depart'),
+        		 	note: tp.getValue('note')
         		};
         	
         	var empty = lib.isEmptyInput(data);

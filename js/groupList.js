@@ -27,8 +27,6 @@ Component.entryPoint = function(NS){
         		this.setColorButton(frmstudy);
         		this.showGroupList();
         		tp.show('groupList');
-        		
-
         	}
         },
         destructor: function(){
@@ -95,7 +93,6 @@ Component.entryPoint = function(NS){
         	
         	groupList.each(function(group){
         		lst += tp.replace('row', [{
-        			field:  group.get('fieldcode') + " " +  group.get('field') + " " + group.get('frmstudy'),
         			success: find ? 'success' : '',
         			label: group.get('remove') ? tp.replace('label') : "",
         			danger: group.get('grRemove') ? 'danger' : '',

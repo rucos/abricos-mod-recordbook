@@ -20,6 +20,7 @@ class RecordBookQuery {
 					field,
 					frmstudy,
 					qual,
+    				note,
 					depart,
 					remove
 			FROM ".$db->prefix."rb_fieldstudy
@@ -37,6 +38,7 @@ class RecordBookQuery {
 					field,
 					frmstudy,
 					qual,
+    				note,
 					depart,
     				remove
 			FROM ".$db->prefix."rb_fieldstudy
@@ -55,7 +57,8 @@ class RecordBookQuery {
 				field='".bkstr($d->field)."',
 				frmstudy='".bkstr($d->frmstudy)."',
 				qual='".bkstr($d->qual)."',
-				depart='".bkstr($d->depart)."'
+				depart='".bkstr($d->depart)."',
+				note='".bkstr($d->note)."'
 			WHERE fieldid=".bkint($id)."
 			LIMIT 1
 		";
@@ -66,13 +69,14 @@ class RecordBookQuery {
     	 
          $sql = "
 			INSERT INTO ".$db->prefix."rb_fieldstudy (
-				fieldcode,field,frmstudy,qual,depart
+				fieldcode,field,frmstudy,qual,depart,note
 			) VALUES (
 				'".bkstr($d->fieldcode)."',
 				'".bkstr($d->field)."',
 				'".bkstr($d->frmstudy)."',
 				'".bkstr($d->qual)."',
-				'".bkstr($d->depart)."'
+				'".bkstr($d->depart)."',
+				'".bkstr($d->note)."'
 			)
 		";
       	$db->query_write($sql);
@@ -175,6 +179,7 @@ class RecordBookQuery {
     				f.fieldid,
     				f.fieldcode,
     				f.frmstudy,
+    				f.note,
     				f.remove
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
@@ -222,7 +227,8 @@ class RecordBookQuery {
     				f.field,
     				f.fieldid,
     				f.fieldcode,
-    				f.frmstudy
+    				f.frmstudy,
+    				f.note
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
     		WHERE g.groupid = ".bkint($groupid)."
@@ -270,7 +276,8 @@ class RecordBookQuery {
     				f.field,
     				f.fieldid,
     				f.fieldcode,
-    				f.frmstudy
+    				f.frmstudy,
+    				f.note
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
     		WHERE g.numgroup LIKE '".bkstr($d->value)."%' 
@@ -608,6 +615,7 @@ class RecordBookQuery {
 					frmstudy,
 					qual,
 					depart,
+    				note,
 					remove
 			FROM ".$db->prefix."rb_fieldstudy
 			WHERE frmstudy = '".bkstr($formStudy)."' AND remove = 0
@@ -721,6 +729,7 @@ class RecordBookQuery {
 			    				f.fieldid,
 			    				f.fieldcode,
 			    				f.frmstudy,
+	    						f.note,
 			    				f.remove
 			    		FROM ".$db->prefix."rb_groups g
 			    		INNER JOIN ".$db->prefix."rb_fieldstudy f ON g.fieldid = f.fieldid

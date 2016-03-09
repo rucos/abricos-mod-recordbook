@@ -22,6 +22,10 @@
       "type": "string",
       "json": "qual"
     },
+    "note": {
+      "type": "string",
+      "json": "nt"
+    },
      "depart": {
       "type": "string",
       "json": "dep"

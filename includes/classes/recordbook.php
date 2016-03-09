@@ -176,7 +176,7 @@ class RecordBook extends AbricosApplication {
     		$d->frmstudy = $utmf->Parser($d->frmstudy);
     		$d->qual = $utmf->Parser($d->qual);
     		$d->depart = $utmf->Parser($d->depart);
-    		
+    		$d->note = $utmf->Parser($d->note);
     		
     		if($d->id !== 0){
     			RecordBookQuery::FieldUpdate(Abricos::$db, $d->id, $d);

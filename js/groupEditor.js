@@ -57,7 +57,8 @@ Component.entryPoint = function(NS){
         		
         		tp.setValue('inpfield', groupItem.get('fieldcode') + " " 
         								+ groupItem.get('field') + " "
-        								+ groupItem.get('frmstudy'));
+        								+ groupItem.get('frmstudy') + " "
+        								+ groupItem.get('note'));
         		
         		tp.setValue('numcrs', groupItem.get('numcrs'));
         		
@@ -77,7 +78,8 @@ Component.entryPoint = function(NS){
 		                   		   {
 		                   			   value: field.get('fieldcode') + " " 
 		                   			   		  + field.get('field') + " " 
-		                   			   		  + field.get('frmstudy')
+		                   			   		  + field.get('frmstudy') + " "
+		                   			   		  + field.get('note')
 		                   		   },
 		                   		   field.toJSON()
 		                   	]);

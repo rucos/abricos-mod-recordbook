@@ -123,7 +123,7 @@ class RecordBookQuery {
 						'".bkstr($d->formcontrol)."',
 						".bkint($d->numcrs).",
 						".bkint($d->semestr).",
-						".bkint($d->numhours).",
+						'".bkstr($d->numhours)."',
 						 ".bkint($d->project)."
 				)
 		";
@@ -139,7 +139,7 @@ class RecordBookQuery {
 				formcontrol='".bkstr($d->formcontrol)."',
 				numcrs=".bkint($d->numcrs).",
 				semestr=".bkint($d->semestr).",
-				numhours=".bkint($d->numhours).",
+				numhours='".bkstr($d->numhours)."',
 				project=".bkint($d->project)."	
 			WHERE subjectid=".bkint($d->subjectid)." AND fieldid=".bkint($d->id)."
 			LIMIT 1

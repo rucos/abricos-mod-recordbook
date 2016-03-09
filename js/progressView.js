@@ -51,6 +51,7 @@ Component.entryPoint = function(NS){
         			groupid: this.get('groupid'),
         			from: 'progressViewWidget'
         		};
+        	
           	this.set('waiting', true);
 	          this.get('appInstance').markListStat(data, function(err, result){
 	    			this.set('waiting', false);

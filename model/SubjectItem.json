@@ -23,7 +23,7 @@
       "json": "sm"
     },
      "numhours": {
-      "type": "int",
+      "type": "string",
       "json": "nh"
     },
     "project": {

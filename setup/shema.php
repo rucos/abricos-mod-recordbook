@@ -12,7 +12,7 @@ $updateManager = Ab_UpdateManager::$current;
 $db = Abricos::$db;
 $pfx = $db->prefix;
 
-if ($updateManager->isInstall('0.1.4')){
+if ($updateManager->isInstall('0.1.5')){
 	
 	Abricos::GetModule('recordbook')->permission->Install();
 
@@ -34,11 +34,11 @@ if ($updateManager->isInstall('0.1.4')){
 				CREATE TABLE IF NOT EXISTS ".$pfx."rb_subject(
 					subjectid int(10) unsigned NOT NULL auto_increment,
 					fieldid int(10) unsigned NOT NULL default 0 COMMENT 'id направления',
-					namesubject varchar(200) default NULL COMMENT 'Название предмета',
+					namesubject varchar(255) default NULL COMMENT 'Название предмета',
 					formcontrol varchar(30) default NULL COMMENT 'Форма контроля',
 					numcrs tinyint(1) unsigned NOT NULL default 0 COMMENT 'Номер курса',
 					semestr tinyint(1) unsigned NOT NULL default 0 COMMENT 'Номер семестра',
-					numhours int(3) unsigned NOT NULL default 0 COMMENT 'Количество часов',
+					numhours varchar(10) default NULL COMMENT 'Количество часов: аудиторные/самостоятельная',
 					project tinyint(1) unsigned NOT NULL default 0 COMMENT 'Курсовая работа/проект',
 					remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален из учебного плана',
 					PRIMARY KEY (subjectid)

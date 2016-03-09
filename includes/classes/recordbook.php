@@ -293,7 +293,7 @@ class RecordBook extends AbricosApplication {
     		$d->formcontrol = $utmf->Parser($d->formcontrol);
     		$d->namesubject = $utmf->Parser($d->namesubject);
     		$d->numcrs = intval($d->numcrs);
-    		$d->numhours = intval($d->numhours);
+    		$d->numhours = $utmf->Parser($d->numhours);
     		$d->semestr = intval($d->semestr);
     		$d->project = intval($d->project);
     		

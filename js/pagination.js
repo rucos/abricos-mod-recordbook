@@ -54,16 +54,18 @@ Component.entryPoint = function(NS){
         CLICKS: {
         	changePage: {
         		event: function(e){
-                	var page =  0,
+                	var page =  this.get('currentPage'),
 	            		type = e.target.getData('type');
             	
 	            	switch(type){
-	            		case 'prev': page = this.get('currentPage'); this.set('currentPage', --page); break;
-	            		case 'next': page = this.get('currentPage'); this.set('currentPage', ++page); break;
+	            		case 'prev': page--; break;
+	            		case 'next': page++; break;
 	            		case 'curent': 
 	            		case 'first': 
-	            		case 'last': page = e.target.getData('page'); this.set('currentPage', page); break;
+	            		case 'last': page = e.target.getData('page'); break;
 	            	}
+                	this.set('currentPage', page);
+                	
 	            	this.get('parent').reloadList();
         		}
         	}

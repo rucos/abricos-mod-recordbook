@@ -23,24 +23,12 @@ Component.entryPoint = function(NS){
                 parent: this
             });
             
-        	this.countSubject();
         	this.reloadList();
         },
         destructor: function(){
             if (this.pagination){
                 this.pagination.destroy();
             }
-        },
-        countSubject: function(){
-        	var data = {
-        		fieldid: this.get('fieldid'),
-        		type: 'subjectList'	
-        	};
-          	this.set('waiting', true);
-	    		this.get('appInstance').countPaginator(data, function(err, result){
-	    			this.set('waiting', false);
-	    				this.pagination.set('countRow', result.countPaginator);
-	    		}, this);
         },
         reloadList: function(){
         	var find = this.get('find');
@@ -55,6 +43,8 @@ Component.entryPoint = function(NS){
 	        	this.set('waiting', true);
 	        		this.get('appInstance').subjectList(data, function(err, result){
 	        			this.set('waiting', false);
+	        			
+	        			this.pagination.set('countRow', result.countPaginator);
 	        				if(result.subjectList.size() > 0 || data.pageSub === 1){//если страница пустая то переход на предыдущую
 	        					this.set('subjectList', result.subjectList);
 	        						this.renderList();

@@ -209,8 +209,19 @@ class RecordBook extends AbricosApplication {
     		
     		switch($d->from){
     			case 'subjectListWidget': 
-    				$res = $this->SubjectList($d->fieldid, $d->pageSub);  
-    					break;
+    				$res = $this->SubjectList($d->fieldid, $d->pageSub);
+    				
+    				$ret = new stdClass();
+    				$ret->type = 'subjectList';
+    				$ret->fieldid = $d->fieldid;
+    				
+    				$count = $this->CountPaginator($ret);
+    				
+    					return $this->ImplodeJSON(
+       						$this->ResultToJSON('subjectList', $res),
+    						$this->ResultToJSON('countPaginator', $count)
+       					);
+    					
     			case 'sheetEditorWidget': 
     				$res = $this->SubjectListSheet($d);
     					break;

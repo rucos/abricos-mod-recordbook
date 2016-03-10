@@ -68,10 +68,11 @@ Component.entryPoint = function(NS){
 			   
         	subjectList.each(function(subject){
         		var obj = {
-        			act: 'Удалить',
-        			event: 'remove-show',
-        			rem: ''
-        		};
+	        			act: 'Удалить',
+	        			event: 'remove-show',
+	        			rem: ''
+        			},
+        			proj = subject.get('project');
         		
         		if(subject.get('remove') === 1){
         			obj.act = 'Восстановить';
@@ -81,7 +82,8 @@ Component.entryPoint = function(NS){
         		
             	lst += tp.replace('row', [{
             		semestr: subject.get('semestr') === 1 ? 'Осенний' : 'Весенний',
-            		project: subject.get('project') === 1 ? 'Да': 'Нет',
+            		project1: proj[0] == 1 ? 'КР' : '',
+            		project2: proj[2] == 1 ? 'КП' : '',
             		cl: find ? 'success' : '',
             		act:  obj.act,
             		event: obj.event,
@@ -98,13 +100,11 @@ Component.entryPoint = function(NS){
 				lst = "";
         	
 				if(id === 0){//если добавляем
-					lst = this.renderSubjectRow() + this.get('dataTable');//добавить новую строку в разметку таблицы
+					lst = this.renderSubjectRow() + this.get('dataTable');
 						this.set('subjectid', 0);
 				} else if(parentRow){//если изменяем
 					parentRow.innerHTML = this.renderSubjectRow(parentRow);
-						if(tp.gel('rowAct.project').value == 1){
-							tp.gel('rowAct.project').checked = true;
-						}
+						this.checkedProject();
 			  				this.set('subjectid', id);
 			  					return;
 				} else {//если отмена
@@ -114,24 +114,43 @@ Component.entryPoint = function(NS){
         },
         renderSubjectRow: function(row){
         	var tp = this.template,
-        		lst = "";
+        		lst = "",
+        		proj = row ? row.cells[5].innerHTML : '';
+
         			lst += tp.replace('rowAct', {
-			     		'namesubject': row ? row.cells[0].childNodes[0].textContent : '',
+			     		'namesubject': row ? row.cells[0].childNodes[0].textContent.trim() : '',
 		        		'formcontrol': row ? row.cells[1].innerHTML : '',
 		        		'numcrs': row ? row.cells[2].innerHTML : '',
 		        		'semestr':  row ? row.cells[3].innerHTML : '',
 		        		'numhours':  row ? row.cells[4].innerHTML : '',
 		        		'act': row ? 'Изменить' : 'Добавить',
-		        		'val': row && row.cells[5].innerHTML == 'Да' ?  1 : 0
+		        		'val1': row &&  proj.indexOf('КР') != -1 ?  1 : 0,
+		        		'val2': row &&  proj.indexOf('КП') != -1 ?  1 : 0
 			    	});
 	        			return lst;
+        },
+        checkedProject: function(){
+        	var tp = this.template,
+        		arr = ['rowAct.project1','rowAct.project2'];
+        	
+        	arr.forEach(function(elem){
+        		if(tp.gel(elem).value == 1){
+        			tp.gel(elem).checked = true;
+        		}
+        	});
+        	
         },
         actSubject: function(){
         	var fieldid = this.get('fieldid'),
         		subjectid = this.get('subjectid'),
         		tp = this.template,
         		sem = tp.gel('rowAct.semestr').value,
-        		lib = this.get('appInstance');
+        		lib = this.get('appInstance'),
+        		arrHours = this.renderNumHours(tp.gel('rowAct.numhours').value); 
+        
+        	if(!arrHours){
+        		return;
+        	}
         	
         	if(sem.length > 0){
         		sem = sem == 'Осенний' ? 1 : 2;
@@ -144,8 +163,10 @@ Component.entryPoint = function(NS){
     			formcontrol: tp.gel('rowAct.formcontrol').value,
     			numcrs: tp.gel('rowAct.numcrs').value,
     			semestr: sem,
-    			numhours: tp.gel('rowAct.numhours').value,
-    			project: tp.gel('rowAct.project').checked
+    			numhours1: arrHours[0],
+    			numhours2: arrHours[1],
+    			project1: tp.gel('rowAct.project1').checked,
+    			project2: tp.gel('rowAct.project2').checked
     		};
         	
         	var empty = lib.isEmptyInput(data);
@@ -157,21 +178,39 @@ Component.entryPoint = function(NS){
         			case 'formcontrol': alert( 'Укажите форму контроля' ); break;
         			case 'numcrs': alert( 'Укажите номер курса' ); break;
         			case 'semestr': alert( 'Укажите номер семестра' ); break;
-        			case 'numhours': alert( 'Укажите количество часов' ); break;
         		}
         		tp.gel(lst).focus();
-        		
         	} else {
-        		this.set('waiting', true);
-        			lib.subjectSave(data, function(err, result){
-        				this.set('subjectid', 0);
-	        			this.set('waiting', false);
-	        			
-		    			if(!err){
-		    					this.reloadList();
-		    			}
-		    		}, this);
+	        		this.set('waiting', true);
+	        			lib.subjectSave(data, function(err, result){
+	        				this.set('subjectid', 0);
+		        			this.set('waiting', false);
+		        			
+			    			if(!err){
+			    				this.reloadList();
+			    			}
+			    		}, this);
         	}
+        },
+        renderNumHours: function(hours){
+        	var arr = hours.split('/'),
+        		ind = hours.indexOf('/'),
+        		tp = this.template,
+        		isNumeric = this.get('appInstance').isNumeric;
+        		
+        	if(ind == -1){
+        		alert( 'Маска ввода ауд/СРС' );
+        			tp.gel('rowAct.numhours').focus();
+        				return false;
+        	}
+	        	for(var i = 0; i < 2; i++){
+	        		if(!isNumeric(arr[i])){
+	        			alert( 'введите число!' );
+	        				tp.gel('rowAct.numhours').focus();
+	        					return false;
+	        		}
+	        	}
+	        	return arr;
         },
         removeSubject: function(subjectid, restore){
         	this.set('waiting', true);
@@ -239,7 +278,8 @@ Component.entryPoint = function(NS){
         	'editSubject-show': {
         		event: function(e){
         			var subjectid = e.target.getData('id');
-        				this.subjectShow(subjectid, e.target._node.parentNode.parentNode);// id предмета, строка таблицы
+        				
+        			this.subjectShow(subjectid, e.target.getDOMNode().parentNode.parentNode);// id предмета, строка таблицы
         		}
         	},
         	remove: {
@@ -250,7 +290,7 @@ Component.entryPoint = function(NS){
         	},
         	chooseFormControl: {
         		event: function(e){
-        			var value = e.target.getData('value'),
+        			var value = e.target.getDOMNode().textContent,
         				tp = this.template;
         			
         			tp.gel('rowAct.formcontrol').value = value;

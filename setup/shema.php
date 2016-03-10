@@ -40,7 +40,7 @@ if ($updateManager->isInstall('0.1.5')){
 					numcrs tinyint(1) unsigned NOT NULL default 0 COMMENT 'Номер курса',
 					semestr tinyint(1) unsigned NOT NULL default 0 COMMENT 'Номер семестра',
 					numhours varchar(10) default NULL COMMENT 'Количество часов: аудиторные/самостоятельная',
-					project tinyint(1) unsigned NOT NULL default 0 COMMENT 'Курсовая работа/проект',
+					project varchar(3) default NULL COMMENT 'Курсовая работа/проект',
 					remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален из учебного плана',
 					PRIMARY KEY (subjectid)
 			)".$charset

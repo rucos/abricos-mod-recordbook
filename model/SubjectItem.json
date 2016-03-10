@@ -27,7 +27,7 @@
       "json": "nh"
     },
     "project": {
-      "type": "int",
+      "type": "string",
       "json": "pr"
     },
     "remove": {

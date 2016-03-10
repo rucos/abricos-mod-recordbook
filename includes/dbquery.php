@@ -117,7 +117,9 @@ class RecordBookQuery {
     }
     
     public static function SubjectAppend(Ab_Database $db, $d){
-    	 
+    	$proj = bkint($d->project1).','.bkint($d->project2);
+    	$hours = bkint($d->numhours1).'/'.bkint($d->numhours2);
+    	
 		$sql = "
 				INSERT INTO ".$db->prefix."rb_subject (
 					fieldid, namesubject, formcontrol, numcrs, semestr, numhours, project
@@ -127,15 +129,17 @@ class RecordBookQuery {
 						'".bkstr($d->formcontrol)."',
 						".bkint($d->numcrs).",
 						".bkint($d->semestr).",
-						'".bkstr($d->numhours)."',
-						 ".bkint($d->project)."
+						'".$hours."',
+						 '".$proj."'
 				)
 		";
 		$db->query_write($sql);
     }
     
     public static function SubjectEdit(Ab_Database $db, $d){
-    
+    	$proj = bkint($d->project1).','.bkint($d->project2);
+    	$hours = bkint($d->numhours1).'/'.bkint($d->numhours2);
+    	
     	$sql = "
 			UPDATE ".$db->prefix."rb_subject
 			SET 
@@ -143,8 +147,8 @@ class RecordBookQuery {
 				formcontrol='".bkstr($d->formcontrol)."',
 				numcrs=".bkint($d->numcrs).",
 				semestr=".bkint($d->semestr).",
-				numhours='".bkstr($d->numhours)."',
-				project=".bkint($d->project)."	
+				numhours='".$hours."',
+				project='".$proj."'
 			WHERE subjectid=".bkint($d->subjectid)." AND fieldid=".bkint($d->id)."
 			LIMIT 1
 		";

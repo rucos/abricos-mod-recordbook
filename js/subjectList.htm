@@ -9,17 +9,6 @@
            		<div class="row">
            			<div class="col-md-8">
            				<input id="{i#findSubject}"  type="text" class="form-control" placeholder="Введите название предмета"/>
-           					<div class="row">
-           						 <div class="col-md-4">
-           						 
-           						 </div>
-           						 <div class="col-md-4">
-           						 
-           						 </div>
-           						 <div class="col-md-4">
-           						 
-           						 </div>
-           					</div>
            			</div>
            			<div class="col-md-1">
 	           			<button data-click="find" type="button" class="btn btn-default" data-wait="disable">
@@ -74,7 +63,7 @@
     <td>{v#numcrs}</td>
     <td>{v#semestr}</td>
     <td>{v#numhours}</td>
-    <td>{v#project}</td>
+    <td>{v#project1} {v#project2}</td>
     <td>
         <button data-click="editSubject-show" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
             Править
@@ -106,21 +95,23 @@
     <td><textarea id="{i#namesubject}"  class="form-control" rows="2">{v#namesubject}</textarea></td>
     <td width="17%">
 		<div class="input-group">
-			<input id="{i#formcontrol}" type="text" class="form-control" value="{v#formcontrol}"/>
+			<input id="{i#formcontrol}" type="text" class="form-control" value="{v#formcontrol}" disabled/>
 			  <div class="input-group-btn" id="{i#divFormControl}">
 			    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
 			    	<span class="caret"></span>
-			    	<span class="sr-only">Toggle Dropdown</span>
 			   	</button>
-			   	<ul class="dropdown-menu dropdown-menu-right">
+			   	<ul class="dropdown-menu dropdown-menu-right" data-click="chooseFormControl">
 			   		<li>
-			   			<a href="" data-click="chooseFormControl" data-value="Экзамен">Экзамен</a>
+			   			<a href="">Экзамен</a>
 			   		</li>
 			   		<li>
-			   			<a href="" data-click="chooseFormControl" data-value="Зачет">Зачет</a>
+			   			<a href="">Зачет</a>
 			   		</li>
 			   		<li>
-			   			<a href="" data-click="chooseFormControl" data-value="Зачет с оценкой">Зачет с оценкой</a>
+			   			<a href="">Зачет с оценкой</a>
+			   		</li>
+			   		<li>
+			   			<a href="">-</a>
 			   		</li>
 			   	</ul>
 			  </div>
@@ -131,18 +122,17 @@
     </td>
     <td width="13%">
     	<div class="input-group">
-			<input id="{i#semestr}" type="text" class="form-control" value="{v#semestr}"/>
+			<input id="{i#semestr}" type="text" class="form-control" value="{v#semestr}" disabled/>
 			  <div class="input-group-btn" id="{i#divSemestr}">
 			    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> 
 			    	<span class="caret"></span>
-			    	<span class="sr-only">Toggle Dropdown</span>
 			   	</button>
-			   	<ul class="dropdown-menu dropdown-menu-right">
+			   	<ul class="dropdown-menu dropdown-menu-right" data-click="chooseSemestr">
 			   		<li>
-			   			<a href="" data-click="chooseSemestr" data-value="1">Осенний</a>
+			   			<a href="" data-value="1">Осенний</a>
 			   		</li>
 			   		<li>
-			   			<a href="" data-click="chooseSemestr" data-value="2">Весенний</a>
+			   			<a href="" data-value="2">Весенний</a>
 			   		</li>
 			   	</ul>
 			  </div>
@@ -152,7 +142,8 @@
     	<input id="{i#numhours}" type="text" class="form-control" value="{v#numhours}"/>
     </td>    
     <td width="8%">
-    	<input id="{i#project}" type="checkbox" value="{v#val}"/>
+    	<input id="{i#project1}" type="checkbox" value="{v#val1}"/> КР <br>
+    	<input id="{i#project2}" type="checkbox" value="{v#val2}"/> КП
     </td>
     <td width="8%"> 
     	<button data-click="actSubject" class="btn btn-default btn-xs" data-wait="disable">

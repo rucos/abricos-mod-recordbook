@@ -53,7 +53,7 @@ class RecordBook extends AbricosApplication {
             case "subjectList":
             	return $this->SubjectListToJSON($d->data);
             case "subjectSave":
-            	return $this->SubjectSaveToJSON($d->subject);
+            	return $this->SubjectSaveToJSON($d->data);
             case "subjectRemove":
             	return $this->SubjectRemoveToJSON($d->subjectid, $d->restore);
             case "groupList":
@@ -295,18 +295,28 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function SubjectSave($d){
-       		
        	   	$d->id = intval($d->id);
        	   	$d->subjectid = intval($d->subjectid);
     		$utmf = Abricos::TextParser(true);
     		$utm = Abricos::TextParser();
     		
     		$d->formcontrol = $utmf->Parser($d->formcontrol);
+    		
+    		switch($d->formcontrol){
+    			case 'Экзамен':
+    			case 'Зачет':
+    			case 'Зачет с оценкой':
+    			case '-': break;
+    			default: return false;
+    		}
+    		
     		$d->namesubject = $utmf->Parser($d->namesubject);
     		$d->numcrs = intval($d->numcrs);
-    		$d->numhours = $utmf->Parser($d->numhours);
+    		$d->numhours1 = intval($d->numhours1);
+    		$d->numhours2 = intval($d->numhours2);
     		$d->semestr = intval($d->semestr);
-    		$d->project = intval($d->project);
+    		$d->project1 = intval($d->project1);
+    		$d->project2 = intval($d->project2);
     		
     		if($d->subjectid !== 0){
     			RecordBookQuery::SubjectEdit($this->db, $d);

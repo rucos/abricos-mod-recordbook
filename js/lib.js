@@ -36,6 +36,9 @@ Component.entryPoint = function(NS){
         },
         setDate: function(date){
         	return date.split('.').reverse().join('-');
+        },
+        isNumeric: function(n){
+        	return !isNaN(parseFloat(n)) && isFinite(n) && n.indexOf('.') == -1;
         }
     }, [], {
         REQS: {
@@ -61,7 +64,7 @@ Component.entryPoint = function(NS){
     			type: 'modelList:SubjectList'
     		},
     		subjectSave: {
-    			args: ['subject']
+    			args: ['data']
     		},
     		subjectRemove: {
     			args: ['subjectid', 'restore']

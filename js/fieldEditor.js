@@ -60,11 +60,12 @@ Component.entryPoint = function(NS){
         		 	field: tp.getValue('field'),
         		 	frmstudy: tp.getValue('frmstudy'),
         		 	qual: tp.getValue('qual'),
-        		 	depart: tp.getValue('depart'),
-        		 	note: tp.getValue('note')
+        		 	depart: tp.getValue('depart')
         		};
         	
         	var empty = lib.isEmptyInput(data);
+        	data.note = tp.getValue('note');
+        	
         	if(empty){
 	        		switch(empty){
 	        			case 'fieldcode': alert( 'Укажите код направления' ); break;

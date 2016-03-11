@@ -26,8 +26,7 @@ if ($updateManager->isInstall('0.1.5')){
 					depart varchar(255) default NULL COMMENT 'Кафедра',
 					note varchar(50) default NULL COMMENT 'Примечание',
 					remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален?',
-					PRIMARY KEY (fieldid),
-					UNIQUE KEY fieldstudy(fieldcode, field, frmstudy)
+					PRIMARY KEY (fieldid)
 			)".$charset
 		);
 

@@ -290,20 +290,28 @@ Component.entryPoint = function(NS){
         	},
         	chooseFormControl: {
         		event: function(e){
-        			var value = e.target.getDOMNode().textContent,
+        			var a = e.target.getDOMNode(),
         				tp = this.template;
         			
-        			tp.gel('rowAct.formcontrol').value = value;
+        			if(!a.href){
+        				return;
+        			}
+        			
+        			tp.gel('rowAct.formcontrol').value = a.textContent;
         			tp.removeClass('rowAct.divFormControl', 'open');
         		}
         	},
         	chooseSemestr: {
         		event: function(e){
-        			var nameSem = e.target,
+        			var a = e.target.getDOMNode(),
     					tp = this.template;
     			
-	    			tp.gel('rowAct.semestr').value = nameSem.getDOMNode().innerHTML;
-	    			tp.gel('rowAct.semestr').name = nameSem.getData('value');
+        			if(!a.href){
+        				return;
+        			}
+        			
+	    			tp.gel('rowAct.semestr').value = a.textContent;
+	    			
 	    			tp.removeClass('rowAct.divSemestr', 'open');
         		}
         	},

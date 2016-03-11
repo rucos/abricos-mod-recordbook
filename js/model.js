@@ -5,8 +5,8 @@ Component.requires = {
     ]
 };
 Component.entryPoint = function(NS){
-	
-    var Y = Brick.YUI,
+
+	var Y = Brick.YUI,
         SYS = Brick.mod.sys;
     
     NS.FieldItem = Y.Base.create('fieldItem', SYS.AppModel, [], {

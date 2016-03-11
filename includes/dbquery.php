@@ -358,8 +358,15 @@ class RecordBookQuery {
 								AND semestr = ".bkint($d->semestr)."
 										AND remove = 0";
     	
-    	if($d->type === 3 || $d->type === 4){
-    		$where .= " AND project = 1";
+    	switch($d->type){
+    		case 1:
+    		case 2:
+    			$where .= " AND formcontrol <> '-'";
+    				break;
+    		case 3:
+    		case 4:
+    			$where .= " AND project LIKE '%1%'";
+    				break;
     	}
     	
     	$sql = "
@@ -369,7 +376,8 @@ class RecordBookQuery {
 						formcontrol,
 						numcrs,
 						semestr,
-						numhours
+						numhours,
+    					project
 				FROM ".$db->prefix."rb_subject
 				WHERE ".$where."
 			";
@@ -390,7 +398,8 @@ class RecordBookQuery {
 					s.date,
     				s.type,
     				s.fioteacher,
-    				sj.remove
+    				sj.remove,
+    				sj.project
 			FROM ".$db->prefix."rb_sheet s INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
 			WHERE s.groupid = ".bkint($d->groupid)."
 						AND sj.semestr = ".bkint($d->currentSemestr)." 

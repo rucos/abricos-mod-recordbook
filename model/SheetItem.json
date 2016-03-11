@@ -45,6 +45,10 @@
     "remove": {
       "type": "int",
       "json": "rem"
+    },
+    "project": {
+      "type": "string",
+      "json": "pr"
     }
   }
 }

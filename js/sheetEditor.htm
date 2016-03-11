@@ -23,24 +23,24 @@
 		<div id="{i#groupRenderItem}"></div>
 		<hr>
 			<div id="{i#sheetPanel}" class="hide">
-				<div class="row">
+				<div class="row" data-click="addSheet-show">
 					 <div class="col-md-3">
-					 	<button data-click="addSheet-show" data-type="1" type="button" class="btn btn-success">
+					 	<button data-type="1" type="button" class="btn btn-success">
 			                +Добавить ведомость
 			            </button>
 					 </div>
 					 <div class="col-md-3">
-					 	<button data-click="addSheet-show" data-type="2" type="button" class="btn btn-info">
+					 	<button data-type="2" type="button" class="btn btn-info">
 			                +Добавить доп ведомость
 			            </button>
 					 </div>
 					  <div class="col-md-3">
-					 	<button data-click="addSheet-show" data-type="3" type="button" class="btn btn-warning">
+					 	<button data-type="3" type="button" class="btn btn-warning">
 			                +Добавить курсовую
 			            </button>
 					 </div>
 					 <div class="col-md-3">
-					 	<button data-click="addSheet-show" data-type="4" type="button" class="btn btn-primary">
+					 	<button data-type="4" type="button" class="btn btn-primary">
 			                +Добавить доп курсовую
 			            </button>
 					 </div>
@@ -97,12 +97,12 @@
 		 	<div class="input-group"> 
 				<div class="input-group-btn" id="{i#divCourse}">
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Курс <span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								<li><a href="" data-click="changeCourse" data-value="1">1</a></li>
-								<li><a href="" data-click="changeCourse" data-value="2">2</a></li>
-								<li><a href="" data-click="changeCourse" data-value="3">3</a></li>
-								<li><a href="" data-click="changeCourse" data-value="4">4</a></li>
-								<li><a href="" data-click="changeCourse" data-value="5">5</a></li>
+							<ul class="dropdown-menu" data-click="changeCourse">
+								<li><a href="" data-value="1">1</a></li>
+								<li><a href="" data-value="2">2</a></li>
+								<li><a href="" data-value="3">3</a></li>
+								<li><a href="" data-value="4">4</a></li>
+								<li><a href="" data-value="5">5</a></li>
 							</ul>
 				</div>
 					<input type="text" class="form-control" id="{i#inpCourse}" value="{v#numcrs}" disabled>
@@ -112,9 +112,9 @@
 			<div class="input-group"> 
 				<div class="input-group-btn" id="{i#divSemestr}">
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Семестр <span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								<li><a href="" data-click="addSemestr" data-value="1">осенний</a></li>
-								<li><a href="" data-click="addSemestr" data-value="2">весенний</a></li>
+							<ul class="dropdown-menu" data-click="addSemestr">
+								<li><a href="" data-value="1">осенний</a></li>
+								<li><a href="" data-value="2">весенний</a></li>
 							</ul>
 				</div>
 					<input type="text" class="form-control" id="{i#inpSemestr}" disabled>
@@ -141,11 +141,11 @@
 <!--{rowSheet}-->
 <tr>
 	<td><label class="label {v#typeClass}">#</label></td>
-    <td>{v#namesubject} {v#isRemove}</td>
+    <td>{v#namesubject} - {v#formcontrol} {v#isRemove}</td>
     <td>{v#date}</td>
     <td>{v#fioteacher}</td>
     <td>
-    	<button data-click="showMark" data-id="{v#id}" data-ns="{v#namesubject}" data-fio="{v#fioteacher}" data-formControl="{v#formcontrol}-{v#type}" data-att="{v#firstattproc}-{v#secondattproc}-{v#thirdattproc}" class="btn btn-default btn-xs" data-wait="disable">
+    	<button data-click="showMark" data-id="{v#id}" data-ns="{v#namesubject}" data-fio="{v#fioteacher}" data-formControl="{v#formcontrol}/{v#type}/{v#project}" data-att="{v#firstattproc}-{v#secondattproc}-{v#thirdattproc}" class="btn btn-default btn-xs" data-wait="disable">
     		Оценки
     	</button>
     </td>
@@ -226,12 +226,12 @@
 
 <!--{ulSubject}-->
 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Предмет <span class="caret"></span></button>
-<ul class="dropdown-menu">
+<ul class="dropdown-menu" data-click="addSubject">
 {v#li}
 </ul>
 
 <!--{liSubject}-->
-<li><a href="" data-click="addSubject" data-id="{v#id}">{v#namesubject}</a></li>
+<li><a href="" data-id="{v#id}">{v#namesubject} - {v#formcontrol}</a></li>
 
 <!--{tableMarkStud}-->
 <div>

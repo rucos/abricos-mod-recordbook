@@ -156,6 +156,7 @@ class RecordBook extends AbricosApplication {
     		$d = RecordBookQuery::FieldItem($this->db, $fieldid);
     		
     		$field = $this->models->InstanceClass('FieldItem', $d);
+    		
     			return $this->_cache['FieldItem'][$fieldid] = $field;
     			
     	}

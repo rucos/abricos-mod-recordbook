@@ -44,6 +44,9 @@ Component.entryPoint = function(NS){
         		numcrs: this.get('currentCourse'),
         		fieldid: this.get('groupItem').get('fieldid')
         	};
+        	if(!objData.currentSemestr){
+        		return;
+        	}
         	this.set('waiting', true);
         	this.get('appInstance').sheetList(objData, function(err, result){
         		this.set('waiting', false);
@@ -236,11 +239,19 @@ Component.entryPoint = function(NS){
         	}));
         },
         parseFormControl: function(formControl){
-        	var arr = formControl.split('-'),
+        	var arr = formControl.split('/'),
         		form = arr[0],
-        		type = arr[1];
-        		
-        	return arr[1] > 2 ? 'Курсовая работа' :  form;
+        		type = arr[1],
+        		project = arr[2];
+        	
+        	if(type > 2){
+        		if(project[0] == 1){
+        			form = 'Курсовая работа';
+        		} else if(project[2] == 1) {
+        			form = 'Курсовой проект';
+        		}
+        	}
+        	return form;
         },
         renderTableZaoch: function(form){
         	var markList = this.get('markList'),
@@ -554,6 +565,10 @@ Component.entryPoint = function(NS){
             		var numCourse = e.target.getData('value'),
             			tp = this.template;
             		
+            			if(!numCourse){
+            				return;
+            			}
+            			
             			tp.setValue('groupRenderItem.inpCourse', numCourse);
             			tp.removeClass('groupRenderItem.divCourse', 'open');
             			tp.setHTML('tablMark', '');
@@ -567,6 +582,10 @@ Component.entryPoint = function(NS){
         		event: function(e){
         			var valCurSem = e.target.getData('value'),
         				tp = this.template;
+        			
+        			if(!valCurSem){
+        				return;
+        			}
         			
         			tp.toggleView(false,'markPanel' ,'sheetPanel');
         			tp.gel('groupRenderItem.inpSemestr').value = e.target.getHTML();
@@ -583,6 +602,9 @@ Component.entryPoint = function(NS){
         			var subjectid = e.target.getData('id'),
         				tp = this.template;
         			
+        			if(!subjectid){
+        				return;
+        			}
         			tp.removeClass('rowAddSheet.divSubject', 'open');
         			tp.setValue('rowAddSheet.inpSubject', e.target.getHTML());
         				this.set('currentSubject', subjectid);
@@ -623,7 +645,6 @@ Component.entryPoint = function(NS){
         					frmStudy: groupItem.get('frmstudy'),
         					fio: targ.getData('fio')
         				};
-        			
         			this.set('currentIdSheet', idSheet);
         			this.set('currentAttProc', attProc);
         			

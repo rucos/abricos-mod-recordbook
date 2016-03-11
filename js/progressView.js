@@ -47,10 +47,16 @@ Component.entryPoint = function(NS){
         		data = {
         			fieldid: group.get('fieldid'),
         			numcrs: this.get('course'),
-        			semestr: this.get('semestr') === 'осенний' ? 1 : 2,
         			groupid: this.get('groupid'),
         			from: 'progressViewWidget'
-        		};
+        		},
+        		semestr = this.get('semestr');
+        	
+        	if(semestr){
+        		data.semestr = semestr === 'осенний' ? 1 : 2;
+        	} else {
+        		return;
+        	}
         	
           	this.set('waiting', true);
 	          this.get('appInstance').markListStat(data, function(err, result){
@@ -169,7 +175,7 @@ Component.entryPoint = function(NS){
             groupid: {value: 0},
             groupItem: {value: null},
             course: {value: 0},
-            semestr: {value: ''},
+            semestr: {value: null},
             subjectList: {value: null},
             markListStat: {value: null},
             studList: {value: null}
@@ -182,12 +188,24 @@ Component.entryPoint = function(NS){
         	},
         	choiceCourse: {
         		event: function(e){
-        			this.renderDropdown(e.target.getData('course'), 'course');
+        			var a = e.target.getDOMNode();
+        			
+        			if(!a.href){
+        				return;
+        			}
+        			
+        			this.renderDropdown(a.textContent, 'course');
         		}
         	},
         	choiceSemestr: {
         		event: function(e){
-        			this.renderDropdown(e.target.getData('semestr'), 'semestr');
+        			var a = e.target.getDOMNode();
+        			
+        			if(!a.href){
+        				return;
+        			}
+        			
+        			this.renderDropdown(a.textContent, 'semestr');
         		}
         	},
         	lightRow: {

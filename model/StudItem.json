@@ -29,6 +29,10 @@
     "transferal": {
       "type": "int",
       "json": "trns"
+    },
+    "rating": {
+      "type": "double",
+      "json": "rt"
     }
   }
 }

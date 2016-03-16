@@ -669,7 +669,8 @@ class RecordBookQuery {
 			SELECT
 					subjectid as id,
 					namesubject,
-					formcontrol
+					formcontrol,
+    				numhours
 			FROM ".$db->prefix."rb_subject
 			WHERE fieldid = ".bkint($d->fieldid)." 
 						AND numcrs = ".bkint($d->numcrs)."
@@ -695,24 +696,38 @@ class RecordBookQuery {
 								AND sh.type < 3
     	";
     	$rows = $db->query_read($sql);
+    	
     	$sheet = '';
 	    	while (($dd = $db->fetch_array($rows))){
 	    		$sheet .= $dd["sheetid"].',';
 	    	}
+	    	
 		   if(strlen($sheet) > 0){
 		   		$rowid = substr($sheet, 0, -1);
-			   	$sql = "
-			    		SELECT
-			    				m.markid as id,
-			    				sh.subjectid,
-			   					m.studid,
-			    				MAX(m.mark) as mark
+				$max = "";
+				
+		   			switch($d->view){
+		   				case 1:
+		   					$max = "m.mark";
+		   						break;
+		   				case 2: 
+		   					$max = "m.prliminary + m.additional";
+		   						break;
+		   				default:
+		   					return;
+		   			}
+		   		
+			   		$sql = "
+			    		SELECT 	m.markid as id,
+		    					sh.subjectid,
+		   						m.studid,
+		   						MAX(".$max.") as mark
 			    		FROM ".$db->prefix."rb_marks m
 			    		INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid
 			    		WHERE m.sheetid IN (".$rowid.")
 			    		GROUP BY sh.subjectid,m.studid
-			    	";
-			   	return $rows = $db->query_read($sql);
+					";
+			   		return $db->query_read($sql);
 		   }
     }
     
@@ -751,7 +766,6 @@ class RecordBookQuery {
 			    	";
 	    		return $rows = $db->query_read($sql);
 	    	}
-	    	
     }
     
     public static function ExpeledStudList(Ab_Database $db, $groupid){

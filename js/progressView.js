@@ -34,13 +34,16 @@ Component.entryPoint = function(NS){
         	this.set('course', groupItem.get('numcrs'));
         },
         renderDropdown: function(value, name){
-        	var tp = this.template;
+        	var tp = this.template,
+        		view = this.get('view');
         	
 				tp.setValue('groupInfo.inp_'+name, value);
 				tp.removeClass('groupInfo.div_'+name, 'open');
 				
 				this.set(name, value);
-					this.reqSubjectList();
+					if(view){
+						this.reqSubjectList();
+					}
         },
         reqSubjectList: function(){
         	var group = this.get('groupItem'),
@@ -48,6 +51,7 @@ Component.entryPoint = function(NS){
         			fieldid: group.get('fieldid'),
         			numcrs: this.get('course'),
         			groupid: this.get('groupid'),
+        			view: this.get('view'),
         			from: 'progressViewWidget'
         		},
         		semestr = this.get('semestr');
@@ -55,6 +59,11 @@ Component.entryPoint = function(NS){
         	if(semestr){
         		data.semestr = semestr === 'осенний' ? 1 : 2;
         	} else {
+        		alert( 'Укажите семестр' );
+        		return;
+        	}
+        	
+        	if(!data.view){
         		return;
         	}
         	
@@ -65,22 +74,32 @@ Component.entryPoint = function(NS){
 	    					this.set('subjectList', result.subjectList);
 	    					this.set('markListStat', result.markListStat);
 	    					this.set('studList', result.studList);
-	    					this.renderTable();
+	    						
+	    						this.renderTable();
 	    				}
-	    		}, this);
+	          }, this);
         },
         renderTable: function(){
         		var subjectList = this.get('subjectList'),
         			tp = this.template,
+        			view = this.get('view'),
         			lstTh = "",
         			lstMarkTd = "";
         		
+ 				if(view == 2){
+					lstTh += tp.replace('ratingTh');
+					lstMarkTd += tp.replace('ratingTd');
+				}
+        		
         		subjectList.each(function(subject){
-	        			lstTh += tp.replace('markSubj', [{
+        				
+	        			lstTh += tp.replace('markSubj', {
 	        				namesubject: subject.get('namesubject')
-	        			}, subject.toJSON()]);
+	        			});
 	        			
-	    	    		lstMarkTd += tp.replace('markTd', [subject.toJSON()]);
+	    	    		lstMarkTd += tp.replace('markTd', {
+	    	    		      id: subject.get('id')
+	    	    		});
         		}, this);
         		
         		tp.setHTML('groupInfo.markTable', tp.replace('markTable', {
@@ -108,19 +127,19 @@ Component.entryPoint = function(NS){
         renderMarkListStat: function(){
         	var markListStat = this.get('markListStat'),
         		tp = this.template,
+        		view = this.get('view'),
         		idRow = 'rowMarkTable.stud-';
         	
         	markListStat.each(function(mark){
         		var id = idRow + mark.get('studid'),
         			row = tp.one(id);
-        		
 	        		if(row){
 	        			var tdRow = row.getDOMNode().cells,
 	        				len = tdRow.length;
 	        			
 		        		for(var i = 3; i < len; i++){
 		        			if(tdRow[i].id == mark.get('subjectid')){
-		        				tdRow[i].innerHTML = this.calcMark(mark.get('mark'));
+		        				tdRow[i].innerHTML = view == 1 ? this.calcMark(mark.get('mark')) : mark.get('mark');
 		        					break;
 		        			}
 		        		}
@@ -167,18 +186,25 @@ Component.entryPoint = function(NS){
 	        			rows[i].cells[cellIndex].classList.add('success');
 	        		}
         	}
+        },
+        setPrimary: function(id){
+        	this.template.addClass('groupInfo.'+id, 'btn-primary');
+        },
+        removePrimary: function(id){
+        	this.template.removeClass('groupInfo.'+id, 'btn-primary');
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,groupInfo,markTable,markSubj,rowMarkTable,markTd'},
+            templateBlockName: {value: 'widget,groupInfo,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd'},
             groupid: {value: 0},
             groupItem: {value: null},
             course: {value: 0},
             semestr: {value: null},
             subjectList: {value: null},
             markListStat: {value: null},
-            studList: {value: null}
+            studList: {value: null},
+            view: {value: null}
         },
         CLICKS: {
         	close:{
@@ -206,6 +232,22 @@ Component.entryPoint = function(NS){
         			}
         			
         			this.renderDropdown(a.textContent, 'semestr');
+        		}
+        	},
+        	choiceViewStat: {
+        		event: function(e){
+        			var view = e.target.getData('view'),
+        				tp = this.template;
+        			
+        			if(view == 1){
+        				this.setPrimary('view1');
+        				this.removePrimary('view2');
+        			} else {
+        				this.setPrimary('view2');
+        				this.removePrimary('view1');
+        			}
+        			this.set('view', view);
+        			this.reqSubjectList();
         		}
         	},
         	lightRow: {

@@ -748,10 +748,47 @@ class RecordBook extends AbricosApplication {
        	
        	public function MarkListStatToJSON($d){
        		$res = $this->MarkListStat($d);
+       		$mark = $this->ResultToJSON('markListStat', $res);
        		
+       		$subject = $this->SubjectListToJSON($d);
+       		$studlist = $this->StudListToJSON($d->groupid);
+       		
+       		if($d->view == 2){
+       			$arrSubj = $subject->subjectList->list;
+       			
+       			foreach($arrSubj as $value){
+       				$hour = explode("/", $value->nh);
+       				
+       				$value->nh = (($hour[0] + $hour[1]) / 36).'';
+       			}
+       			
+      			$arrStud = $studlist->studList->list;
+      			$arrMark = $mark->markListStat->list;
+      			
+       			foreach($arrStud as $stud){
+       				$rating = 0;
+       				foreach($arrMark as $key => $mark){
+       					if($stud->id == $mark->stid){
+       						if(isset($mark->mk) && $mark->mk >= 51){
+       							foreach($arrSubj as $subj){
+       								if($mark->sid == $subj->id){
+       									$rating += $subj->nh * $mark->mk;
+       								}
+       							}
+       						} else {
+       							$rating = 0;
+       								break;
+       						}
+       						unset($arrMark[$key]);
+       					}
+       				}
+       				$stud->rt = $rating / 100;
+       			}
+       		}
+
        		$list = $this->ImplodeJSON(
-       				$this->SubjectListToJSON($d),
-       				$this->StudListToJSON($d->groupid)
+       				$subject,
+       				$studlist
        		);
        		
        		return $this->ImplodeJSON(
@@ -760,12 +797,17 @@ class RecordBook extends AbricosApplication {
        		); 
        	}
        	
+       	public function SortStudRating($a, $b){
+       		return max($a, $b);
+       	}
+       	
        	public function MarkListStat($d){
        		
        		$d->groupid = intval($d->groupid);
        		$d->fieldid = intval($d->fieldid);
        		$d->numcrs = intval($d->numcrs);
        		$d->semestr = intval($d->semestr);
+       		$d->view = intval($d->view);
        		
        		if (isset($this->_cache['markListStat'][$d->groupid])){
        			return $this->_cache['markListStat'][$d->groupid];

@@ -753,6 +753,12 @@ class RecordBook extends AbricosApplication {
        		$subject = $this->SubjectListToJSON($d);
        		$studlist = $this->StudListToJSON($d->groupid);
        		
+       		
+       		/*
+       		 * 
+       		 * Подсчет рейтинга и сортировка 
+       		 * 
+       		 * */
        		if($d->view == 2){
        			$arrSubj = $subject->subjectList->list;
        			
@@ -764,10 +770,12 @@ class RecordBook extends AbricosApplication {
        			
       			$arrStud = $studlist->studList->list;
       			$arrMark = $mark->markListStat->list;
+      			$arrRating = array();
       			
-       			foreach($arrStud as $stud){
+       			foreach($arrStud as $keySt => $stud){
        				$rating = 0;
-       				foreach($arrMark as $key => $mark){
+       				
+       				foreach($arrMark as $keyMk => $mark){
        					if($stud->id == $mark->stid){
        						if(isset($mark->mk) && $mark->mk >= 51){
        							foreach($arrSubj as $subj){
@@ -779,13 +787,18 @@ class RecordBook extends AbricosApplication {
        							$rating = 0;
        								break;
        						}
-       						unset($arrMark[$key]);
+       						unset($arrMark[$keyMk]);
        					}
        				}
-       				$stud->rt = $rating / 100;
+       				$stud->rt = round($rating / 100, 2);
+       				
+       				$arrRating[$keySt] = $stud->rt;
        			}
+       			array_multisort($arrRating, SORT_DESC, $arrStud);
+       			
+       			$studlist->studList->list = $arrStud;
        		}
-
+       		
        		$list = $this->ImplodeJSON(
        				$subject,
        				$studlist
@@ -795,10 +808,6 @@ class RecordBook extends AbricosApplication {
        				$this->ResultToJSON('markListStat', $res),
        				$list
        		); 
-       	}
-       	
-       	public function SortStudRating($a, $b){
-       		return max($a, $b);
        	}
        	
        	public function MarkListStat($d){

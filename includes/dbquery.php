@@ -270,6 +270,10 @@ class RecordBookQuery {
     }
     
     public static function GroupFind(Ab_Database $db, $d){
+    	
+    	if(!$d->value){
+    		return false;
+    	}
     
     	$sql = "
 			SELECT
@@ -581,6 +585,24 @@ class RecordBookQuery {
     }
     
     public static function SubjectFind(Ab_Database $db, $d){
+
+    	$where = "
+    		fieldid = ".bkint($d->fieldid)." 
+		";
+
+    	if($d->filterCourse && $d->filterSemestr){
+    		$where .= "
+    			AND numcrs = ".bkint($d->filterCourse)."
+    					AND semestr = ".bkint($d->filterSemestr)."
+    		";
+    	} else if($d->value){
+    		$where .= "
+    			AND namesubject LIKE '".bkstr($d->value)."%'
+    		";
+    	} else {
+    		return false;
+    	}
+    	
     	 
     	$sql = "
 			SELECT
@@ -593,13 +615,17 @@ class RecordBookQuery {
     				project,
     				remove
 			FROM ".$db->prefix."rb_subject
-			WHERE fieldid = ".bkint($d->fieldid)." AND namesubject LIKE '".bkstr($d->value)."%'
+			WHERE ".$where."
 		";
     	 
     	return $db->query_read($sql);
     }
     
     public static function StudFind(Ab_Database $db, $d){
+    	
+    	if(!$d->value){
+    		return false;
+    	}
     
     	$sql = "
 			SELECT

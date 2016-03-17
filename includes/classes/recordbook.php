@@ -653,21 +653,18 @@ class RecordBook extends AbricosApplication {
        	
        	public function Find($d){
        	
-       		if($d->value !== 0){
-       			$utmf = Abricos::TextParser(true);
-       			$d->value = $utmf->Parser($d->value);
-       		} else {
-       			return false;
-       		}
-       		
        		if (isset($this->_cache[$d->type][$d->value])){
        			return $this->_cache[$d->type][$d->value];
        		}
        		
+       		$utmf = Abricos::TextParser(true);
+       		$d->value = $utmf->Parser($d->value);
        		
        		switch($d->type){
        			case 'Subject':
        				$d->fieldid = intval($d->fieldid);
+       				$d->filterCourse = intval($d->filterCourse);
+       				$d->filterSemestr = intval($d->filterSemestr);
        					$rows = RecordBookQuery::SubjectFind($this->db, $d);
        						break;
        			case 'Group':

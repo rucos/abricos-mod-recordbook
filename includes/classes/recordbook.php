@@ -675,6 +675,8 @@ class RecordBook extends AbricosApplication {
        				$d->groupid = intval($d->groupid);
        					$rows = RecordBookQuery::StudFind($this->db, $d);
        						break;
+       			default: 
+       				return false;
        		}
        		
        		$listClass = $d->type."List";

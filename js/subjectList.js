@@ -91,6 +91,7 @@ Component.entryPoint = function(NS){
         	 tp.setHTML('list', tp.replace('table', {rows: lst}));
         	 	this.set('dataTable', lst);
         	 		this.set('subjectid', 0);
+        	 		
         	 			if(!find) this.pagination.renderPaginator();
         },
         subjectShow: function(id, parentRow){
@@ -232,11 +233,7 @@ Component.entryPoint = function(NS){
         		if(!data.filterCourse || !data.filterSemestr){
         			return;
         		} else {
-        			
-    				tp.show('allSubject');
-        			tp.hide('pagination');
-        			
-        			this.set('find', true);
+        			this.showFind();
         		}
         	}
         	this.reqFindSubject(data);
@@ -259,6 +256,23 @@ Component.entryPoint = function(NS){
         			collect[i].classList.remove('active');
         		}
         	}
+        },
+        showFind: function(){
+        	var tp = this.template;
+        	
+				tp.show('allSubject');
+    			tp.hide('pagination');
+    			
+    			this.set('find', true);
+        },
+        unSetFind: function(){
+        	var tp = this.template;
+        	
+   			this.set('filterCourse', 0);
+			this.set('filterSemestr', 0);
+			
+			this.setActive(tp.gel('course').children, 0);
+			this.setActive(tp.gel('semestr').children, 0);
         }
     }, {
         ATTRS: {
@@ -276,12 +290,14 @@ Component.entryPoint = function(NS){
         	'remove-show': {
                 event: function(e){
                        var subjectid = e.target.getData('id');
+                       
                        this.template.toggleView(true, 'row.removegroup-' + subjectid, 'row.remove-' + subjectid);
                    }
             },
             'remove-cancel': {
             	event: function(e){
                        var subjectid = e.target.getData('id');
+                       
                        this.template.toggleView(false, 'row.removegroup-' + subjectid, 'row.remove-' + subjectid);
                    }
             },
@@ -310,6 +326,7 @@ Component.entryPoint = function(NS){
         	remove: {
         		event: function(e){
         			var subjectid = e.target.getData('id');
+        			
         				this.removeSubject(subjectid, 1);
         		}
         	},
@@ -336,7 +353,6 @@ Component.entryPoint = function(NS){
         			}
         			
 	    			tp.gel('rowAct.semestr').value = a.textContent;
-	    			
 	    			tp.removeClass('rowAct.divSemestr', 'open');
         		}
         	},
@@ -347,18 +363,9 @@ Component.entryPoint = function(NS){
         				val = input.value;
         			
         			if(val.length){
-        				tp.show('allSubject');
-            			tp.hide('pagination');
-            			
-            			this.set('find', true);
-            			
-            			this.set('filterCourse', 0);
-            			this.set('filterSemestr', 0);
-            			
-            			this.setActive(tp.gel('course').children, 0);
-            			this.setActive(tp.gel('semestr').children, 0);
-            			
-        				this.find(val);
+        				this.showFind();
+        					this.unSetFind();
+        						this.find(val);
         			} else {
         				alert( 'Введите название предмета!' );
         					input.focus();
@@ -373,18 +380,15 @@ Component.entryPoint = function(NS){
         			tp.show('pagination');
         			
         			this.set('find', false);
-        			this.set('filterCourse', 0);
-        			this.set('filterSemestr', 0);
         			
-        			this.setActive(tp.gel('course').children, 0);
-        			this.setActive(tp.gel('semestr').children, 0);
-        			
-        			this.reloadList();
+        			this.unSetFind();
+        				this.reloadList();
         		}
         	},
         	restore: {
         		event: function(e){
         			var subjectid = e.target.getData('id');
+        			
     					this.removeSubject(subjectid, 0);
         		}
         	},

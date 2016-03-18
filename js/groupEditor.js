@@ -30,7 +30,7 @@ Component.entryPoint = function(NS){
 		    						this.renderGroupItem();
 		    				}
 	    				}, this);
-	    		}
+	    		} 
         		
         		if(this.get('groupListShow')){
         			tp.gel('numgroup').disabled = true;
@@ -55,12 +55,12 @@ Component.entryPoint = function(NS){
         	
         		tp.setValue('numgroup', groupItem.get('numgroup'));
         		
-        		tp.setValue('inpfield', groupItem.get('fieldcode') + " " 
-        								+ groupItem.get('field') + " "
-        								+ groupItem.get('frmstudy') + " "
-        								+ groupItem.get('note'));
-        		
         		tp.setValue('numcrs', groupItem.get('numcrs'));
+        		
+         		tp.setValue('inpfield', groupItem.get('fieldcode') + " " 
+						+ groupItem.get('field') + " "
+						+ groupItem.get('frmstudy') + " "
+						+ groupItem.get('note'));
         		
         		this.set('currentFieldId', groupItem.get('fieldid'));
         },
@@ -72,23 +72,17 @@ Component.entryPoint = function(NS){
 	        	this.set('waiting', true);
 	       		this.get('appInstance').fieldList('groupEditor', function(err, result){
 	    			this.set('waiting', false);
-	    			if(!err){
-		        		result.fieldList.each(function(field){
-		            		lst += tp.replace('liField', [
-		                   		   {
-		                   			   value: field.get('fieldcode') + " " 
-		                   			   		  + field.get('field') + " " 
-		                   			   		  + field.get('frmstudy') + " "
-		                   			   		  + field.get('note')
-		                   		   },
-		                   		   field.toJSON()
-		                   	]);
-		            		
-		                });
-	        		}
+		    			if(!err){
+			        		result.fieldList.each(function(field){
+			            		lst += tp.replace('liField', [
+			                   		   field.toJSON()
+			                   	]);
+			                });
+		        		}
 	    			tp.setHTML('list', tp.replace('ulField', {li: lst}));
 	        	}, this);
-        	} else {
+        	}
+        	else {
         		tp.setHTML('list', tp.replace('ulField', {li: lst}));
         	}
         },
@@ -136,7 +130,7 @@ Component.entryPoint = function(NS){
             groupid: {value: 0},
             currentFieldId: {value: 0},
             groupItem: {value: null},
-            groupListShow: {value: null}//если true то выводит список группы и заполняет список направлений
+            groupListShow: {value: null}
         },
         CLICKS: {
         	saveGroup: {
@@ -151,10 +145,19 @@ Component.entryPoint = function(NS){
         	},
         	add: {
         		event: function(e){
-        	  		var tp = this.template;
-        			tp.setValue('inpfield', e.target.getData('value'));//установка значения input направление
-        			tp.removeClass('widget.list', 'open');//скрытие списка
-        			this.set('currentFieldId', e.target.getData('id'));//запоминание id направления
+        	  		var tp = this.template,
+        	  			targ = e.target,
+        	  			a = targ.getDOMNode();
+        	  		
+        	  		if(!a.href){
+        	  			return;
+        	  		}
+        	  		
+        			tp.setValue('inpfield', a.textContent);
+        			
+        			tp.removeClass('widget.list', 'open');
+        			
+        			this.set('currentFieldId', targ.getData('id'));
         		}
         	}
         }

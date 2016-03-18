@@ -39,7 +39,7 @@
 		      <div class="input-group-btn">
 		     		<div id="{i#list}"></div>
 		      </div>
-		      <input type="text" class="form-control" id={i#inpfield} disabled>
+		      <textarea class="form-control" id={i#inpfield} disabled></textarea>
 		    </div>
 		  </div>
 		 </div>
@@ -49,9 +49,9 @@
 
 <!--{ulField}-->
 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Направление <span class="caret"></span></button>
-<ul class="dropdown-menu">
+<ul class="dropdown-menu" data-click="add">
 {v#li}
 </ul>
 
 <!--{liField}-->
-<li><a href="" data-click="add" data-id="{v#id}" data-value="{v#value}">{v#value}</a></li>
+<li><a href="" data-id="{v#id}">{v#fieldcode} {v#field} {v#frmstudy} {v#note}</a></li>

@@ -207,6 +207,11 @@ Component.entryPoint = function(NS){
         			return this.getURL('ws') + 'managerExpeled/ManagerWidgetExpeled';
         		}
         	},
+        	managerReport: {
+        		view: function(){
+        			return this.getURL('ws') + 'managerReport/ManagerWidgetReport';
+        		}
+        	},
         	field: {
         	    editor: function(fieldid){
         	    	return this.getURL('ws') + 'fieldEditor/FieldEditorWidget/' + (fieldid | 0) + '/';

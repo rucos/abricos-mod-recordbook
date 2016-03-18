@@ -60,6 +60,10 @@ Component.entryPoint = function(NS){
 	        				this.setActive('expeledLi');
 	        					this.go("managerExpeled.view");
 	        						break;
+	        			case "reportA":
+	        				this.setActive('reportLi');
+	        					this.go("managerReport.view");
+	        						break;
 	        		}
         		}
         	}

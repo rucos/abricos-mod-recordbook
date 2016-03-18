@@ -65,6 +65,7 @@ if ($updateManager->isInstall('0.1.5')){
 					fio varchar(255) default NULL COMMENT 'ФИО Студента',
 					datebirth int(10) unsigned NOT NULL default 0 COMMENT 'Дата рождения',
 					preveducation varchar(255) default NULL COMMENT 'Документ о предыдущем образовании',
+					listgroup varchar(255) default NULL COMMENT 'Список групп в которых учился',
 					transferal tinyint(1) unsigned NOT NULL default 0 COMMENT 'Отчислен? 1: да',
 					PRIMARY KEY (id),
 					UNIQUE KEY student (numbook,fio)
@@ -101,7 +102,5 @@ if ($updateManager->isInstall('0.1.5')){
 					PRIMARY KEY (markid)
 			)".$charset
 		);
-		
-		
 }
 ?>

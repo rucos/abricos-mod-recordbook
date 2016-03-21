@@ -679,9 +679,36 @@ class RecordBookQuery {
     public static function TransitStud(Ab_Database $db, $d){
     	
     	$sql = "
+    			SELECT
+    					groupid as idgr,
+    					listgroup as lg
+    			FROM ".$db->prefix."rb_students
+    			WHERE id=".bkint($d->studid)."
+    			LIMIT 1
+    	";
+    	$row = $db->query_first($sql);
+
+     	if($d->groupid == $row['idgr']){
+	     		return false;
+     	}
+    	
+    	$haystack = $row['lg'];
+    	$needle = $row['idgr'];
+    	
+    	$pos = strripos($haystack, $needle);
+    	
+    	if($pos !== false){
+    		$listGroup = $row['lg'];
+    	} else {
+    		$listGroup = $row['lg'] ? $row['lg']."," : "";
+    		$listGroup .= $row['idgr'];
+     	}
+    	
+    	$sql = "
 			UPDATE ".$db->prefix."rb_students
 			SET
-				groupid = ".bkint($d->groupid).",
+				groupid=".bkint($d->groupid).",
+				listgroup='".$listGroup."',
 				transferal=0
 			WHERE id = ".bkint($d->studid)."
 			LIMIT 1

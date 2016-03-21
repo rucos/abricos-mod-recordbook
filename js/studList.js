@@ -139,7 +139,7 @@ Component.entryPoint = function(NS){
         		data = {
         			studid: studid,
         			remove: remove
-        		}
+        		};
 
         	this.set('waiting', true);
 	        	this.get('appInstance').studRemove(data, function(err, result){

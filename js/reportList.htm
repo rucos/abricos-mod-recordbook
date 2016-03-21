@@ -1,2 +1,21 @@
 <!--{widget}-->
-...
+<div class="row">
+		<div class="col-md-6">
+			<input id="{i#inpfind}"  type="text" class="form-control" placeholder="Введите ФИО студента или № зачетной книжки"/>
+		</div>
+		<div class="col-md-1">
+			<button data-click="find" type="button" class="btn btn-default" data-wait="disable">
+		   		Найти
+			</button>
+		</div>
+</div>
+<hr>
+	<div id="{i#groupRenderItem}"></div>
+	
+<!--{groupItem}-->
+<h5>Номер группы: <span>{v#numgroup}</span></h5>
+<h5>Направление: <span>{v#fieldcode} {v#field}</span></h5>
+<h5>Форма обучения: <span>{v#frmstudy}</span></h5>
+<h5>Номер курса: <span>{v#numcrs}</span></h5>
+<h5>Номер зачетной книжки: <span>{v#numbook}</span></h5>
+<h5>ФИО: <span>{v#fio}</span></h5>

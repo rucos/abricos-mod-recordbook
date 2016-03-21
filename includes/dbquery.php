@@ -838,6 +838,28 @@ class RecordBookQuery {
 		";
     	return $db->query_read($sql);
     }
+    
+    public static function FindStudReport(Ab_Database $db, $value){
+    	
+    	$sql = "
+    		SELECT
+					s.groupid as id,
+    				s.id as studid,
+    				s.numbook,
+    				s.fio,
+    				g.numgroup,
+    				g.numcrs,
+    				f.fieldcode,
+    				f.field,
+    				f.frmstudy
+    		FROM ".$db->prefix."rb_students s
+    		INNER JOIN ".$db->prefix."rb_groups g ON g.groupid = s.groupid
+    		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
+    		WHERE numbook='".bkstr($value)."' OR fio='".bkstr($value)."'
+    		LIMIT 1
+    	";
+    	return $db->query_first($sql);
+    }
 }
 
 ?>

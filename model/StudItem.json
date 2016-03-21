@@ -10,6 +10,10 @@
       "type": "int",
       "json": "gid"
     },
+    "datebirth": {
+      "type": "int",
+      "json": "dbirt"
+    },
     "numbook": {
       "type": "string",
       "json": "nk"
@@ -17,10 +21,6 @@
     "fio": {
       "type": "string",
       "json": "f"
-    },
-    "datebirth": {
-      "type": "int",
-      "json": "dbir"
     },
     "preveducation": {
       "type": "string",

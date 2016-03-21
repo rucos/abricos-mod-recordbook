@@ -163,6 +163,11 @@ Component.entryPoint = function(NS){
     		expeledStudList: {
     			args: ['groupid'],
     			type: 'modelList:StudList'
+    		},
+    		findStudReport: {
+    			args: ['value'],
+    			attribute: false,
+    			type: 'model:StudGroupItem'
     		}
         },
         ATTRS: {
@@ -179,6 +184,7 @@ Component.entryPoint = function(NS){
         	MarkListStat: {value: NS.MarkListStat},
         	MarkItem: {value: NS.MarkItem},
         	GroupModalList: {value: NS.GroupModalList},
+        	StudGroupItem: {value: NS.StudGroupItem},
         	findGroup: {value: false},
         	findGroupVal: {value: ''},
         	frmstudy: {value: 0},

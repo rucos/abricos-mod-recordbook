@@ -83,4 +83,9 @@ class RecordBookConfig extends AbricosModel {
 	protected $_structModule = 'recordbook';
 	protected $_structName = 'Config';
 }
+
+class StudGroupItem extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'StudGroupItem';
+}
 ?>

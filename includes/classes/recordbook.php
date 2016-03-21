@@ -27,13 +27,14 @@ class RecordBook extends AbricosApplication {
 				'GroupModalList' => 'GroupModalList',
 				'MarkItemStat' => 'MarkItemStat',
 				'MarkListStat' => 'MarkListStat',
-				'Config' => 'RecordBookConfig'
+				'Config' => 'RecordBookConfig',
+				'StudGroupItem' => 'StudGroupItem'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, StudGroupItem';
 	}
 
 	public function ResponseToJSON($d){
@@ -105,6 +106,8 @@ class RecordBook extends AbricosApplication {
             	return $this->ExpeledGroupListToJSON();
             case "expeledStudList":
             	return $this->ExpeledStudListToJSON($d->groupid);
+            case "findStudReport":
+            	return $this->FindStudReportToJSON($d->value);
             	
         }
         return null;
@@ -913,6 +916,24 @@ class RecordBook extends AbricosApplication {
        		return $this->_cache['ExpeledStudList'][$groupid] = $list;
        	}
        	
+       	public function FindStudReportToJSON($value){
+       		$res = $this->FindStudReport($value);
+       		return $this->ResultToJSON('findStudReport', $res);
+       	}
+       	
+       	public function FindStudReport($value){
+       		$utmf = Abricos::TextParser(true);
+       		$value = $utmf->Parser($value);
+       		
+       		if (isset($this->_cache['FindStudReport'][$value])){
+       			return $this->_cache['FindStudReport'][$value];
+       		}
+       		
+       		$row = RecordBookQuery::FindStudReport($this->db, $value);
+       		$group = $this->models->InstanceClass('StudGroupItem', $row);
+       		
+       		return $this->_cache['FindStudReport'][$value] = $group;
+       	}
 }
 
 ?>

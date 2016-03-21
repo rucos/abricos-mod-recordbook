@@ -77,4 +77,8 @@ Component.entryPoint = function(NS){
         structureName: 'Config'
     });
     
+    NS.StudGroupItem = Y.Base.create('studGroupItem', SYS.AppModel, [], {
+        structureName: 'StudGroupItem'
+    });
+    
 };

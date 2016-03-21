@@ -1,0 +1,46 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "numgroup": {
+      "type": "string",
+      "json": "ng"
+    },
+    "numcrs": {
+      "type": "int",
+      "json": "nc"
+    },
+    "field": {
+      "type": "string",
+      "json": "fi"
+    },
+    "fieldid": {
+      "type": "int",
+      "json": "fid"
+    },
+    "fieldcode": {
+      "type": "string",
+      "json": "fc"
+    },
+     "frmstudy": {
+      "type": "string",
+      "json": "fs"
+    },
+    "studid": {
+      "type": "int",
+      "json": "sid"
+    },
+    "fio": {
+      "type": "string",
+      "json": "f"
+    },
+    "numbook": {
+      "type": "string",
+      "json": "nb"
+    }
+  }
+}

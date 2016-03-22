@@ -1,5 +1,6 @@
 <!--{widget}-->
 <div id="{i#pag}"></div>
+<div id="{i#pagCourse}"></div>
 
 <!--{paginator}-->
 <ul class="pagination" data-click="changePage">
@@ -13,3 +14,34 @@
 
 <!--{liPagePagin}-->
 <li class="{v#active}" style="display: {v#dli};"><a href="" data-page="{v#cnt}" data-type="curent">{v#cnt}</a></li>
+
+<!--{paginatorCourse}-->
+<div class="row">
+	<div class="col-md-3">
+		<div id="{i#course}" class="btn-group" data-toggle="buttons" data-click="setFilter">
+			  	<label class="btn btn-info">
+			          <input type="radio">1</label>
+			  	<label class="btn btn-info">
+			          <input type="radio">2</label>
+			    <label class="btn btn-info">
+			    	<input type="radio">3</label>
+				<label class="btn btn-info">
+			    	<input type="radio">4</label>
+				<label class="btn btn-info">
+			    	<input type="radio">5</label>
+		</div>
+	</div>
+	<div class="col-md-4">
+    	<div id="{i#semestr}" class="btn-group" data-toggle="buttons" data-click="setFilter">
+		  	<label class="btn btn-warning">
+		          <input type="radio"/>Осенний</label>
+		  	<label class="btn btn-warning">
+		          <input type="radio"/>Весенний</label>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<button type="button" class="hide btn btn-primary" data-wait="disable">
+			Сбросить фильтр
+		</button>
+	</div>
+</div>

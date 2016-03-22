@@ -849,6 +849,7 @@ class RecordBookQuery {
     				s.fio,
     				g.numgroup,
     				g.numcrs,
+    				f.fieldid,
     				f.fieldcode,
     				f.field,
     				f.frmstudy
@@ -859,6 +860,29 @@ class RecordBookQuery {
     		LIMIT 1
     	";
     	return $db->query_first($sql);
+    }
+    
+    public static function MarkStudReport(Ab_Database $db, $d){
+    	 
+    			$sql = "
+    					SELECT
+    						  m.markid as id,
+    						  sj.namesubject,
+    						  sj.formcontrol,
+    						  MAX(sh.date) as date,
+    						  MAX(m.mark) as mark
+    					FROM ".$db->prefix."rb_marks m
+    					INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid
+    					INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid = sj.subjectid
+    					WHERE m.studid=".$d->studid."
+    							AND sh.groupid = ".bkint($d->groupid)."
+    								AND sj.fieldid = ".bkint($d->fieldid)."
+    									AND sj.numcrs = ".bkint($d->course)."
+											AND sj.semestr = ".bkint($d->semestr)."
+												AND sh.type < 3
+						GROUP BY sj.namesubject
+    			";
+    			return $db->query_read($sql);
     }
 }
 

@@ -8,14 +8,44 @@
 		   		Найти
 			</button>
 		</div>
+		<div class="col-md-1">
+			<button id="{i#btnCancel}" data-click="cancel" type="button" class="btn btn-primary hide" data-wait="disable">
+		   		Отмена
+			</button>
+		</div>
 </div>
 <hr>
-	<div id="{i#groupRenderItem}"></div>
+	<div id="{i#reportRenderItem}"></div>
+	<div id="{i#pagCourse}"></div>
+	<div id="{i#tablMark}"></div>
 	
-<!--{groupItem}-->
+<!--{reportItem}-->
 <h5>Номер группы: <span>{v#numgroup}</span></h5>
 <h5>Направление: <span>{v#fieldcode} {v#field}</span></h5>
 <h5>Форма обучения: <span>{v#frmstudy}</span></h5>
 <h5>Номер курса: <span>{v#numcrs}</span></h5>
 <h5>Номер зачетной книжки: <span>{v#numbook}</span></h5>
 <h5>ФИО: <span>{v#fio}</span></h5>
+
+<!--{table}-->
+<table class="table table-striped table-hover">
+    <thead>
+    <tr>
+    	<th>#</th>
+	   	 <th>Название предмета</th>
+	   	 <th>Форма контроля</th>
+	   	 <th>Дата проведения</th>
+	     <th>Оценка</th>
+    </tr>
+    </thead>
+    <tbody>{v#rows}</tbody>
+</table>
+
+<!--{row}-->
+<tr {v#cl}>
+	<td>{v#n}</td>
+    <td>{v#namesubject}</td>
+    <td>{v#formcontrol}</td>
+    <td>{v#date}</td>
+    <td>{v#mark}</td>
+</tr>

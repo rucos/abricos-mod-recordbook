@@ -28,13 +28,13 @@ class RecordBook extends AbricosApplication {
 				'MarkItemStat' => 'MarkItemStat',
 				'MarkListStat' => 'MarkListStat',
 				'Config' => 'RecordBookConfig',
-				'StudGroupItem' => 'StudGroupItem'
+				'ReportItem' => 'ReportItem'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, StudGroupItem';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem';
 	}
 
 	public function ResponseToJSON($d){
@@ -108,6 +108,8 @@ class RecordBook extends AbricosApplication {
             	return $this->ExpeledStudListToJSON($d->groupid);
             case "findStudReport":
             	return $this->FindStudReportToJSON($d->value);
+            case "markStudReport":
+            	return $this->MarkStudReportToJSON($d->data);
             	
         }
         return null;
@@ -930,10 +932,38 @@ class RecordBook extends AbricosApplication {
        		}
        		
        		$row = RecordBookQuery::FindStudReport($this->db, $value);
-       		$group = $this->models->InstanceClass('StudGroupItem', $row);
+       		$group = $this->models->InstanceClass('ReportItem', $row);
        		
        		return $this->_cache['FindStudReport'][$value] = $group;
        	}
+       	
+       	public function MarkStudReportToJSON($d){
+       		$res = $this->MarkStudReport($d);
+       		return $this->ResultToJSON('markStudReport', $res);
+       	}
+       	
+       	public function MarkStudReport($d){
+       		
+       		if (isset($this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr])){
+       			return $this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr];
+       		}
+       		
+       		$d->fieldid = intval($d->fieldid);
+       		$d->groupid = intval($d->groupid);
+       		$d->studid = intval($d->studid);
+       		$d->course = intval($d->course);
+       		$d->semestr = intval($d->semestr);
+       		
+       		$list = $this->models->InstanceClass('MarkListStat');
+       		
+       		$rows = RecordBookQuery::MarkStudReport($this->db, $d);
+       		
+       		while ($dd = $this->db->fetch_array($rows)){
+       			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
+       		}
+       		return $this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr] = $list;
+       	}
+       	
 }
 
 ?>

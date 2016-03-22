@@ -17,6 +17,18 @@
     "mark": {
       "type": "int",
       "json": "mk"
+    },
+    "namesubject": {
+      "type": "string",
+      "json": "ns"
+    },
+    "date": {
+      "type": "int",
+      "json": "dt"
+    },
+    "formcontrol": {
+      "type": "string",
+      "json": "fc"
     }
   }
 }

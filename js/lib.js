@@ -39,6 +39,27 @@ Component.entryPoint = function(NS){
         },
         isNumeric: function(n){
         	return !isNaN(parseFloat(n)) && isFinite(n) && n.indexOf('.') == -1;
+        },
+        setTradMark: function(val){
+        	if(val <= 100){
+        		if(val < 51){
+        			return '';
+        		} else if(val >= 51 && val < 71){
+        			return '3';
+        		} else if(val >= 71 && val < 86){
+        			return '4';
+        		} else {
+        			return '5';
+        		}
+        	} else {
+        		switch(val){
+        			case 101: return '';
+        			case 102: return 'Зач';
+        			case 103: return '3';
+        			case 104: return '4';
+        			case 105: return '5';
+        		}
+        	}
         }
     }, [], {
         REQS: {
@@ -167,7 +188,12 @@ Component.entryPoint = function(NS){
     		findStudReport: {
     			args: ['value'],
     			attribute: false,
-    			type: 'model:StudGroupItem'
+    			type: 'model:ReportItem'
+    		},
+    		markStudReport: {
+    			args: ['data'],
+    			attribute: false,
+    			type: 'modelList:MarkListStat'
     		}
         },
         ATTRS: {
@@ -184,7 +210,7 @@ Component.entryPoint = function(NS){
         	MarkListStat: {value: NS.MarkListStat},
         	MarkItem: {value: NS.MarkItem},
         	GroupModalList: {value: NS.GroupModalList},
-        	StudGroupItem: {value: NS.StudGroupItem},
+        	ReportItem: {value: NS.ReportItem},
         	findGroup: {value: false},
         	findGroupVal: {value: ''},
         	frmstudy: {value: 0},

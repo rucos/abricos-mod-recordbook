@@ -71,4 +71,80 @@ Component.entryPoint = function(NS){
         	}
         }
     });
+    
+    NS.PaginationCourseWidget = Y.Base.create('paginationCourseWidget', SYS.AppWidget, [], {
+        onInitAppWidget: function(err, appInstance){
+        	var tp = this.template,
+        		show = this.get('show');
+        	
+        		if(show){
+        			this.showPagination();
+        		}
+        },        
+        setActive: function(collect, value){
+        	for(var i = 0; i < collect.length; i++){
+        		if(i == value - 1){
+        			collect[i].classList.add('active');
+        		} else {
+        			collect[i].classList.remove('active');
+        		}
+        	}
+        },
+        showPagination: function(){
+        	var tp = this.template;
+        	
+        	tp.setHTML('pagCourse', tp.replace('paginatorCourse'));
+        },
+        hidePagination: function(){
+        	this.template.setHTML('pagCourse', "");
+        	this.set('filterSemestr', 0);
+        	this.set('filterCourse', 0);
+        },
+        act: function(){
+        	var parent = this.get('parent');
+        	
+  			switch(parent.name){
+				case 'reportListWidget':
+					parent.reloadMarkList();
+						break;
+  			}
+        }
+    }, {
+        ATTRS: {
+        	component: {value: COMPONENT},
+            templateBlockName: {value: 'widget, paginatorCourse'},
+            filterSemestr: {value: 0},
+            filterCourse: {value: 0},
+            show: {value: false},
+            parent: ''
+        },
+        CLICKS: {
+        	setFilter: {
+        		event: function(e){
+        			var label = e.target.getDOMNode(),
+        				value = label.textContent;
+        			
+        			if(label.tagName == 'LABEL'){
+        				switch(value){
+        					case "Осенний" :
+        						this.set('filterSemestr', 1);
+        							value = 1;
+        								break;
+        					case "Весенний" : 
+        						this.set('filterSemestr', 2);
+        							value = 2;
+        								break;
+        					default:
+        						this.set('filterCourse', value);
+        							break;
+        				}
+        				this.setActive(label.parentNode.children, value);
+        			} else {
+        				return;
+        			}
+        			this.act();
+        		}
+        	}
+        }
+    });
 };

@@ -128,44 +128,30 @@ Component.entryPoint = function(NS){
         	var markListStat = this.get('markListStat'),
         		tp = this.template,
         		view = this.get('view'),
-        		idRow = 'rowMarkTable.stud-';
+        		idRow = 'rowMarkTable.stud-',
+        		lib = this.get('appInstance');
         	
         	markListStat.each(function(mark){
         		var id = idRow + mark.get('studid'),
         			row = tp.one(id);
+        		
 	        		if(row){
 	        			var tdRow = row.getDOMNode().cells,
-	        				len = tdRow.length;
+	        				len = tdRow.length,
+	        				mk = mark.get('mark');
 	        			
 		        		for(var i = 3; i < len; i++){
 		        			if(tdRow[i].id == mark.get('subjectid')){
-		        				tdRow[i].innerHTML = view == 1 ? this.calcMark(mark.get('mark')) : mark.get('mark');
+		        				if(mk < 51 || mk === 101){
+		        					tdRow[i].classList.add('danger');
+		        				}
+		        				
+		        				tdRow[i].innerHTML = view == 1 ? lib.setTradMark(mk) : mk;
 		        					break;
 		        			}
 		        		}
 	        		}
         	}, this);
-        },
-        calcMark: function(val){
-        	if(val <= 100){
-        		if(val < 51){
-        			return '';
-        		} else if(val >= 51 && val < 71){
-        			return '3';
-        		} else if(val >= 71 && val < 86){
-        			return '4';
-        		} else {
-        			return '5';
-        		}
-        	} else {
-        		switch(val){
-        			case 101: return '';
-        			case 102: return 'Зач';
-        			case 103: return '3';
-        			case 104: return '4';
-        			case 105: return '5';
-        		}
-        	}
         },
         lightRow: function(rowIndex, cellIndex){
         	var tp = this.template,

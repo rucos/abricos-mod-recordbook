@@ -847,6 +847,7 @@ class RecordBookQuery {
     				s.id as studid,
     				s.numbook,
     				s.fio,
+    				s.transferal,
     				g.numgroup,
     				g.numcrs,
     				f.fieldid,

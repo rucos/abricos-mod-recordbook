@@ -58,8 +58,11 @@ Component.entryPoint = function(NS){
         renderGroupItem: function(){
         	var tp = this.template,
         		reportItem = this.get('reportItem');
+        	
+        		tp.setHTML('reportRenderItem', tp.replace('reportItem', [{
+        			remove: reportItem.get('transferal') ? tp.replace('label') : ''
+        		}, reportItem.toJSON()]));
         		
-        		tp.setHTML('reportRenderItem', tp.replace('reportItem', [reportItem.toJSON()]));
         		tp.setHTML('tablMark', '');
         		
         		this.paginationCourse.showPagination();
@@ -125,7 +128,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, reportItem, table, row'},
+            templateBlockName: {value: 'widget, reportItem, table, row, label'},
             reportItem: {value: null},
             markList: {value: null}
         },

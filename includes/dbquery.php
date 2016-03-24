@@ -848,12 +848,14 @@ class RecordBookQuery {
     				s.numbook,
     				s.fio,
     				s.transferal,
+    				s.listgroup,
     				g.numgroup,
     				g.numcrs,
     				f.fieldid,
     				f.fieldcode,
     				f.field,
-    				f.frmstudy
+    				f.frmstudy,
+    				f.note
     		FROM ".$db->prefix."rb_students s
     		INNER JOIN ".$db->prefix."rb_groups g ON g.groupid = s.groupid
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid

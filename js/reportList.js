@@ -24,7 +24,7 @@ Component.entryPoint = function(NS){
                 this.paginationCourse.destroy();
             }
         },
-        reqFind: function(){
+        reqFind: function(value){
         	var tp = this.template,
         		value = tp.getValue('inpfind').trim();
         	
@@ -40,14 +40,13 @@ Component.entryPoint = function(NS){
         		
         		this.set('waiting', true);
         		this.get('appInstance').findStudReport(value, function(err, result){
-        			var res = result.findStudReport;
+        			var reportItem = result.findStudReport;
 
         			this.set('waiting', false);
-        			
-	        			if(!err && res.get('id')){
-	        				
-	        				this.set('reportItem', res);
-	        					this.renderGroupItem();
+	        			if(!err && reportItem.get('id')){
+	        					this.set('oldGroups', result.groupList);
+		        				this.set('reportItem', reportItem);
+		        					this.renderGroupItem();
 	        			} else {
 	        				this.cancel(false);
 	        				tp.setHTML('reportRenderItem', 'Студент не найден');
@@ -57,33 +56,53 @@ Component.entryPoint = function(NS){
         },
         renderGroupItem: function(){
         	var tp = this.template,
-        		reportItem = this.get('reportItem');
-        	
+        		reportItem = this.get('reportItem'),
+        		lstGroup = tp.replace('listGroups', {
+        			item: this.renderListGroup()
+        		});
+        		
         		tp.setHTML('reportRenderItem', tp.replace('reportItem', [{
-        			remove: reportItem.get('transferal') ? tp.replace('label') : ''
+        			remove: reportItem.get('transferal') ? tp.replace('label') : '',
+        			data: lstGroup
         		}, reportItem.toJSON()]));
         		
         		tp.setHTML('tablMark', '');
         		
+        		this.set('fieldid', reportItem.get('fieldid'));
+        		this.set('groupid', reportItem.get('id'));
+        		
         		this.paginationCourse.showPagination();
         },
-        cancel: function(flag){
-			var tp = this.template;
-			
-			if(flag){
-				tp.addClass('btnCancel', 'hide');
-				tp.setHTML('reportRenderItem', '');
-				tp.setValue('inpfind', '');
-			}
-			
-			tp.setHTML('tablMark', '');
-			this.paginationCourse.hidePagination();
+        renderListGroup: function(){
+        	var tp = this.template,
+    			reportItem = this.get('reportItem'),
+    			oldGroups = this.get('oldGroups'),
+    			lst = "";
+        	
+	        	lst += this.setLstGroup(reportItem, true);
+	        	
+	        	if(oldGroups){
+	        		oldGroups.each(function(group){
+	        			lst += this.setLstGroup(group, false);
+	        		}, this);
+	        	}
+	        	return lst;
+        },
+        setLstGroup: function(group, active){
+        	var tp = this.template,
+        		lst = "";
+
+	        	lst = tp.replace('itemGroups', [{
+	        			active: active ? 'active' : ''
+	        		}, group.toJSON()]);
+	        	
+	        	return lst;
         },
         reloadMarkList: function(){
         	var reportItem = this.get('reportItem'),
         		data = {
-        			fieldid: reportItem.get('fieldid'),
-        			groupid: reportItem.get('id'),
+        			fieldid: this.get('fieldid'),
+        			groupid: this.get('groupid'),
         			studid:  reportItem.get('studid'),
         			course: this.paginationCourse.get('filterCourse'),
         			semestr: this.paginationCourse.get('filterSemestr')
@@ -124,13 +143,38 @@ Component.entryPoint = function(NS){
         	} else {
             	tp.setHTML('tablMark', 'Оценок нет');
         	}
+        },
+        unSetActive: function(){
+        	var tp = this.template,
+        		div = tp.gel('listGroups.list-groups'),
+        		collect = div.children,
+        		len = collect.length;
+        	
+	        	for(var i = 0; i < len; i++){
+	       			collect[i].classList.remove('active');
+	        	}
+        },
+        cancel: function(flag){
+			var tp = this.template;
+			
+			if(flag){
+				tp.addClass('btnCancel', 'hide');
+				tp.setHTML('reportRenderItem', '');
+				tp.setValue('inpfind', '');
+			}
+			
+			tp.setHTML('tablMark', '');
+			this.paginationCourse.hidePagination();
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, reportItem, table, row, label'},
+            templateBlockName: {value: 'widget, reportItem, table, row, label, listGroups, itemGroups'},
             reportItem: {value: null},
-            markList: {value: null}
+            markList: {value: null},
+            oldGroups: {value: null},
+            fieldid: {value: 0},
+            groupid: {value: 0}
         },
         CLICKS: {
         	find: {
@@ -141,6 +185,24 @@ Component.entryPoint = function(NS){
         	cancel: {
         		event: function(e){
         			this.cancel(true);
+        		}
+        	},
+        	changeGroup: {
+        		event: function(e){
+        			var targ = e.target,
+        				a =  targ.getDOMNode();
+        			
+        			if(!a.href){
+        				return;
+        			}
+        			
+        			this.set('fieldid', targ.getData('fid'));
+        			this.set('groupid', targ.getData('gid'));
+        			
+        			this.unSetActive();
+        			a.classList.add('active');
+        			
+        			this.reloadMarkList();
         		}
         	}
         }

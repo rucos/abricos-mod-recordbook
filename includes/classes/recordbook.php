@@ -920,21 +920,35 @@ class RecordBook extends AbricosApplication {
        	
        	public function FindStudReportToJSON($value){
        		$res = $this->FindStudReport($value);
-       		return $this->ResultToJSON('findStudReport', $res);
+       		$oldGr = isset($res->oldGroup) ? $this->ResultToJSON('groupList', $res->oldGroup) : "";
+       		
+       		return $this->ImplodeJSON(
+       				$this->ResultToJSON('findStudReport', $res->curentGroup),
+       				$oldGr
+       		);
        	}
        	
        	public function FindStudReport($value){
        		$utmf = Abricos::TextParser(true);
        		$value = $utmf->Parser($value);
        		
-       		if (isset($this->_cache['FindStudReport'][$value])){
-       			return $this->_cache['FindStudReport'][$value];
-       		}
-       		
        		$row = RecordBookQuery::FindStudReport($this->db, $value);
-       		$group = $this->models->InstanceClass('ReportItem', $row);
        		
-       		return $this->_cache['FindStudReport'][$value] = $group;
+       		$res = new stdClass();
+       		$res->curentGroup = $this->models->InstanceClass('ReportItem', $row);
+       		
+	       		if(isset($row['listgroup'])){
+	       			$arGroup = explode(',', $row['listgroup']);
+	       			$listGr = $this->models->InstanceClass('GroupList');
+	       			
+	       			foreach ($arGroup as $value){
+	       				$rowGr = RecordBookQuery::GroupItem($this->db, $value);
+	       				$listGr->Add($this->models->InstanceClass('GroupItem', $rowGr));
+	       			}
+	       			$res->oldGroup = $listGr;
+	       		}
+	       		
+       		return $res;
        	}
        	
        	public function MarkStudReportToJSON($d){

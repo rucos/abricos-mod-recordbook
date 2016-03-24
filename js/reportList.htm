@@ -21,12 +21,19 @@
 	<div id="{i#tablMark}"></div>
 	
 <!--{reportItem}-->
-<p>Номер группы: <label>{v#numgroup}</label></p>
-<p>Направление: <label>{v#fieldcode} {v#field}</label></p>
-<p>Форма обучения: <label>{v#frmstudy}</label></p>
-<p>Номер курса: <label>{v#numcrs}</label></p>
-<p>Номер зачетной книжки: <label>{v#numbook}</label></p>
-<p>ФИО: <label>{v#fio}</label> {v#remove}</p>
+<p><label>Номер зачетной книжки:</label> {v#numbook}</p>
+<p><label>ФИО:</label> {v#fio} {v#remove}</p>
+<p><label>Список групп:</label></p>
+{v#data}
+<p><label>Фильтр по курсу и семестру:</label></p>
+
+<!--{listGroups}-->
+<div id="{i#list-groups}" class="list-group" data-click="changeGroup">
+ {v#item}
+</div>
+
+<!--{itemGroups}-->
+<a href="" class="list-group-item {v#active}" data-fid="{v#fieldid}" data-gid="{v#id}" >{v#numgroup} {v#fieldcode} {v#field} {v#note} {v#frmstudy} {v#numcrs} курс</a>
 
 <!--{table}-->
 <label>Текущая успеваемость:</label>

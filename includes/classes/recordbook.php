@@ -383,6 +383,7 @@ class RecordBook extends AbricosApplication {
        		$utm = Abricos::TextParser();
        		$group->numgroup = $utmf->Parser($group->numgroup);
        		$group->currentFieldId = intval($group->currentFieldId);
+       		$group->year = intval($group->year);
        		
        		if($group->groupid > 0){
         		RecordBookQuery::GroupEdit($this->db, $group);
@@ -947,7 +948,6 @@ class RecordBook extends AbricosApplication {
 	       			}
 	       			$res->oldGroup = $listGr;
 	       		}
-	       		
        		return $res;
        	}
        	

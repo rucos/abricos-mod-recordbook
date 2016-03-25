@@ -214,7 +214,7 @@ class RecordBookQuery {
 						".bkint($group->currentFieldId).",
 						'".bkstr($group->numgroup)."',
 							".bkint($group->numcrs).",
-								".TIMENOW."
+							".bkint($group->year)."
 					)
 		";
     	$db->query_write($sql);
@@ -248,7 +248,8 @@ class RecordBookQuery {
 			SET 
 				fieldid=".bkint($group->currentFieldId).",
 				numgroup='".bkstr($group->numgroup)."',
-				numcrs=".bkint($group->numcrs)."
+				numcrs=".bkint($group->numcrs).",
+				dateline=".bkint($group->year)."
 			WHERE groupid=".bkint($group->groupid)."
 			LIMIT 1
 		";
@@ -667,7 +668,8 @@ class RecordBookQuery {
 			SELECT
     			groupid as id,
     			numgroup,
-    			numcrs
+    			numcrs,
+    			dateline
 			FROM ".$db->prefix."rb_groups
 			WHERE fieldid = ".bkint($fieldid)."
 						AND remove = 0
@@ -851,6 +853,7 @@ class RecordBookQuery {
     				s.listgroup,
     				g.numgroup,
     				g.numcrs,
+    				g.dateline,
     				f.fieldid,
     				f.fieldcode,
     				f.field,

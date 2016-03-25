@@ -35,6 +35,7 @@ Component.entryPoint = function(NS){
         		if(this.get('groupListShow')){
         			tp.gel('numgroup').disabled = true;
         			tp.gel('numcrs').disabled = true;
+        			tp.gel('year').disabled = true;
 	        			 this.listStud = new NS.StudListWidget({
 	  	                     srcNode: tp.gel('listStud'),
 	  	                     groupid: this.get('groupid')
@@ -61,6 +62,8 @@ Component.entryPoint = function(NS){
 						+ groupItem.get('field') + " "
 						+ groupItem.get('frmstudy') + " "
 						+ groupItem.get('note'));
+         		
+         		tp.setValue('year', groupItem.get('dateline'));
         		
         		this.set('currentFieldId', groupItem.get('fieldid'));
         },
@@ -94,7 +97,8 @@ Component.entryPoint = function(NS){
 	        			numgroup: tp.getValue('numgroup'),
 	            		currentFieldId: this.get('currentFieldId'),
 	            		groupid: this.get('groupid'),
-	            		numcrs: tp.getValue('numcrs')
+	            		numcrs: tp.getValue('numcrs'),
+	            		year: tp.getValue('year')
 	        		};
 	        	
 	        		var empty = lib.isEmptyInput(obj);

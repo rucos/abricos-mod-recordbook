@@ -20,7 +20,7 @@ class RecordBookManager extends Ab_ModuleManager {
     }
 
     private $_recordbook = null;
-
+    
     public function IsAdminRole(){
     	return $this->IsRoleEnable(RecordBookAction::ADMIN);
     }

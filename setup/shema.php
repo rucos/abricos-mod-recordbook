@@ -51,7 +51,7 @@ if ($updateManager->isInstall('0.1.5')){
 					fieldid int(10) unsigned NOT NULL default 0 COMMENT 'id направления',
 					numgroup varchar(50) default NULL COMMENT 'Номер группы',
 					numcrs tinyint(1) unsigned NOT NULL default 0 COMMENT 'Номер курса',
-					dateline int(10) unsigned NOT NULL default 0 COMMENT 'Дата добавления',
+					dateline smallint(4) unsigned NOT NULL default 0 COMMENT 'Дата зачисления',
 					remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален?',
 					PRIMARY KEY (groupid)
 			)".$charset

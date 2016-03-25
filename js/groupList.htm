@@ -41,6 +41,7 @@
     <thead>
     <tr>
 	   	 <th>№группы</th>
+	   	 <th>Год поступления</th>
 	   	 <th>Направление</th>
 	     <th>Список группы</th>
 	     <th>Ведомости</th>
@@ -54,7 +55,8 @@
 
 <!--{row}-->
 <tr class="{v#success} {v#danger}">
-    <td>{v#numgroup}({v#numcrs})</td>
+    <td>{v#numgroup}({v#numcrs}) </td>
+    <td>{v#dateline}</td>
     <td>{v#fieldcode} {v#field} {v#frmstudy} {v#note} {v#label}</td>
     <td>
     	 <button data-click="showListGroup" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">

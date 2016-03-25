@@ -14,6 +14,10 @@
       "type": "int",
       "json": "nc"
     },
+    "dateline": {
+      "type": "int",
+      "json": "dl"
+    },
     "transferal": {
       "type": "int",
       "json": "tf"

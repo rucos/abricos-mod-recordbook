@@ -97,6 +97,9 @@ Component.entryPoint = function(NS){
         },
         hidePagination: function(){
         	this.template.setHTML('pagCourse', "");
+        	this.resetPagination();
+        },
+        resetPagination: function(){
         	this.set('filterSemestr', 0);
         	this.set('filterCourse', 0);
         },
@@ -106,6 +109,9 @@ Component.entryPoint = function(NS){
   			switch(parent.name){
 				case 'reportListWidget':
 					parent.reloadMarkList();
+						break;
+				case 'subjectListWidget':
+					parent.find();
 						break;
   			}
         }

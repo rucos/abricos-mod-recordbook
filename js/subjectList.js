@@ -23,11 +23,21 @@ Component.entryPoint = function(NS){
                 parent: this
             });
             
+        	this.paginationCourse = new NS.PaginationCourseWidget({
+        		srcNode: this.template.gel('pagCourse'),
+        		show: true,
+        		parent: this
+        	});
+            
         	this.reloadList();
         },
         destructor: function(){
             if (this.pagination){
                 this.pagination.destroy();
+            }
+            
+            if(this.paginationCourse){
+            	this.paginationCourse.destroy();
             }
         },
         reloadList: function(){
@@ -55,7 +65,11 @@ Component.entryPoint = function(NS){
 	        				}
 	        		}, this);
         	} else {
-        		this.find(tp.gel('findSubject').value);
+        		if(this.getFilter('filterSemestr') || this.getFilter('filterCourse')){
+        			this.find();
+        		} else {
+        			this.find(tp.gel('findSubject').value);
+        		}
         	}
         },
         renderList: function(){
@@ -224,8 +238,8 @@ Component.entryPoint = function(NS){
         		data = {
 	        		fieldid: this.get('fieldid'),
 	        		value: val || 0,
-	        		filterCourse: +this.get('filterCourse'),
-	        		filterSemestr: +this.get('filterSemestr'),
+	        		filterCourse: +this.getFilter('filterCourse'),
+	        		filterSemestr: +this.getFilter('filterSemestr'),
 	        		type: 'Subject'
 	        	};
         	
@@ -235,6 +249,9 @@ Component.entryPoint = function(NS){
         		} else {
         			this.showFind();
         		}
+        	} else {
+        		data.filterCourse = 0;
+        		data.filterSemestr = 0;
         	}
         	this.reqFindSubject(data);
         },
@@ -248,15 +265,6 @@ Component.entryPoint = function(NS){
         			}
         	}, this);
         },
-        setActive: function(collect, value){
-        	for(var i = 0; i < collect.length; i++){
-        		if(i == value - 1){
-        			collect[i].classList.add('active');
-        		} else {
-        			collect[i].classList.remove('active');
-        		}
-        	}
-        },
         showFind: function(){
         	var tp = this.template;
         	
@@ -265,14 +273,8 @@ Component.entryPoint = function(NS){
     			
     			this.set('find', true);
         },
-        unSetFind: function(){
-        	var tp = this.template;
-        	
-   			this.set('filterCourse', 0);
-			this.set('filterSemestr', 0);
-			
-			this.setActive(tp.gel('course').children, 0);
-			this.setActive(tp.gel('semestr').children, 0);
+        getFilter: function(name){
+        	return this.paginationCourse.get(name);
         }
     }, {
         ATTRS: {
@@ -282,9 +284,7 @@ Component.entryPoint = function(NS){
             subjectList: {value: null},
             dataTable: {value: ''},
             subjectid: {value: 0},
-            find: {value: false},
-            filterCourse: {value: 0},
-            filterSemestr: {value: 0}
+            find: {value: false}
         },
         CLICKS: {
         	'remove-show': {
@@ -364,8 +364,8 @@ Component.entryPoint = function(NS){
         			
         			if(val.length){
         				this.showFind();
-        					this.unSetFind();
-        						this.find(val);
+        					this.find(val);
+        					this.paginationCourse.hidePagination();
         			} else {
         				alert( 'Введите название предмета!' );
         					input.focus();
@@ -380,8 +380,9 @@ Component.entryPoint = function(NS){
         			tp.show('pagination');
         			
         			this.set('find', false);
+        			this.paginationCourse.resetPagination();
+        			this.paginationCourse.showPagination();
         			
-        			this.unSetFind();
         				this.reloadList();
         		}
         	},
@@ -390,32 +391,6 @@ Component.entryPoint = function(NS){
         			var subjectid = e.target.getData('id');
         			
     					this.removeSubject(subjectid, 0);
-        		}
-        	},
-        	setFilter: {
-        		event: function(e){
-        			var label = e.target.getDOMNode(),
-        				value = label.textContent;
-        			
-        			if(label.tagName == 'LABEL'){
-        				switch(value){
-        					case "Осенний" :
-        						this.set('filterSemestr', 1);
-        							value = 1;
-        								break;
-        					case "Весенний" : 
-        						this.set('filterSemestr', 2);
-        							value = 2;
-        								break;
-        					default:
-        						this.set('filterCourse', value);
-        							break;
-        				}
-        				this.setActive(label.parentNode.children, value);
-        			} else {
-        				return;
-        			}
-        			this.find();
         		}
         	}
         }

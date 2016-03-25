@@ -16,23 +16,27 @@ Component.entryPoint = function(NS){
     NS.StudListWidget = Y.Base.create('studListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
         	var tp = this.template,
-        		expeled = this.get('expeled');
+        		expeled = this.get('expeled'),
+        		groupid = this.get('groupid');
         	
         	if(expeled){
         		tp.addClass('head', 'hide');
         	}
-        	this.reloadList();
+        	if(groupid){
+        		this.reloadList();
+        	}
         },
         reloadList: function(){
         	var groupid = this.get('groupid'),
         		expeled = this.get('expeled'),
         		lib = this.get('appInstance');
         	
-        		this.set('waiting', true);
         			if(expeled){
-        				lib.expeledStudList(groupid, this.callBackStudList, this);
+        				this.set('waiting', true);
+        					lib.expeledStudList(groupid, this.callBackStudList, this);
         			} else {
-        				lib.studList(groupid, this.callBackStudList, this);
+        				this.set('waiting', true);
+        					lib.studList(groupid, this.callBackStudList, this);
         			}
         },
         callBackStudList: function(err, result){

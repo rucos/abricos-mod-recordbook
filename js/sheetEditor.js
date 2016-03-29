@@ -516,6 +516,10 @@ Component.entryPoint = function(NS){
         },
         isNumeric: function(n){
         	return !isNaN(parseFloat(n)) && isFinite(n) && n.indexOf('.') == -1;
+        },
+        printShow: function(){
+            var url = '/recordbook/print/';
+	           window.open(url, 'recordbookPrint', 'width=550,height=500');
         }
     }, {
         ATTRS: {
@@ -689,7 +693,7 @@ Component.entryPoint = function(NS){
         	},
         	print: {
         		event: function(e){
-        			console.log(this.get('currentIdSheet'));
+        			this.printShow();
         		}
         	}
         }

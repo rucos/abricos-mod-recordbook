@@ -31,6 +31,18 @@ class RecordBookModule extends Ab_Module {
         return $this->_manager;
     }
     
+    public function GetContentName(){
+    
+    	$dir = Abricos::$adress->dir;
+    	if (isset($dir[1])){
+    		switch ($dir[1]){
+    			case 'print':
+    				return $dir[1];
+    		}
+    	}
+    	return '';
+    }
+    
     public function Bos_IsMenu(){
     	return true;
     }

@@ -517,9 +517,13 @@ Component.entryPoint = function(NS){
         isNumeric: function(n){
         	return !isNaN(parseFloat(n)) && isFinite(n) && n.indexOf('.') == -1;
         },
-        printShow: function(){
-            var url = '/recordbook/print/';
-	           window.open(url, 'recordbookPrint', 'width=550,height=500');
+        printShow: function(idSheet, type){
+        	var id = idSheet ? idSheet : this.get('currentIdSheet'),
+        		type = type ? type : this.get('currentType'),
+        		url = '/recordbook/print/' + id + "/" + type,
+        		printWin = window.open(url, 'recordbookPrint', 'width=850,height=700');
+        	
+            	printWin.focus();
         }
     }, {
         ATTRS: {
@@ -651,6 +655,7 @@ Component.entryPoint = function(NS){
         					frmStudy: groupItem.get('frmstudy'),
         					fio: targ.getData('fio')
         				};
+        			
         			this.set('currentIdSheet', idSheet);
         			this.set('currentAttProc', attProc);
         			
@@ -693,7 +698,10 @@ Component.entryPoint = function(NS){
         	},
         	print: {
         		event: function(e){
-        			this.printShow();
+        			var idSheet = e.target.getData('id'),
+        				type = e.target.getData('type');
+        			
+        				this.printShow(idSheet, type);
         		}
         	}
         }

@@ -110,7 +110,7 @@ class RecordBook extends AbricosApplication {
             	return $this->FindStudReportToJSON($d->value);
             case "markStudReport":
             	return $this->MarkStudReportToJSON($d->data);
-            	
+            
         }
         return null;
     }
@@ -976,6 +976,32 @@ class RecordBook extends AbricosApplication {
        			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
        		}
        		return $this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr] = $list;
+       	}
+       	
+       	public function SheetPrint($id, $quory){
+       		return RecordBookQuery::$quory($this->db, $id);
+       	}
+       	
+       	public function SetTradMark($mark){
+       	    if($mark <= 100){
+        		if($mark < 51){
+        			return 'неудов.';
+        		} else if($mark >= 51 && $mark < 71){
+        			return 'удов.';
+        		} else if($mark >= 71 && $mark < 86){
+        			return 'хор.';
+        		} else {
+        			return 'отл.';
+        		}
+        	} else {
+        		switch($mark){
+        			case 101: return 'не зачтено';
+        			case 102: return 'зачтено';
+        			case 103: return 'удов.';
+        			case 104: return 'хор.';
+        			case 105: return 'отл.';
+        		}
+        	}
        	}
        	
 }

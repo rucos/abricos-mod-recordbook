@@ -2,7 +2,84 @@
 [tt=window]_sys[/tt]
 [script]content/print.php[/script]
 
+[bkvar=row]
+	<tr>
+		<td>{v#n}</td>
+		<td>{v#fio}</td>
+		<td>{v#numbook}</td>
+		<td>{v#firstatt}</td>
+		<td>{v#secondatt}</td>
+		<td>{v#thirdatt}</td>
+		<td>{v#prliminary}</td>
+		<td>{v#additional}</td>
+		<td>{v#debts}</td>
+		<td>{v#mark}</td>
+		<td>{v#tradmark}</td>
+		<td></td>
+	</tr>
+[/bkvar]
+
+[bkvar=rowEnd]
+	<tr>
+		<td colspan="3">Подпись преподавателя, подтверждающая результаты контрольных этапов</td>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td colspan="6">Директор филиала ___________________   </td>
+	</tr>
+[/bkvar]
+
+[bkvar=rowAddEnd]
+   <tr>
+        <td colspan="3" rowspan="2">Подпись преподавателя, подтверждающая результаты контрольных этапов</td>
+        <td rowspan="2"></td>
+        <td rowspan="2"></td>
+        <td rowspan="2"></td>
+        <td colspan="6">Дата выдачи________ Срок пересдачи________</td>
+    </tr>
+    <tr>
+        <td colspan="6">Директор филиала ___________________   </td>
+    </tr>
+[/bkvar]
+
+
 [*]-->
 <div>
-распечатка
+<p>{v#fullname}</p>
+<p>{v#shortname}</p>
+<p>{v#extra}ВЕДОМОСТЬ УЧЕТА КАЧЕСТВА УЧЕБНОЙ РАБОТЫ № {v#idSheet}/{v#numGroup}/{v#countSemestr}</p>
+<p>Учебная дисциплина: {v#nameSubject} Направление: {v#field}, кафедра {v#depart}</p>
+<p>Группа {v#numGroup} курс: {v#course}   Объем {v#volume} ({v#aud}/{v#self}) часов ({v#countZE} зач. ед.)     Форма контроля – {v#formControl}</p>
+<p>Семестр {v#semestr} ({v#countSemestr}) {v#year}/{v#year1} уч. г. Дата проведения {v#date} </p>
+<p>Фамилия, имя, отчество преподавателя: {v#fioTeacher}</p>
+<table border="1">
+	    <thead>
+		      <tr>
+		        <td rowspan="4">№ п/п</td>
+		        <td rowspan="4" width="20%">фамилия, имя, отчество студента</td>
+		        <td rowspan="4">номер зачетной книжки</td>
+		        <td>1 атт</td>
+		        <td>2 атт</td>
+		        <td>3 атт</td>
+		        <td rowspan="4">Предварительная оценка</td>
+		        <td rowspan="4">Дополнительные баллы</td>
+		        <td rowspan="4">Кол-во долгов</td>
+		        <td rowspan="4">Окончательная оценка</td>
+		        <td rowspan="4">Традиционная оценка</td>
+		        <td rowspan="4">Подпись</td>
+		   	 </tr>
+		   	 <tr>
+		        <td colspan="3">Веса аттест.(%)</td>
+		   	 </tr>
+		     <tr>
+		        <td>{v#att1}</td>
+		        <td>{v#att2}</td>
+		        <td>{v#att3}</td>
+		     </tr>
+		     <tr>
+		        <td colspan="3">Аттест. оценки</td>
+		     </tr>
+	    </thead>
+	    <tbody>{v#rows}</tbody>
+</table>
 </div>

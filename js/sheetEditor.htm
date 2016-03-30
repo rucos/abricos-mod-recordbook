@@ -69,21 +69,6 @@
                     <img src="/images/loading.gif"/>
                 </span>
 		       	<div id="{i#tablMark}"></div>
-		       		<div class="row">
-				            <div class="col-md-7">
-				              
-				            </div>
-				            <div class="col-md-5">
-				                <div class="btn-toolbar pull-right hidden-print">
-						             <button data-click="print" type="button" class=" btn btn-default btn-xs" data-wait="disable">
-				                        Печать
-				                    </button>
-				                    <button data-click="cancelMark" type="button" class=" btn btn-default btn-xs" data-wait="disable">
-				                        Отмена
-				                    </button>
-				           		</div>
-				       		</div>
-		       		</div>
 			</div>
 	</div>
 </div>
@@ -145,6 +130,11 @@
     <td>{v#namesubject} - {v#formcontrol} {v#isRemove}</td>
     <td>{v#date}</td>
     <td>{v#fioteacher}</td>
+    <td>
+    	<button data-click="print" data-type="{v#type}" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    		Печать
+    	</button>
+    </td>
     <td>
     	<button data-click="showMark" data-id="{v#id}" data-ns="{v#namesubject}" data-fio="{v#fioteacher}" data-formControl="{v#formcontrol}/{v#type}/{v#project}" data-att="{v#firstattproc}-{v#secondattproc}-{v#thirdattproc}" class="btn btn-default btn-xs" data-wait="disable">
     		Оценки
@@ -270,7 +260,7 @@
 		     </tr>
 	    </thead>
 	    <tbody>{v#rows}</tbody>
-	</table>
+</table>
 
 <!--{rowMarkStudOch}-->
 <tr id="{v#id}">

@@ -5,7 +5,7 @@
 [bkvar=row]
 	<tr>
 		<td>{v#n}</td>
-		<td>{v#fio}</td>
+		<td align="left">{v#fio}</td>
 		<td>{v#numbook}</td>
 		<td>{v#firstatt}</td>
 		<td>{v#secondatt}</td>
@@ -30,7 +30,7 @@
 [/bkvar]
 
 [bkvar=rowAddEnd]
-   <tr>
+   <tr height="20px">
         <td colspan="3" rowspan="2">Подпись преподавателя, подтверждающая результаты контрольных этапов</td>
         <td rowspan="2"></td>
         <td rowspan="2"></td>
@@ -44,37 +44,92 @@
 
 
 [*]-->
+<style type="text/css">
+	table, th, td  {
+		border: 1px solid black;
+		border-collapse: collapse;
+	}
+	.vert-text{
+		-ms-transform: rotate(90deg);
+		-moz-transform: rotate(90deg);
+		-webkit-transform: rotate(90deg);
+		transform: rotate(90deg);
+		
+		-ms-transform-origin: left top 0;
+		-moz-transform-origin: left top 0;
+		-webkit-transform-origin: left top 0;
+		transform-origin: left top 0;
+		
+		margin-left: 50px;
+		padding: 0;
+		float: left;
+		font-size: 9pt;
+		text-align: center;
+		width: 100px;
+	}
+	
+	.sheetTable tr{
+		text-align: center;
+		vertical-align: middle;
+	}
+	
+	.sheetTable .vert{
+		height:100px;
+		width:50px;
+	}
+	
+	p {
+		margin: 1px;
+	}
+	
+	.center {
+		text-align: center;
+	}
+	
+	.left {
+		margin-left: 100px;
+	}
+	
+	@media print {
+		.print-button {
+			display: none;
+		}
+	}
+</style>
+
 <div>
-<p>{v#fullname}</p>
-<p>{v#shortname}</p>
-<p>{v#extra}ВЕДОМОСТЬ УЧЕТА КАЧЕСТВА УЧЕБНОЙ РАБОТЫ № {v#idSheet}/{v#numGroup}/{v#countSemestr}</p>
-<p>Учебная дисциплина: {v#nameSubject} Направление: {v#field}, кафедра {v#depart}</p>
-<p>Группа {v#numGroup} курс: {v#course}   Объем {v#volume} ({v#aud}/{v#self}) часов ({v#countZE} зач. ед.)     Форма контроля – {v#formControl}</p>
-<p>Семестр {v#semestr} ({v#countSemestr}) {v#year}/{v#year1} уч. г. Дата проведения {v#date} </p>
+<p class="print-button"><button onClick="window.print()">Печать</button></p>
+<p class="center">{v#fullname}</p>
+<p class="center">{v#shortname}</p>
+<p class="center">{v#extra}ВЕДОМОСТЬ УЧЕТА КАЧЕСТВА УЧЕБНОЙ РАБОТЫ № {v#idSheet}/{v#numGroup}/{v#countSemestr}</p>
+<p>Учебная дисциплина: {v#nameSubject} <span class="left">Направление: {v#field}, кафедра {v#depart}</span></p>
+<p>Группа {v#numGroup} <span class="left">курс: {v#course}</span>   <span class="left">{v#volume}</span>    <span class="left"> Форма контроля – {v#formControl}</span></p>
+<p>Семестр {v#semestr} ({v#countSemestr}) {v#year}/{v#year1} уч. г. <span class="left">Дата проведения {v#date} </span></p>
 <p>Фамилия, имя, отчество преподавателя: {v#fioTeacher}</p>
-<table border="1">
+
+<table class="sheetTable">
 	    <thead>
 		      <tr>
-		        <td rowspan="4">№ п/п</td>
-		        <td rowspan="4" width="20%">фамилия, имя, отчество студента</td>
-		        <td rowspan="4">номер зачетной книжки</td>
+		        <td rowspan="4" width="3%">№ п/п</td>
+		        <td rowspan="4" width="15%">Фамилия, имя, отчество студента</td>
+		        <td rowspan="4" width="10%">номер зачетной книжки</td>
 		        <td>1 атт</td>
 		        <td>2 атт</td>
 		        <td>3 атт</td>
-		        <td rowspan="4">Предварительная оценка</td>
-		        <td rowspan="4">Дополнительные баллы</td>
-		        <td rowspan="4">Кол-во долгов</td>
-		        <td rowspan="4">Окончательная оценка</td>
-		        <td rowspan="4">Традиционная оценка</td>
-		        <td rowspan="4">Подпись</td>
+		        <td rowspan="4" width="5%"><div class="vert"><div class="vert-text">Предварительная оценка</div></div></td>
+		        <td rowspan="4" width="5%"><div class="vert"><div class="vert-text">Дополнительные баллы</div></div></td>
+		        <td rowspan="4" width="5%"><div class="vert"><div class="vert-text">Кол-во долгов</div></div></td>
+		        <td rowspan="4" width="5%"><div class="vert"><div class="vert-text">Окончательная оценка</div></div></td>
+		        <td rowspan="4" width="7%"><div class="vert"><div class="vert-text">Традиционная оценка</div></div></td>
+		        <td rowspan="4" width="10%"><div class="vert"><div class="vert-text">Подпись</div></td>
 		   	 </tr>
 		   	 <tr>
 		        <td colspan="3">Веса аттест.(%)</td>
 		   	 </tr>
 		     <tr>
-		        <td>{v#att1}</td>
-		        <td>{v#att2}</td>
-		        <td>{v#att3}</td>
+		        <td width="6%">{v#att1}</td>
+		        <td width="6%">{v#att2}</td>
+		        <td width="6%">{v#att3}</td>
 		     </tr>
 		     <tr>
 		        <td colspan="3">Аттест. оценки</td>

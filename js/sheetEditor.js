@@ -251,6 +251,7 @@ Component.entryPoint = function(NS){
         			form = 'Курсовой проект';
         		}
         	}
+        	this.set('currentType', type);
         	return form;
         },
         renderTableZaoch: function(form){
@@ -521,9 +522,9 @@ Component.entryPoint = function(NS){
         	var id = idSheet ? idSheet : this.get('currentIdSheet'),
         		type = type ? type : this.get('currentType'),
         		url = '/recordbook/print/' + id + "/" + type,
-        		printWin = window.open(url, 'recordbookPrint', 'width=850,height=700');
-        	
-            	printWin.focus();
+        		printWin = window.open(url, 'recordbookPrint', 'width=1050,height=800');
+            	
+        	printWin.focus();
         }
     }, {
         ATTRS: {

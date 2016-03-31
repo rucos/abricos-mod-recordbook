@@ -904,8 +904,8 @@ class RecordBookQuery {
     				sj.numcrs as nc,
     				sj.semestr as sem,
     				sj.numhours as nh,
+    				sj.project as pj,
     				f.fieldcode as fc,
-    				f.depart as dt,
     				g.numgroup as ng,
     				g.dateline as dad
 			FROM ".$db->prefix."rb_sheet sh

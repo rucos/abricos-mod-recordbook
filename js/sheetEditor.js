@@ -503,7 +503,7 @@ Component.entryPoint = function(NS){
         	}
         },
         checkInp: function(val){
-        	if(!this.isNumeric(val)){
+        	if(!this.get('appInstance').isNumeric(val)){
         		alert( 'Введите число' );
         			return false;
         	} else if(!this.isIncluded(val)){
@@ -514,9 +514,6 @@ Component.entryPoint = function(NS){
         },
         isIncluded: function(n){
         	return n >= 0 && n <= 100;
-        },
-        isNumeric: function(n){
-        	return !isNaN(parseFloat(n)) && isFinite(n) && n.indexOf('.') == -1;
         },
         printShow: function(idSheet, type){
         	var id = idSheet ? idSheet : this.get('currentIdSheet'),

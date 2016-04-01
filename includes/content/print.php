@@ -33,15 +33,22 @@ $brick = Brick::$builder->brick;
 $v = &$brick->param->var;
 
 $sheet = $modManager->GetRecordBook()->SheetPrint($id, 'SheetItem');
-
 $markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
-$rowsmark = "";
-$i = 0;
 
+	$vers = phpversion();
+	if($vers <= '5.3.13'){
+		$pattern = "/(\w+) (\w)\w+ (\w)\w+/iu";
+	} else {
+		$pattern = "/(\W+) (\W)\W+ (\W)\W+/iu";
+	}
+	
+	$i = 0;
+	$rowsmark = "";
 	while ($d = $modManager->db->fetch_array($markList)){
+		
 		$rowsmark .= Brick::ReplaceVarByData($v['row'], array(
 				"n" => ++$i,
-				"fio" => preg_replace('/(\w+) (\w)\w+ (\w)\w+/iu', '$1 $2. $3.', $d['fio']),
+				"fio" => preg_replace($pattern, '$1 $2. $3.', $d['fio']),
 				"numbook" => $d['numbook'],
 				"firstatt" => $d['firstatt'],
 				"secondatt" => $d['secondatt'],
@@ -53,15 +60,18 @@ $i = 0;
 				"tradmark" => $modManager->GetRecordBook()->SetTradMark($d['mark'])
 		));
 	}
-
-		if($type % 2 !== 0) {
-			$rowEnd = $v['rowEnd'];
-			$extra = "";
-		} else {
-			$rowEnd = $v['rowAddEnd'];
-			$extra = "ДОПОЛНИТЕЛЬНАЯ ";
-		}
-		$rowsmark .=  $rowEnd; 
+	
+		$sheetId = $id;
+		
+			if($type % 2 !== 0) {
+				$rowEnd = $v['rowEnd'];
+				$extra = "";
+			} else {
+				$rowEnd = $v['rowAddEnd'];
+				$extra = "ДОПОЛНИТЕЛЬНАЯ ";
+				$sheetId = "_____";
+			}
+		$rowsmark .=  $rowEnd;
 
 			$countSemestr = $sheet['nc'] * 2 + ($sheet['sem'] - 2);
 			$yearEnd = $sheet['dad'] + $sheet['nc'];
@@ -87,7 +97,7 @@ $i = 0;
 							"fullname" => $fullname,
 							"shortname" =>  $shortname,
 							"extra" => $extra,
-							"idSheet" => $id,
+							"idSheet" => $sheetId,
 							"numGroup" => $sheet['ng'],
 							"countSemestr" => $countSemestr,
 							"nameSubject" => $sheet['ns'],

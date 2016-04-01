@@ -12,7 +12,7 @@ $updateManager = Ab_UpdateManager::$current;
 $db = Abricos::$db;
 $pfx = $db->prefix;
 
-if ($updateManager->isInstall('0.1.5')){
+if ($updateManager->isInstall('0.2.0')){
 	
 	Abricos::GetModule('recordbook')->permission->Install();
 

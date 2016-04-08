@@ -44,6 +44,7 @@
 
 [*]-->
 <style type="text/css">
+	
 	table, th, td  {
 		border: 1px solid black;
 		border-collapse: collapse;
@@ -89,10 +90,16 @@
 			display: none;
 		}
 	}
+	
 </style>
 
-<div>
-<p class="print-button"><button onClick="window.print()">Печать</button></p>
+
+<p class="print-button">
+	Размер шрифта:
+	<input type="range" min="70" max="110" step="5" value="100" onInput="CheckFontSize(this.value)">
+	<button onClick="window.print()">Печать</button>
+</p>
+<div id="print" style="font-size: 100%;">
 <p class="center">{v#fullname}</p>
 <p class="center">{v#shortname}</p>
 <p class="center">{v#extra}ВЕДОМОСТЬ УЧЕТА КАЧЕСТВА УЧЕБНОЙ РАБОТЫ № {v#idSheet}/{v#numGroup}/{v#countSemestr}</p>
@@ -101,7 +108,7 @@
 <p>Семестр {v#semestr} ({v#countSemestr}) {v#year}/{v#year1} уч. г. <span class="left">Дата проведения {v#date} </span></p>
 <p>Фамилия, имя, отчество преподавателя: {v#fioTeacher}</p>
 
-<table class="sheetTable">
+<table class="sheetTable" style="font-size: 90%;">
 	    <thead>
 		      <tr>
 		        <td rowspan="4" width="3%">№ п/п</td>
@@ -132,3 +139,9 @@
 	    <tbody>{v#rows}</tbody>
 </table>
 </div>
+
+<script>
+	function CheckFontSize(size){
+		document.getElementById('print').style.fontSize = size + '%';
+	}
+</script>

@@ -276,12 +276,9 @@ class RecordBook extends AbricosApplication {
        		$d->semestr = intval($d->semestr);
        		$d->groupid = intval($d->groupid);
        		 
-       		if (isset($this->_cache['SubjectListProgress'][$d->fieldid])){
-       			return $this->_cache['SubjectListProgress'][$d->fieldid];
-       		}
 			$list = $this->SubjectListModels('SubjectListProgress', $d);
 			
-       		return $this->_cache['SubjectListProgress'][$d->fieldid] = $list;
+       		return $list;
        	}
        	
        	public function SubjectListModels($query, $d){
@@ -753,55 +750,16 @@ class RecordBook extends AbricosApplication {
        	
        	public function MarkListStatToJSON($d){
        		$res = $this->MarkListStat($d);
+       		$resProj = $this->MarkListStat($d, true);
+       		
        		$mark = $this->ResultToJSON('markListStat', $res);
+       		$markProj = $this->ResultToJSON('markListStatProj', $resProj);
        		
        		$subject = $this->SubjectListToJSON($d);
        		$studlist = $this->StudListToJSON($d->groupid);
        		
-       		
-       		/*
-       		 * 
-       		 * Подсчет рейтинга и сортировка 
-       		 * 
-       		 * */
        		if($d->view == 2){
-       			$arrSubj = $subject->subjectList->list;
-       			
-       			foreach($arrSubj as $value){
-       				$hour = explode("/", $value->nh);
-       				
-       				$value->nh = (($hour[0] + $hour[1]) / 36).'';
-       			}
-       			
-      			$arrStud = $studlist->studList->list;
-      			$arrMark = $mark->markListStat->list;
-      			$arrRating = array();
-      			
-       			foreach($arrStud as $keySt => $stud){
-       				$rating = 0;
-       				
-       				foreach($arrMark as $keyMk => $mark){
-       					if($stud->id == $mark->stid){
-       						if(isset($mark->mk) && $mark->mk >= 51){
-       							foreach($arrSubj as $subj){
-       								if($mark->sid == $subj->id){
-       									$rating += $subj->nh * $mark->mk;
-       								}
-       							}
-       						} else {
-       							$rating = 0;
-       								break;
-       						}
-       						unset($arrMark[$keyMk]);
-       					}
-       				}
-       				$stud->rt = round($rating / 100, 2);
-       				
-       				$arrRating[$keySt] = $stud->rt;
-       			}
-       			array_multisort($arrRating, SORT_DESC, $arrStud);
-       			
-       			$studlist->studList->list = $arrStud;
+       			$studlist->studList->list = $this->CalcRating($subject, $studlist, $mark, $markProj);
        		}
        		
        		$list = $this->ImplodeJSON(
@@ -809,13 +767,69 @@ class RecordBook extends AbricosApplication {
        				$studlist
        		);
        		
-       		return $this->ImplodeJSON(
+       		$listMark = $this->ImplodeJSON(
        				$this->ResultToJSON('markListStat', $res),
+       				$this->ResultToJSON('markListStatProj', $resProj)
+       		);
+       		
+       		return $this->ImplodeJSON(
+       				$listMark,
        				$list
        		); 
        	}
        	
-       	public function MarkListStat($d){
+       	/*
+       	 *
+       	* Подсчет рейтинга и сортировка
+       	*
+       	* */
+       	public function CalcRating($subject, $studlist, $mark, $markProj){
+       		$arrSubj = $subject->subjectList->list;
+       		$arrStud = $studlist->studList->list;
+       		$arrMark = $mark->markListStat->list;
+       		$arrMarkProj = $markProj->markListStatProj->list;
+       		
+       		foreach($arrSubj as $value){
+       			$hour = explode("/", $value->nh);
+       			 
+       			$value->nh = (($hour[0] + $hour[1]) / 36).'';
+       		}
+       		
+       		$arrRating = array();
+       		
+       		foreach($arrStud as $keySt => $stud){
+       			$rating = 0;
+       			 
+       			foreach($arrMark as $keyMk => $mark){
+       				if($stud->id == $mark->stid){
+       					if(isset($mark->mk) && $mark->mk >= 51){
+       						foreach($arrSubj as $subj){
+       							if($mark->sid == $subj->id){
+       								$rating += $subj->nh * $mark->mk;
+       							}
+       						}
+       					} else {
+       						$rating = 0;
+       							break;
+       					}
+       					unset($arrMark[$keyMk]);
+       				}
+       			}
+       			
+       			$stud->rt = round($rating / 100, 2);
+       			 
+       			$arrRating[$keySt] = $stud->rt;
+       		}
+       		array_multisort($arrRating, SORT_DESC, $arrStud);
+       		
+       		return $arrStud;
+       	}
+       	
+       	public function Rating($array, $stud){
+       		
+       	}
+       	
+       	public function MarkListStat($d, $project = false){
        		
        		$d->groupid = intval($d->groupid);
        		$d->fieldid = intval($d->fieldid);
@@ -823,18 +837,14 @@ class RecordBook extends AbricosApplication {
        		$d->semestr = intval($d->semestr);
        		$d->view = intval($d->view);
        		
-       		if (isset($this->_cache['markListStat'][$d->groupid])){
-       			return $this->_cache['markListStat'][$d->groupid];
-       		}
-       		
-       		$rows = RecordBookQuery::MarkListStat(Abricos::$db, $d);
+       		$rows = RecordBookQuery::MarkListStat(Abricos::$db, $d, $project);
        		
        		$list = $this->models->InstanceClass('MarkListStat');
        		while (($dd = $this->db->fetch_array($rows))){
        			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
        		}
        		
-       		return $this->_cache['markListStat'][$d->groupid] = $list;
+       		return $list;
        	}
        	
        	public function ConfigSaveToJSON($d){

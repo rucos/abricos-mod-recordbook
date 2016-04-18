@@ -72,7 +72,8 @@ Component.entryPoint = function(NS){
 	    			this.set('waiting', false);
 	    				if(!err){
 	    					this.set('subjectList', result.subjectList);
-	    					this.set('markListStat', result.markListStat);
+	    					this.set('mark', result.markListStat);
+	    					this.set('markProj', result.markListStatProj);
 	    					this.set('studList', result.studList);
 	    						
 	    						this.renderTable();
@@ -92,14 +93,26 @@ Component.entryPoint = function(NS){
 				}
         		
         		subjectList.each(function(subject){
-        				
-	        			lstTh += tp.replace('markSubj', {
-	        				namesubject: subject.get('namesubject')
-	        			});
-	        			
-	    	    		lstMarkTd += tp.replace('markTd', {
-	    	    		      id: subject.get('id')
-	    	    		});
+        			var namesubject = subject.get('namesubject'),
+        				subjectid = subject.get('id'),
+        				project = subject.get('project');
+        			
+	    				lstTh += this.replaceTh(namesubject);
+	    				lstMarkTd += this.replaceTd(subjectid, 0);
+	    				
+	        			if(project.indexOf('1') !== -1){
+	        				var arr = project.split(','),
+	        					title = "";
+	        				
+	        				if(arr[0] == 1){
+	        					title = " (Курсовая работа)";
+	        				} else if(arr[1] == 1){
+	        					title = " (Курсовой проект)";
+	        				}
+		        				lstTh += this.replaceTh(namesubject + title);
+		        				
+			    	    		lstMarkTd += this.replaceTd(subjectid, 1);
+	        			} 
         		}, this);
         		
         		tp.setHTML('groupInfo.markTable', tp.replace('markTable', {
@@ -107,6 +120,17 @@ Component.entryPoint = function(NS){
         			rows: this.renderStudList(lstMarkTd)
         		}));
         			this.renderMarkListStat();
+        },
+        replaceTh: function(namesubject){
+        	return this.template.replace('markSubj', {
+				namesubject: namesubject
+			});
+        },
+        replaceTd: function(subjectid, proj){
+        	return this.template.replace('markTd', {
+        		id: subjectid,
+        		proj: proj
+			});
         },
         renderStudList: function(lstMarkTd){
         	var studList = this.get('studList'),
@@ -125,13 +149,12 @@ Component.entryPoint = function(NS){
         		return lstTd;
         },
         renderMarkListStat: function(){
-        	var markListStat = this.get('markListStat'),
+        	var markList = this.get('mark'),
         		tp = this.template,
-        		view = this.get('view'),
-        		idRow = 'rowMarkTable.stud-',
-        		lib = this.get('appInstance');
+        		idRow = 'rowMarkTable.stud-';
+        		
         	
-        	markListStat.each(function(mark){
+        	markList.each(function(mark){
         		var id = idRow + mark.get('studid'),
         			row = tp.one(id);
         		
@@ -141,17 +164,42 @@ Component.entryPoint = function(NS){
 	        				mk = mark.get('mark');
 	        			
 		        		for(var i = 3; i < len; i++){
-		        			if(tdRow[i].id == mark.get('subjectid')){
-		        				if(mk < 51 || mk === 101){
-		        					tdRow[i].classList.add('danger');
-		        				}
-		        				
-		        				tdRow[i].innerHTML = view == 1 ? lib.setTradMark(mk) : mk;
-		        					break;
+		        			if(tdRow[i].dataset.proj == 0){
+			        			if(tdRow[i].id == mark.get('subjectid')){
+			        				this.validMark(tdRow[i], mk);
+			        					break;
+			        			}
+		        			} else {
+		        				this.renderMarkProj(tdRow[i], mark.get('studid'));
 		        			}
 		        		}
 	        		}
         	}, this);
+        },
+        renderMarkProj: function(tdRow, studid){
+        	var markList = this.get('markProj'),
+        		lib = this.get('appInstance'),
+        		view = this.get('view');
+        	
+        	markList.each(function(mark){
+        		var mk = mark.get('mark'),
+        			curStudid = mark.get('studid');
+        		
+        		if(tdRow.id == mark.get('subjectid') && curStudid == studid){
+        			this.validMark(tdRow, mk);
+    					return;
+        		}
+        	}, this);
+        },
+        validMark: function(tdRow, mk){
+        	var view = this.get('view'),
+        		lib = this.get('appInstance');	
+        	
+			if(mk < 51 || mk === 101){
+				tdRow.classList.add('danger');
+			}
+			
+			tdRow.innerHTML = view == 1 ? lib.setTradMark(mk) : mk;
         },
         lightRow: function(rowIndex, cellIndex){
         	var tp = this.template,
@@ -188,9 +236,10 @@ Component.entryPoint = function(NS){
             course: {value: 0},
             semestr: {value: null},
             subjectList: {value: null},
-            markListStat: {value: null},
+            mark: {value: null},
             studList: {value: null},
-            view: {value: null}
+            view: {value: null},
+            markProj: {value: null}
         },
         CLICKS: {
         	close:{

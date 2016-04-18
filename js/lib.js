@@ -172,6 +172,9 @@ Component.entryPoint = function(NS){
     			args: ['data'],
     			type: 'modelList:MarkListStat'
     		},
+    		markListStatProj: {
+    			type: 'modelList:MarkListStat'
+    		},
     		configSave: {
     			args: ['data']
     		},

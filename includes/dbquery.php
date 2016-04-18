@@ -725,7 +725,8 @@ class RecordBookQuery {
 					subjectid as id,
 					namesubject,
 					formcontrol,
-    				numhours
+    				numhours,
+    				project
 			FROM ".$db->prefix."rb_subject
 			WHERE fieldid = ".bkint($d->fieldid)." 
 						AND numcrs = ".bkint($d->numcrs)."
@@ -737,19 +738,26 @@ class RecordBookQuery {
     	
     }
     
-    public static function MarkListStat(Ab_Database $db, $d){
+    public static function MarkListStat(Ab_Database $db, $d, $project){
     	
-    	$sql = "
-    		SELECT
-    				sh.sheetid
-    		FROM ".$db->prefix."rb_sheet sh
-    		INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = sh.subjectid
-    		WHERE sh.groupid = ".bkint($d->groupid)."
-    				AND sj.fieldid = ".bkint($d->fieldid)."
-    					AND sj.numcrs = ".bkint($d->numcrs)."
-							AND sj.semestr = ".bkint($d->semestr)."
-								AND sh.type < 3
-    	";
+    	if($project){
+    		$type = "sh.type > 2";
+    	} else {
+    		$type = "sh.type < 3";
+    	}
+    	
+	    	$sql = "
+	    		SELECT
+	    				sh.sheetid
+	    		FROM ".$db->prefix."rb_sheet sh
+	    		INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = sh.subjectid
+	    		WHERE sh.groupid = ".bkint($d->groupid)."
+	    				AND sj.fieldid = ".bkint($d->fieldid)."
+	    					AND sj.numcrs = ".bkint($d->numcrs)."
+								AND sj.semestr = ".bkint($d->semestr)."
+									AND ".$type."
+	    	";
+
     	$rows = $db->query_read($sql);
     	
     	$sheet = '';

@@ -821,6 +821,7 @@ class RecordBook extends AbricosApplication {
        						
        				}
        			}
+
   
        			$stud->rt = round($ratingMark / 100, 2);
        			 

@@ -771,6 +771,8 @@ class RecordBook extends AbricosApplication {
        				$this->ResultToJSON('markListStat', $res),
        				$this->ResultToJSON('markListStatProj', $resProj)
        		);
+//        		print_r($list);
+//        		print_r($listMark);
        		
        		return $this->ImplodeJSON(
        				$listMark,
@@ -788,35 +790,84 @@ class RecordBook extends AbricosApplication {
        		$arrStud = $studlist->studList->list;
        		$arrMark = $mark->markListStat->list;
        		$arrMarkProj = $markProj->markListStatProj->list;
+       		$countMark = count($arrMark);
+       		$countMarkProj = count($arrMarkProj);
        		
-       		foreach($arrSubj as $value){
-       			$hour = explode("/", $value->nh);
-       			 
-       			$value->nh = (($hour[0] + $hour[1]) / 36).'';
+       		if($countMark || $countMarkProj){
+       			foreach($arrSubj as $value){
+       				$hour = explode("/", $value->nh);
+       				 
+       				$value->nh = (($hour[0] + $hour[1]) / 36).'';
+       			}
+       			
+       			$arrRating = array();
        		}
-       		
-       		$arrRating = array();
-       		
+       	
        		foreach($arrStud as $keySt => $stud){
-       			$rating = 0;
-       			 
-       			foreach($arrMark as $keyMk => $mark){
-       				if($stud->id == $mark->stid){
-       					if(isset($mark->mk) && $mark->mk >= 51){
-       						foreach($arrSubj as $subj){
-       							if($mark->sid == $subj->id){
-       								$rating += $subj->nh * $mark->mk;
-       							}
-       						}
+       			$ratingMark = 0;
+       			
+       			if($countMark > 0){
+       				$ratingMark = $this->Rating($arrMark, $stud, $arrSubj);    				
+       			}
+       			
+       			if($ratingMark === -1){
+       				$ratingMark = 0;
+       			} else {
+       				if($countMarkProj > 0){
+       					$ratingMarkProj = $this->Rating($arrMarkProj, $stud, $arrSubj, 1);
+       					if($ratingMarkProj === -1){
+       						$ratingMark = 0;
        					} else {
-       						$rating = 0;
-       							break;
+       						$ratingMark += $ratingMarkProj;
        					}
-       					unset($arrMark[$keyMk]);
+       						
        				}
        			}
        			
-       			$stud->rt = round($rating / 100, 2);
+//        			foreach($arrMark as $keyMk => $mark){
+//        				if($stud->id == $mark->stid){
+//        					if(isset($mark->mk) && $mark->mk >= 51){
+//        						foreach($arrSubj as $subj){
+//        							if($mark->sid == $subj->id){
+//        								$ratingMark += $subj->nh * $mark->mk;
+//        							}
+//        						}
+//        					} else {
+//        						$ratingMark = 0;
+//        							break;
+//        					}
+//        					unset($arrMark[$keyMk]);
+//        				}
+//        			}
+       			
+//        				foreach($arrMarkProj as $keyMkPr => $markPr){
+//        					if($stud->id == $markPr->stid){
+//        						if(isset($markPr->mk) && $markPr->mk >= 51){
+//        							foreach($arrSubj as $subj){
+//        								if($markPr->sid == $subj->id){
+//        									if($subj->fc == "-"){
+//        										$ratingMarkProject += $subj->nh * $markPr->mk;
+//        									} else {
+//        										$ratingMarkProject += $markPr->mk;
+//        									}
+//        								}
+//        							}
+//        						} else {
+//        							$ratingMarkProject = 0;
+//        								break;
+//        						}
+//        						unset($arrMarkProj[$keyMkPr]);
+//        					}
+//        				}
+       				
+// 	       				if($ratingMarkProject > 0 && $ratingMark > 0){
+// 	       					$ratingMark += $ratingMarkProject;
+// 	       				} else {
+// 	       					$ratingMark = 0;
+// 	       				}
+       			
+  
+       			$stud->rt = round($ratingMark / 100, 2);
        			 
        			$arrRating[$keySt] = $stud->rt;
        		}
@@ -825,8 +876,34 @@ class RecordBook extends AbricosApplication {
        		return $arrStud;
        	}
        	
-       	public function Rating($array, $stud){
-       		
+       	public function Rating($arr, $stud, $arrSubj, $proj = 0){
+       		$rating = 0;
+	       		foreach($arr as $mark){
+	       			if($stud->id == $mark->stid){
+	       				if(isset($mark->mk) && $mark->mk >= 51){
+	       					foreach($arrSubj as $subj){
+	       						if($mark->sid == $subj->id){
+	       							
+	       							switch($proj){
+	       								case 0: 
+	       									$rating += $subj->nh * $mark->mk;
+	       									 	break;
+	       								case 1:
+	       									if($subj->fc == '-'){
+	       										$rating += $subj->nh * $mark->mk;
+	       									} else {
+	       										$rating += $mark->mk;
+	       									}
+	       							}
+	       						}
+	       					}
+	       				} else {
+	       					$rating = -1;
+	       						break;
+	       				}
+	       			}
+	       		}
+       		return $rating;
        	}
        	
        	public function MarkListStat($d, $project = false){

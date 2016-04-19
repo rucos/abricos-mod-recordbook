@@ -72,8 +72,8 @@ Component.entryPoint = function(NS){
 	    			this.set('waiting', false);
 	    				if(!err){
 	    					this.set('subjectList', result.subjectList);
-	    					this.set('mark', result.markListStat);
-	    					this.set('markProj', result.markListStatProj);
+	    					this.set('markList', result.markListStat);
+	    					this.set('markListProj', result.markListStatProj);
 	    					this.set('studList', result.studList);
 	    						
 	    						this.renderTable();
@@ -97,8 +97,10 @@ Component.entryPoint = function(NS){
         				subjectid = subject.get('id'),
         				project = subject.get('project');
         			
-	    				lstTh += this.replaceTh(namesubject);
-	    				lstMarkTd += this.replaceTd(subjectid, 0);
+        				if(subject.get('formcontrol') != '-'){
+            				lstTh += this.replaceTh(namesubject);
+    	    				lstMarkTd += this.replaceTd(subjectid, 0);
+        				}
 	    				
 	        			if(project.indexOf('1') !== -1){
 	        				var arr = project.split(','),
@@ -119,7 +121,8 @@ Component.entryPoint = function(NS){
         			th: lstTh,
         			rows: this.renderStudList(lstMarkTd)
         		}));
-        			this.renderMarkListStat();
+        			this.renderMarkList('markList', 0);
+        			this.renderMarkList('markListProj', 1);
         },
         replaceTh: function(namesubject){
         	return this.template.replace('markSubj', {
@@ -148,48 +151,30 @@ Component.entryPoint = function(NS){
         		
         		return lstTd;
         },
-        renderMarkListStat: function(){
-        	var markList = this.get('mark'),
-        		tp = this.template,
-        		idRow = 'rowMarkTable.stud-';
-        		
-        	
-        	markList.each(function(mark){
-        		var id = idRow + mark.get('studid'),
-        			row = tp.one(id);
-        		
+        renderMarkList: function(attr, proj){
+        	var markList = this.get(attr),
+    		tp = this.template,
+    		idRow = 'rowMarkTable.stud-';
+    		
+	    	markList.each(function(mark){
+	    		var id = idRow + mark.get('studid'),
+	    			row = tp.one(id);
+	    		
 	        		if(row){
 	        			var tdRow = row.getDOMNode().cells,
 	        				len = tdRow.length,
 	        				mk = mark.get('mark');
 	        			
 		        		for(var i = 3; i < len; i++){
-		        			if(tdRow[i].dataset.proj == 0){
+		        			if(tdRow[i].dataset.proj == proj){
 			        			if(tdRow[i].id == mark.get('subjectid')){
 			        				this.validMark(tdRow[i], mk);
 			        					break;
 			        			}
-		        			} else {
-		        				this.renderMarkProj(tdRow[i], mark.get('studid'));
-		        			}
+		        			} 
 		        		}
 	        		}
-        	}, this);
-        },
-        renderMarkProj: function(tdRow, studid){
-        	var markList = this.get('markProj'),
-        		lib = this.get('appInstance'),
-        		view = this.get('view');
-        	
-        	markList.each(function(mark){
-        		var mk = mark.get('mark'),
-        			curStudid = mark.get('studid');
-        		
-        		if(tdRow.id == mark.get('subjectid') && curStudid == studid){
-        			this.validMark(tdRow, mk);
-    					return;
-        		}
-        	}, this);
+	    	}, this);
         },
         validMark: function(tdRow, mk){
         	var view = this.get('view'),
@@ -236,10 +221,10 @@ Component.entryPoint = function(NS){
             course: {value: 0},
             semestr: {value: null},
             subjectList: {value: null},
-            mark: {value: null},
+            markList: {value: null},
             studList: {value: null},
             view: {value: null},
-            markProj: {value: null}
+            markListProj: {value: null}
         },
         CLICKS: {
         	close:{

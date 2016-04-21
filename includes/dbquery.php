@@ -305,11 +305,12 @@ class RecordBookQuery {
     				numbook,
     				fio,
     				datebirth,
-    				preveducation
+    				preveducation,
+    				listgroup
     		FROM ".$db->prefix."rb_students
     		WHERE groupid=".bkint($groupid)." 
     					AND transferal=0
-    		ORDER BY fio ASC
+    		ORDER BY listgroup ASC, fio ASC
 		";
     	return $db->query_read($sql);
     }

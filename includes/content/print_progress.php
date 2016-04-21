@@ -143,6 +143,7 @@ class PrintProgress {
 		$n = 0;
 		while($student = $this->db->fetch_array($studList)){
 			$td = "";
+			$lstGroup = $student['listgroup'] !== null ? true : false;
 
 			foreach($this->subjectidArr as $keyCurSubject => $subject){
 				if($subject->proj === 0){
@@ -160,6 +161,7 @@ class PrintProgress {
 			}
 			
 			$this->rows .= Brick::ReplaceVarByData($this->v['tr'], array(
+				"clsName" => $lstGroup ? "class='tdLightTop'" : "",
 				"n" =>  ++$n,
 				"fio" => preg_replace($pattern, '$1 $2. $3.', $student['fio']),
 				"nbook" => $student['numbook'],
@@ -196,7 +198,7 @@ class PrintProgress {
 	
 	public function ReplaceTdBody($mark, $keyCurSubject){
 		return Brick::ReplaceVarByData($this->v['td'], array(
-				"clsName" => $keyCurSubject === $this->colExam ? "class='tdLightLeft'" : "",
+				"clsName" =>  $keyCurSubject === $this->colExam ? "class='tdLightLeft'" : "",
 				"mark" => $this->recordBook->SetTradMark($mark, true)
 		));
 	}

@@ -32,11 +32,11 @@ class RecordBookModule extends Ab_Module {
     }
     
     public function GetContentName(){
-    
     	$dir = Abricos::$adress->dir;
     	if (isset($dir[1])){
     		switch ($dir[1]){
     			case 'print':
+    			case 'print_progress':
     				return $dir[1];
     		}
     	}

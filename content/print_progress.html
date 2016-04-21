@@ -1,0 +1,135 @@
+<!--[*]
+[tt=window]_sys[/tt]
+[script]content/print_progress.php[/script]
+
+[bkvar=tdhead]
+		<td>
+			<div class="vert">
+				<div class="vert-text">{v#subject}</div>
+			</div>
+		</td>
+[/bkvar]
+
+[bkvar=tr]
+		<tr>
+			<td>
+				<p>{v#n}</p>
+			</td>
+			<td>
+				<p>{v#fio}</p>
+			</td>
+			<td>
+				<p>{v#nbook}</p>
+			</td>
+			{v#td}
+		</tr>
+[/bkvar]
+
+[bkvar=td]
+		<td>
+			<p>{v#mark}</p>
+		</td>
+		
+[/bkvar]
+[*]-->
+<style type="text/css">
+	#print {
+		font-size: 130%;
+	}
+	table, th, td  {
+		border: 1px solid black;
+		border-collapse: collapse;
+		margin-bottom: 40px;
+	}
+	.vert-text{
+		-ms-transform: rotate(-90deg);
+		-moz-transform: rotate(-90deg);
+		-webkit-transform: rotate(-90deg);
+		transform: rotate(-90deg);
+		
+		margin-left: 10px;
+		padding: 0;
+		float: left;
+		text-align: center;
+		width: 350px;
+		height: 350px;
+		font-size: 11pt;
+	}
+	
+	.sheetTable tr{
+		text-align: center;
+	}
+	
+	.sheetTable .vert{
+		width:50px;
+	}
+	
+	p {
+		margin: 5px;
+	}
+	
+	.center {
+		text-align: center;
+		margin-bottom: 7px;
+	}
+	
+	.right {
+		text-align: right;
+		margin-bottom: 20px;
+	}
+	
+	.left {
+		margin-left: 100px;
+	}
+	
+	@media print {
+		.print-button {
+			display: none;
+		}
+	}
+	
+</style>
+
+<p class="print-button">
+	Размер шрифта:
+	<input type="range" min="70" max="130" step="10" value="130" onInput="CheckFontSize(this.value)">
+	<button onClick="window.print()">Печать</button>
+</p>
+
+<div id="print">
+	<p class="center">{v#fullname}</p>
+	<p class="center">{v#shortname}</p>
+	<p class="center">СВЕДЕНИЯ</p>
+	<p class="center">
+		об успеваемости студентов группы № {v#numgroup}, направление {v#field}
+		за {v#semestr} семестр {v#year} учебного года
+	</p>
+	
+	<table class="sheetTable" align="center">
+		    <thead>
+			     <tr>
+			        <td rowspan="2">п/п</td>
+			        <td rowspan="2">Фамилия, имя, <br>отчество студента</td>
+			        <td rowspan="2">№ зач. кн.</td>
+			        <td colspan="{v#colExam}">Экзамены</td>
+			        <td colspan="{v#colCredit}">Зачеты</td>
+			    </tr>
+				<tr>
+					{v#tdhead}
+				</tr>
+		    </thead>
+		    <tbody>{v#rows}</tbody>
+	</table>
+	
+	<p class="right">Директор филиала__________________</p>
+	<p class="right">Секретарь__________________</p>
+	<p class="center" style="font-size: 80%;">Примечание: оценки должны быть условно обозначены следующим образом:<br>
+		отлично - «О», хорошо – «Х», удовлетворительно – «У», неудовлетворительно – «Н»
+	</p>
+</div>
+
+<script>
+	function CheckFontSize(size){
+		document.getElementById('print').style.fontSize = size + '%';
+	}
+</script>

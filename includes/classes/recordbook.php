@@ -261,13 +261,9 @@ class RecordBook extends AbricosApplication {
        		$d->semestr = intval($d->semestr);
        		$d->type = intval($d->type);//тип ведомости
        		
-       		if (isset($this->_cache['SubjectListSheet'][$d->fieldid])){
-       			return $this->_cache['SubjectListSheet'];
-       		}
-       		
 			$list = $this->SubjectListModels('SubjectListSheet', $d);
 			
-       		return $this->_cache['SubjectListSheet'][$d->fieldid] = $list;
+       		return $list;
        	}
        	
        	public function SubjectListProgress($d){
@@ -277,7 +273,6 @@ class RecordBook extends AbricosApplication {
        		$d->groupid = intval($d->groupid);
        		 
 			$list = $this->SubjectListModels('SubjectListProgress', $d);
-			
        		return $list;
        	}
        	
@@ -396,17 +391,12 @@ class RecordBook extends AbricosApplication {
        	}
        	 
        	public function GroupItem($groupid){
-       		if(!isset($this->_cache['GroupItem'])){
-       			$this->_cache['GroupItem'] = array();
-       		}
-       		if (isset($this->_cache['GroupItem'][$groupid])){
-       			return $this->_cache['GroupItem'][$groupid];
-       		}
-       	
+       		
        		$d = RecordBookQuery::GroupItem($this->db, $groupid);
        	
        		$group = $this->models->InstanceClass('GroupItem', $d);
-       		return $this->_cache['GroupItem'][$groupid] = $group;
+       		
+       		return $group;
        	}
        	
        	public function GroupRemoveToJSON($d){
@@ -1025,24 +1015,32 @@ class RecordBook extends AbricosApplication {
        		return RecordBookQuery::$quory($this->db, $id);
        	}
        	
-       	public function SetTradMark($mark){
+       	public function ProgressPrint($d, $quory){
+       		return RecordBookQuery::$quory($this->db, $d);
+       	}
+       	
+       	public function ProgressMarkPrint($d, $project){
+       		return RecordBookQuery::MarkListStat($this->db, $d, $project);
+       	}
+       	
+       	public function SetTradMark($mark, $print = false){
        	    if($mark <= 100){
         		if($mark < 51){
-        			return 'неудов.';
+        			return $print ? ' ' : 'неудов.';
         		} else if($mark >= 51 && $mark < 71){
-        			return 'удов.';
+        			return $print ? 'У' :  'удов.';
         		} else if($mark >= 71 && $mark < 86){
-        			return 'хор.';
+        			return $print ? 'Х' :  'хор.';
         		} else {
-        			return 'отл.';
+        			return $print ? 'О' :  'отл.';
         		}
         	} else {
         		switch($mark){
-        			case 101: return 'не зачтено';
-        			case 102: return 'зачтено';
-        			case 103: return 'удов.';
-        			case 104: return 'хор.';
-        			case 105: return 'отл.';
+        			case 101: return $print ? '' :  'не зачтено';
+        			case 102: return $print ? 'З' :  'зачтено';
+        			case 103: return $print ? 'У' :  'удов.';
+        			case 104: return $print ? 'Х' :  'хор.';
+        			case 105: return $print ? 'О' :  'отл.';
         		}
         	}
        	}

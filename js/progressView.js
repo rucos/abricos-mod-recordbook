@@ -211,6 +211,15 @@ Component.entryPoint = function(NS){
         },
         removePrimary: function(id){
         	this.template.removeClass('groupInfo.'+id, 'btn-primary');
+        },
+        printShow: function(){
+        	var groupid = this.get('groupid'),
+            	course = this.get('course'),
+            	semestr = this.get('semestr') === 'осенний' ? 1 : 2,
+            	url = '/recordbook/print_progress/' + groupid + "/" + course + "/" + semestr,
+            	printWin = window.open(url, 'recordbookPrint_progress', 'width=1250,height=800');
+                	
+            	printWin.focus();
         }
     }, {
         ATTRS: {
@@ -277,6 +286,16 @@ Component.entryPoint = function(NS){
         			
         			if(targ.hasClass('td-mark')){
         				this.lightRow(node.parentNode.sectionRowIndex + 1, node.cellIndex);
+        			}
+        		}
+        	},
+        	print: {
+        		event: function(e){
+        			var semestr = this.get('semestr');
+        			if(semestr){
+        				this.printShow();
+        			} else {
+        				alert('Укажите семместр');
         			}
         		}
         	}

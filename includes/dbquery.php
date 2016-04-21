@@ -738,7 +738,7 @@ class RecordBookQuery {
     	
     }
     
-    public static function MarkListStat(Ab_Database $db, $d, $project){
+    public static function MarkListStat(Ab_Database $db, $d, $project = false){
     	
     	if($project){
     		$type = "sh.type > 2";

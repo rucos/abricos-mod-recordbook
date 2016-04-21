@@ -3,7 +3,7 @@
 [script]content/print_progress.php[/script]
 
 [bkvar=tdhead]
-		<td>
+		<td {v#clsName}>
 			<div class="vert">
 				<div class="vert-text">{v#subject}</div>
 			</div>
@@ -26,7 +26,7 @@
 [/bkvar]
 
 [bkvar=td]
-		<td>
+		<td {v#clsName}>
 			<p>{v#mark}</p>
 		</td>
 		
@@ -47,13 +47,13 @@
 		-webkit-transform: rotate(-90deg);
 		transform: rotate(-90deg);
 		
-		margin-left: 10px;
+		margin-left: 7px;
 		padding: 0;
 		float: left;
 		text-align: center;
 		width: 350px;
 		height: 350px;
-		font-size: 11pt;
+		font-size: 85%;
 	}
 	
 	.sheetTable tr{
@@ -88,6 +88,11 @@
 		}
 	}
 	
+	.tdLightLeft {
+		border-left: 3px solid black;
+	}
+	
+	
 </style>
 
 <p class="print-button">
@@ -111,8 +116,8 @@
 			        <td rowspan="2">п/п</td>
 			        <td rowspan="2">Фамилия, имя, <br>отчество студента</td>
 			        <td rowspan="2">№ зач. кн.</td>
-			        <td colspan="{v#colExam}">Экзамены</td>
-			        <td colspan="{v#colCredit}">Зачеты</td>
+			        <td colspan="{v#colExam}"> Экзамены</td>
+			        <td colspan="{v#colCredit}" class="tdLightLeft">Зачеты</td>
 			    </tr>
 				<tr>
 					{v#tdhead}

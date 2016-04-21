@@ -144,14 +144,14 @@ class PrintProgress {
 		while($student = $this->db->fetch_array($studList)){
 			$td = "";
 
-			foreach($this->subjectidArr as $subject){
+			foreach($this->subjectidArr as $keyCurSubject => $subject){
 				if($subject->proj === 0){
-					$res = $this->RenderMarkList($markList, $student['id'], $subject->id);
+					$res = $this->RenderMarkList($markList, $student['id'], $subject->id, $keyCurSubject);
 						if(isset($res->key)){
 							unset($markList[$res->key]);
 						}
 				} else {
-					$res = $this->RenderMarkList($markListProj, $student['id'], $subject->id);
+					$res = $this->RenderMarkList($markListProj, $student['id'], $subject->id, $keyCurSubject);
 						if(isset($res->key)){
 							unset($markListProj[$res->key]);
 						}
@@ -169,7 +169,7 @@ class PrintProgress {
 	
 	}
 
-	public function RenderMarkList($markList, $studid, $subjectid){
+	public function RenderMarkList($markList, $studid, $subjectid, $keyCurSubject){
 		$res = new stdClass();
 		$res->td = "";
 		
@@ -179,7 +179,7 @@ class PrintProgress {
 				if($studid === $mark['studid']){
 					if($subjectid === $mark['subjectid']){
 						$flag = true;
-						$res->td = $this->ReplaceTdBody($mark['mark']);
+						$res->td = $this->ReplaceTdBody($mark['mark'], $keyCurSubject);
 						$res->key = $key;
 						
 							return $res;
@@ -188,20 +188,22 @@ class PrintProgress {
 			}
 			
 			if(!$flag){
-				$res->td = $this->ReplaceTdBody("");
+				$res->td = $this->ReplaceTdBody("", $keyCurSubject);
 			}
 			
 		return $res;
 	}
 	
-	public function ReplaceTdBody($mark){
+	public function ReplaceTdBody($mark, $keyCurSubject){
 		return Brick::ReplaceVarByData($this->v['td'], array(
+				"clsName" => $keyCurSubject === $this->colExam ? "class='tdLightLeft'" : "",
 				"mark" => $this->recordBook->SetTradMark($mark, true)
 		));
 	}
 	
 	public function ReplaceTdHead($namesubject){
 		return Brick::ReplaceVarByData($this->v['tdhead'], array(
+				"clsName" => $this->colCredit === 1 ? "class='tdLightLeft'" : "", 
 				"subject" => $namesubject
 		));
 	}

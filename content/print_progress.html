@@ -35,6 +35,7 @@
 <style type="text/css">
 	#print {
 		font-size: 130%;
+		min-height: 950px;
 	}
 	table, th, td  {
 		border: 1px solid black;
@@ -100,11 +101,11 @@
 
 <p class="print-button">
 	Размер шрифта:
-	<input type="range" min="70" max="130" step="10" value="130" onInput="CheckFontSize(this.value)">
+	<input type="range" min="70" max="160" step="10" value="130" onInput="CheckFontSize(this.value)">
 	<button onClick="window.print()">Печать</button>
 </p>
 
-<div id="print">
+<div id="print" >
 	<p class="center">{v#fullname}</p>
 	<p class="center">{v#shortname}</p>
 	<p class="center">СВЕДЕНИЯ</p>

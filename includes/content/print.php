@@ -78,6 +78,8 @@ $markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
 			$dtSheet = $sheet['date'] ? date('d.m.Y', $sheet['date']) : "";
 			$formCtrl = $sheet['fct'];
 			$arrFioDep = explode('/', $sheet['ft']);
+			$form = "Форма контроля -";
+			$act = "проведения";
 			
 			if($type > 2){
 				$proj = explode(',', $sheet['pj']);
@@ -89,8 +91,15 @@ $markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
 				$volume = "";
 			} else {
 				$hours = explode('/', $sheet['nh']);
-				$vhours = $hours[0] + $hours[1];
-				$volume = "Объем ".$vhours." (".$hours[0]."/".$hours[1].")"." часов "."(".($vhours / 36)." зач. ед.)";
+				if($formCtrl === 'Практика'){
+					$formCtrl = "";
+					$form = "";
+					$act = "сдачи";
+					$volume = "Даты ".$hours[0].".".$yearEnd." г. - ".$hours[1].".".$yearEnd." г.";
+				} else {
+					$vhours = $hours[0] + $hours[1];
+					$volume = "Объем ".$vhours." (".$hours[0]."/".$hours[1].")"." часов "."(".($vhours / 36)." зач. ед.)";
+				}
 			}
 
 				$brick->content = Brick::ReplaceVarByData($brick->content, array(
@@ -105,6 +114,8 @@ $markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
 							"depart" => !isset($arrFioDep[1]) ? '' : $arrFioDep[1],
 							"course" => $sheet['nc'],
 							"volume" => $volume,
+							"form" => $form,
+							"act" => $act,
 							"formControl" => $formCtrl,
 							"semestr" => $sheet['sem'] == 1 ? 'осенний' : 'весенний',
 							"fioTeacher" => !isset($arrFioDep[0]) ? '' : $arrFioDep[0],

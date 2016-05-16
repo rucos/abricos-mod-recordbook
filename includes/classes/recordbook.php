@@ -299,15 +299,6 @@ class RecordBook extends AbricosApplication {
     		$utm = Abricos::TextParser();
     		
     		$d->formcontrol = $utmf->Parser($d->formcontrol);
-    		
-    		switch($d->formcontrol){
-    			case 'Экзамен':
-    			case 'Зачет':
-    			case 'Зачет с оценкой':
-    			case '-': break;
-    			default: return false;
-    		}
-    		
     		$d->namesubject = $utmf->Parser($d->namesubject);
     		$d->numcrs = intval($d->numcrs);
     		$d->numhours1 = intval($d->numhours1);
@@ -315,6 +306,25 @@ class RecordBook extends AbricosApplication {
     		$d->semestr = intval($d->semestr);
     		$d->project1 = intval($d->project1);
     		$d->project2 = intval($d->project2);
+    		
+    		switch($d->formcontrol){
+    			case 'Экзамен':
+    				break;
+    			case 'Зачет':
+    				break;
+    			case 'Зачет с оценкой':
+    				break;
+    			case 'Практика':
+    				$d->numhours1 = 0;
+    				$d->numhours2 = 0;
+    				$d->project1 = 0;
+    				$d->project2 = 0;
+    					break;
+    			case '-': break;
+    			default: return false;
+    		}
+    		
+
     		
     		if($d->subjectid !== 0){
     			RecordBookQuery::SubjectEdit($this->db, $d);

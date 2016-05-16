@@ -3,8 +3,7 @@ console.log();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js']},
-        {name: '{C#MODNAME}', files: ['pagination.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -24,11 +23,11 @@ Component.entryPoint = function(NS){
             });
             
         	this.paginationCourse = new NS.PaginationCourseWidget({
-        		srcNode: this.template.gel('pagCourse'),
+        		srcNode: tp.gel('pagCourse'),
         		show: true,
         		parent: this
         	});
-            
+        	
         	this.reloadList();
         },
         destructor: function(){
@@ -96,7 +95,7 @@ Component.entryPoint = function(NS){
             		semestr: subject.get('semestr') === 1 ? 'Осенний' : 'Весенний',
             		project1: proj[0] == 1 ? 'КР' : '',
             		project2: proj[2] == 1 ? 'КП' : '',
-            		cl: find ? 'success' : '',
+            		cl: find ? "class='success'" : '',
             		act:  obj.act,
             		event: obj.event,
             		rem: obj.rem
@@ -110,16 +109,18 @@ Component.entryPoint = function(NS){
         },
         subjectShow: function(id, parentRow){
         	var tp = this.template,
+        		edit = this.get('edit'),
 				lst = "";
         	
 				if(id === 0){//если добавляем
 					lst = this.renderSubjectRow() + this.get('dataTable');
 						this.set('subjectid', 0);
 				} else if(parentRow){//если изменяем
-					parentRow.innerHTML = this.renderSubjectRow(parentRow);
-						this.checkedProject();
-			  				this.set('subjectid', id);
-			  					return;
+						parentRow.innerHTML = this.renderSubjectRow(parentRow);
+							this.setDisabledForElement(tp.gel('rowAct.formcontrol').value);
+								this.checkedProject();
+				  					this.set('subjectid', id);
+				  						return;
 				} else {//если отмена
 					lst = this.get('dataTable');
 				}
@@ -159,7 +160,8 @@ Component.entryPoint = function(NS){
         		tp = this.template,
         		sem = tp.gel('rowAct.semestr').value,
         		lib = this.get('appInstance'),
-        		arrHours = this.renderNumHours(tp.gel('rowAct.numhours').value); 
+        		formcontrol = tp.gel('rowAct.formcontrol').value,
+        		arrHours = this.renderNumHours(tp.gel('rowAct.numhours').value, formcontrol); 
         
         	if(!arrHours){
         		return;
@@ -173,7 +175,7 @@ Component.entryPoint = function(NS){
     			id: fieldid,
     			subjectid: subjectid,
     			namesubject: tp.gel('rowAct.namesubject').value,
-    			formcontrol: tp.gel('rowAct.formcontrol').value,
+    			formcontrol: formcontrol,
     			numcrs: tp.gel('rowAct.numcrs').value,
     			semestr: sem,
     			numhours1: arrHours[0],
@@ -205,25 +207,29 @@ Component.entryPoint = function(NS){
 			    		}, this);
         	}
         },
-        renderNumHours: function(hours){
+        renderNumHours: function(hours, formcontrol){
+        	if(formcontrol == 'Практика'){
+        		return [0,0];
+        	}
+        	
         	var arr = hours.split('/'),
         		ind = hours.indexOf('/'),
         		tp = this.template,
         		isNumeric = this.get('appInstance').isNumeric;
-        		
-        	if(ind == -1){
-        		alert( 'Маска ввода ауд/СРС' );
-        			tp.gel('rowAct.numhours').focus();
-        				return false;
-        	}
-	        	for(var i = 0; i < 2; i++){
-	        		if(!isNumeric(arr[i])){
-	        			alert( 'введите число!' );
-	        				tp.gel('rowAct.numhours').focus();
-	        					return false;
-	        		}
+        	
+	        	if(ind == -1){
+	        		alert( 'Маска ввода ауд/СРС' );
+	        			tp.gel('rowAct.numhours').focus();
+	        				return false;
 	        	}
-	        	return arr;
+		        	for(var i = 0; i < 2; i++){
+		        		if(!isNumeric(arr[i])){
+		        			alert( 'введите число!' );
+		        				tp.gel('rowAct.numhours').focus();
+		        					return false;
+		        		}
+		        	}
+		        	return arr;
         },
         removeSubject: function(subjectid, restore){
         	this.set('waiting', true);
@@ -275,6 +281,22 @@ Component.entryPoint = function(NS){
         },
         getFilter: function(name){
         	return this.paginationCourse.get(name);
+        },
+        setDisabledForElement: function(formControl){
+        	var tp = this.template,
+        		numhours = tp.gel('rowAct.numhours'),
+    			project1 = tp.gel('rowAct.project1'),
+    			project2 = tp.gel('rowAct.project2');
+        	
+  			if(formControl == 'Практика'){
+  				numhours.disabled = true;
+  				project1.disabled = true;
+  				project2.disabled = true;
+			} else {
+				numhours.disabled = false;
+  				project1.disabled = false;
+  				project2.disabled = false;
+			}
         }
     }, {
         ATTRS: {
@@ -284,7 +306,8 @@ Component.entryPoint = function(NS){
             subjectList: {value: null},
             dataTable: {value: ''},
             subjectid: {value: 0},
-            find: {value: false}
+            find: {value: false},
+            edit: {value: false}
         },
         CLICKS: {
         	'remove-show': {
@@ -308,19 +331,28 @@ Component.entryPoint = function(NS){
         	},
         	'showSubject-cancel': {
         		event: function(e){
-        			this.subjectShow();
+        			this.set('edit', false);
+        				this.subjectShow();
         		}
         	},
         	actSubject: {
         		event: function(e){
-        			this.actSubject();
+        			this.set('edit', false);
+        				this.actSubject();
         		}
         	},
         	'editSubject-show': {
         		event: function(e){
-        			var subjectid = e.target.getData('id');
+        			var targ = e.target,
+        				subjectid = targ.getData('id'),
+        				tr = targ.getDOMNode().parentNode.parentNode,
+        				edit = this.get('edit');
+        			
+        			if(!edit){
+        				this.set('edit', true);
         				
-        			this.subjectShow(subjectid, e.target.getDOMNode().parentNode.parentNode);// id предмета, строка таблицы
+        				this.subjectShow(subjectid, tr);// id предмета, строка таблицы	
+        			}
         		}
         	},
         	remove: {
@@ -333,14 +365,17 @@ Component.entryPoint = function(NS){
         	chooseFormControl: {
         		event: function(e){
         			var a = e.target.getDOMNode(),
-        				tp = this.template;
+        				tp = this.template,
+        				formControl = a.textContent;
         			
         			if(!a.href){
         				return;
         			}
         			
-        			tp.gel('rowAct.formcontrol').value = a.textContent;
+        			tp.gel('rowAct.formcontrol').value = formControl;
         			tp.removeClass('rowAct.divFormControl', 'open');
+        			
+        			this.setDisabledForElement(formControl);
         		}
         	},
         	chooseSemestr: {

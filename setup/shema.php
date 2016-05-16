@@ -38,7 +38,7 @@ if ($updateManager->isInstall('0.2.0')){
 					formcontrol varchar(30) default NULL COMMENT 'Форма контроля',
 					numcrs tinyint(1) unsigned NOT NULL default 0 COMMENT 'Номер курса',
 					semestr tinyint(1) unsigned NOT NULL default 0 COMMENT 'Номер семестра',
-					numhours varchar(10) default NULL COMMENT 'Количество часов: аудиторные/самостоятельная',
+					numhours varchar(11) default NULL COMMENT 'Количество часов: аудиторные/самостоятельная',
 					project varchar(3) default NULL COMMENT 'Курсовая работа/проект',
 					remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален из учебного плана',
 					PRIMARY KEY (subjectid)

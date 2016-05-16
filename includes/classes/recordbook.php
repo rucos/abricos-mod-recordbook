@@ -301,8 +301,8 @@ class RecordBook extends AbricosApplication {
     		$d->formcontrol = $utmf->Parser($d->formcontrol);
     		$d->namesubject = $utmf->Parser($d->namesubject);
     		$d->numcrs = intval($d->numcrs);
-    		$d->numhours1 = intval($d->numhours1);
-    		$d->numhours2 = intval($d->numhours2);
+    		$d->numhours1 = floatval($d->numhours1);
+    		$d->numhours2 = floatval($d->numhours2);
     		$d->semestr = intval($d->semestr);
     		$d->project1 = intval($d->project1);
     		$d->project2 = intval($d->project2);
@@ -315,8 +315,6 @@ class RecordBook extends AbricosApplication {
     			case 'Зачет с оценкой':
     				break;
     			case 'Практика':
-    				$d->numhours1 = 0;
-    				$d->numhours2 = 0;
     				$d->project1 = 0;
     				$d->project2 = 0;
     					break;

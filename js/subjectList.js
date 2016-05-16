@@ -184,7 +184,6 @@ Component.entryPoint = function(NS){
     			project1: tp.gel('rowAct.project1').checked,
     			project2: tp.gel('rowAct.project2').checked
     		};
-        	
         	var empty = lib.isEmptyInput(data);
         	
         	if(empty){//проверка на заполняемость input
@@ -209,27 +208,15 @@ Component.entryPoint = function(NS){
         	}
         },
         renderNumHours: function(hours, formcontrol){
-        	if(formcontrol == 'Практика'){
-        		return [0,0];
-        	}
-        	
         	var arr = hours.split('/'),
         		ind = hours.indexOf('/'),
-        		tp = this.template,
-        		isNumeric = this.get('appInstance').isNumeric;
+        		tp = this.template;
         	
 	        	if(ind == -1){
 	        		alert( 'Маска ввода ауд/СРС' );
 	        			tp.gel('rowAct.numhours').focus();
 	        				return false;
 	        	}
-		        	for(var i = 0; i < 2; i++){
-		        		if(!isNumeric(arr[i])){
-		        			alert( 'введите число!' );
-		        				tp.gel('rowAct.numhours').focus();
-		        					return false;
-		        		}
-		        	}
 		        	return arr;
         },
         find: function(val){
@@ -285,16 +272,13 @@ Component.entryPoint = function(NS){
         },
         setDisabledForElement: function(formControl){
         	var tp = this.template,
-        		numhours = tp.gel('rowAct.numhours'),
     			project1 = tp.gel('rowAct.project1'),
     			project2 = tp.gel('rowAct.project2');
         	
   			if(formControl == 'Практика'){
-  				numhours.disabled = true;
   				project1.disabled = true;
   				project2.disabled = true;
 			} else {
-				numhours.disabled = false;
   				project1.disabled = false;
   				project2.disabled = false;
 			}

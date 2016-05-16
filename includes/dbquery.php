@@ -118,7 +118,7 @@ class RecordBookQuery {
     
     public static function SubjectAppend(Ab_Database $db, $d){
     	$proj = bkint($d->project1).','.bkint($d->project2);
-    	$hours = bkint($d->numhours1).'/'.bkint($d->numhours2);
+    	$hours = doubleval($d->numhours1).'/'.doubleval($d->numhours2);
     	
 		$sql = "
 				INSERT INTO ".$db->prefix."rb_subject (
@@ -138,7 +138,7 @@ class RecordBookQuery {
     
     public static function SubjectEdit(Ab_Database $db, $d){
     	$proj = bkint($d->project1).','.bkint($d->project2);
-    	$hours = bkint($d->numhours1).'/'.bkint($d->numhours2);
+    	$hours = doubleval($d->numhours1).'/'.doubleval($d->numhours2);
     	
     	$sql = "
 			UPDATE ".$db->prefix."rb_subject

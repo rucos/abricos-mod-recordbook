@@ -508,6 +508,7 @@ class RecordBook extends AbricosApplication {
        		$d->groupid = intval($d->groupid);
        		$d->idSheet = intval($d->idSheet);
        		$d->typeSheet = intval($d->typeSheet);
+       		$d->isPractic = intval($d->isPractic);
        		
        		$utmf = Abricos::TextParser(true);
        		$d->fioteacher = $utmf->Parser($d->fioteacher);

@@ -419,7 +419,8 @@ class RecordBookQuery {
     public static function SheetAppend(Ab_Database $db, $d){
     
     	$a = array(30, 30, 40);
-   		if($d->typeSheet === 3 || $d->typeSheet === 4){
+    	$typeSheet = $d->typeSheet;
+   		if($typeSheet === 3 || $typeSheet === 4 || $d->isPractic){
    			$a[0] = 0;
    			$a[1] = 0;
    			$a[2] = 100;
@@ -434,7 +435,7 @@ class RecordBookQuery {
 						".$a[1].",
 						".$a[2].",		
 					".bkint($d->date).",
-					".bkint($d->typeSheet).",
+					".bkint($typeSheet).",
 					'".bkstr($d->fioteacher)."'
 			)
 		";

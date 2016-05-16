@@ -167,7 +167,6 @@ Component.entryPoint = function(NS){
     	        		}
             	}
         	}
-        	
 			var objData = {
 	        			idSubject: this.get('currentSubject'),
 	        			date: lib.getDate(valDate),//получить в мсек
@@ -175,7 +174,8 @@ Component.entryPoint = function(NS){
 	        			idSheet: id,
 	        			typeSheet: this.get('currentType'),
 	        			arrStudId: arrStudId,
-	        			fioteacher: fioteacher
+	        			fioteacher: fioteacher,
+	        			isPractic: nameSubject.indexOf('Практика') !== -1 ? true : false
 	        		};
 			
 				if(!nameSubject){

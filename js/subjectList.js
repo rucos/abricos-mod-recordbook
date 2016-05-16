@@ -129,13 +129,14 @@ Component.entryPoint = function(NS){
         renderSubjectRow: function(row){
         	var tp = this.template,
         		lst = "",
-        		proj = row ? row.cells[5].innerHTML : '';
+        		proj = row ? row.cells[5].innerHTML : '',
+        		arrSemCour = this.filterForAppendRow();
 
         			lst += tp.replace('rowAct', {
 			     		'namesubject': row ? row.cells[0].childNodes[0].textContent.trim() : '',
 		        		'formcontrol': row ? row.cells[1].innerHTML : '',
-		        		'numcrs': row ? row.cells[2].innerHTML : '',
-		        		'semestr':  row ? row.cells[3].innerHTML : '',
+		        		'numcrs': row ? row.cells[2].innerHTML : arrSemCour[0],
+		        		'semestr':  row ? row.cells[3].innerHTML : arrSemCour[1],
 		        		'numhours':  row ? row.cells[4].innerHTML : '',
 		        		'act': row ? 'Изменить' : 'Добавить',
 		        		'val1': row &&  proj.indexOf('КР') != -1 ?  1 : 0,
@@ -231,14 +232,6 @@ Component.entryPoint = function(NS){
 		        	}
 		        	return arr;
         },
-        removeSubject: function(subjectid, restore){
-        	this.set('waiting', true);
-        		this.get('appInstance').subjectRemove(subjectid, restore, function(err, result){
-        			this.set('waiting', false);
-        				this.reloadList();
-        		}, this);
-        		this.set('subjectid', 0);
-        },
         find: function(val){
         	var tp = this.template,
         		data = {
@@ -271,6 +264,14 @@ Component.entryPoint = function(NS){
         			}
         	}, this);
         },
+        removeSubject: function(subjectid, restore){
+        	this.set('waiting', true);
+        		this.get('appInstance').subjectRemove(subjectid, restore, function(err, result){
+        			this.set('waiting', false);
+        				this.reloadList();
+        		}, this);
+        		this.set('subjectid', 0);
+        },
         showFind: function(){
         	var tp = this.template;
         	
@@ -297,6 +298,26 @@ Component.entryPoint = function(NS){
   				project1.disabled = false;
   				project2.disabled = false;
 			}
+        },
+        filterForAppendRow: function(){
+        	var pag = this.paginationCourse,
+        		sem = pag.get('filterSemestr'),
+        		cour = pag.get('filterCourse'),
+        		resp = ['',''];
+        		
+        	if(cour > 0){
+        		resp[0] = cour;
+        	}
+        	
+        	switch(sem){
+        		case 1:
+        			resp[1] = 'Осенний';
+        				break;
+        		case 2: 
+        			resp[1] = 'Весенний';
+        				break;
+        	}
+        	return resp;
         }
     }, {
         ATTRS: {

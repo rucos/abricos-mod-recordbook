@@ -792,9 +792,13 @@ class RecordBook extends AbricosApplication {
        		
        		if($countMark || $countMarkProj){
        			foreach($arrSubj as $value){
-       				$hour = explode("/", $value->nh);
-       				 
-       				$value->nh = (($hour[0] + $hour[1]) / 36).'';
+       				if($value->fc !== 'Практика'){
+       					$hour = explode("/", $value->nh);
+       					
+       					$value->nh = (($hour[0] + $hour[1]) / 36).'';
+       				} else {
+       					$value->nh = 1;
+       				}
        			}
        			
        			$arrRating = array();

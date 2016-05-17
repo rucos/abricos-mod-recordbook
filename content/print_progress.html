@@ -2,7 +2,11 @@
 [tt=window]_sys[/tt]
 [script]content/print_progress.php[/script]
 
-[bkvar=tdhead]
+[bkvar=tdheadForm]
+		<td colspan="{v#colspan}" {v#clsName}> {v#formEdu}</td>
+[/bkvar]
+
+[bkvar=tdheadSubj]
 		<td {v#clsName}>
 			<div class="vert">
 				<div class="vert-text">{v#subject}</div>
@@ -119,11 +123,12 @@
 			        <td rowspan="2">п/п</td>
 			        <td rowspan="2">Фамилия, имя, <br>отчество студента</td>
 			        <td rowspan="2">№ зач. кн.</td>
-			        <td colspan="{v#colExam}"> Экзамены</td>
-			        <td colspan="{v#colCredit}" class="tdLightLeft">Зачеты</td>
+			        {v#tdheadForm}
+			        <!-- <td colspan="{v#colCredit}" class="tdLightLeft">Зачеты</td>
+			        <td colspan="{v#colPract}" class="tdLightLeft">Практики</td> -->
 			    </tr>
 				<tr>
-					{v#tdhead}
+					{v#tdheadSubj}
 				</tr>
 		    </thead>
 		    <tbody>{v#rows}</tbody>

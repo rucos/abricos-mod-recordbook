@@ -1056,6 +1056,7 @@ class RecordBook extends AbricosApplication {
         			case 105: return $print ? 'О' :  'отл.';
         		}
         	}
+        	return "";
        	}
        	
 }

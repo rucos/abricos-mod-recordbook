@@ -131,12 +131,12 @@ class PrintProgress {
 		foreach ($formControl as $form => $subject){
 			$key = "isNotProject";
 			$formEdu = "";
-			$credit = false;
+			$exam = false;
 			$colspan = count($subject);
 			
 			switch($form){
 				case 'exam':
-					$credit = true;
+					$exam = true;
 					$this->creditLight = $colspan;
 					$formEdu = 'Экзамены';
 						break;
@@ -153,13 +153,11 @@ class PrintProgress {
 			}
 			
 			if($colspan > 0){
-				$this->tdheadForm .= $this->ReplaceTdHeadForm($formEdu, $colspan, $credit);
+				$this->tdheadForm .= $this->ReplaceTdHeadForm($formEdu, $colspan, $exam);
 					
-				foreach ($subject as $name){
+				foreach ($subject as $keySubj => $name){
 					array_push($this->subjectidArr->$key, $name[0]);
-					$this->tdheadSubj .= $this->ReplaceTdheadSubj($name[1], $credit);
-					
-					$credit = false;
+					$this->tdheadSubj .= $this->ReplaceTdheadSubj($name[1], $keySubj);
 				}
 			}
 		}
@@ -221,24 +219,24 @@ class PrintProgress {
 		return $td;
 	}
 	
-	public function ReplaceTdBody($mark, $credit){
+	public function ReplaceTdBody($mark, $examCol){
 		return Brick::ReplaceVarByData($this->v['td'], array(
-				"clsName" =>  $credit === $this->creditLight ? "class='tdLightLeft'" : "",
+				"clsName" =>  $examCol === $this->creditLight - 1 ? "class='tdLightRight'" : "",
 				"mark" => $this->recordBook->SetTradMark($mark, true)
 		));
 	}
 	
-	public function ReplaceTdHeadForm($formEdu, $colspan, $credit){
+	public function ReplaceTdHeadForm($formEdu, $colspan, $exam){
 		return Brick::ReplaceVarByData($this->v['tdheadForm'], array(
-				"clsName" => $credit ? "class='tdLightLeft'" : "", 
+				"clsName" => $exam ? "class='tdLightRight'" : "", 
 				"colspan" => $colspan,
 				"formEdu" => $formEdu
 		));
 	}
 	
-	public function ReplaceTdheadSubj($namesubject, $credit){
+	public function ReplaceTdheadSubj($namesubject, $examCol){
 		return Brick::ReplaceVarByData($this->v['tdheadSubj'], array(
-				"clsName" => $credit ? "class='tdLightLeft'" : "", 
+				"clsName" => $examCol === $this->creditLight - 1 ? "class='tdLightRight'" : "", 
 				"subject" => $namesubject
 		));
 	}

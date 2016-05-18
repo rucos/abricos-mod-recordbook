@@ -157,7 +157,7 @@ class PrintProgress {
 					
 				foreach ($subject as $keySubj => $name){
 					array_push($this->subjectidArr->$key, $name[0]);
-					$this->tdheadSubj .= $this->ReplaceTdheadSubj($name[1], $keySubj);
+					$this->tdheadSubj .= $this->ReplaceTdheadSubj($name[1], $exam, $keySubj);
 				}
 			}
 		}
@@ -234,9 +234,14 @@ class PrintProgress {
 		));
 	}
 	
-	public function ReplaceTdheadSubj($namesubject, $examCol){
+	public function ReplaceTdheadSubj($namesubject, $exam, $keySubj){
+		$clsName = "";
+		
+		if($exam){
+			$clsName = $keySubj === $this->creditLight - 1 ? "class='tdLightRight'" : "";
+		}
 		return Brick::ReplaceVarByData($this->v['tdheadSubj'], array(
-				"clsName" => $examCol === $this->creditLight - 1 ? "class='tdLightRight'" : "", 
+				"clsName" => $clsName, 
 				"subject" => $namesubject
 		));
 	}

@@ -27,7 +27,6 @@ class RecordBook extends AbricosApplication {
 				'GroupModalList' => 'GroupModalList',
 				'MarkItemStat' => 'MarkItemStat',
 				'MarkListStat' => 'MarkListStat',
-				'Config' => 'RecordBookConfig',
 				'ReportItem' => 'ReportItem'
 		);
 	}
@@ -98,10 +97,6 @@ class RecordBook extends AbricosApplication {
             	return $this->TransitStudToJSON($d->data);
             case "markListStat":
             	return $this->MarkListStatToJSON($d->data);
-            case "configSave":
-            	return $this->ConfigSaveToJSON($d->data);
-            case "config":
-            	return $this->ConfigToJSON();
             case "expeledGroupList":
             	return $this->ExpeledGroupListToJSON();
             case "expeledStudList":
@@ -881,46 +876,6 @@ class RecordBook extends AbricosApplication {
        		}
        		
        		return $list;
-       	}
-       	
-       	public function ConfigSaveToJSON($d){
-       		$res = $this->ConfigSave($d);
-       		return $this->ResultToJSON('configSave', $res);
-       	}
-       	
-       	public function ConfigSave($d){
-       		$utmf = Abricos::TextParser(true);
-       		$d->fullname = $utmf->Parser($d->fullname);
-       		$d->shortname = $utmf->Parser($d->shortname);
-       		$d->manager = $utmf->Parser($d->manager);
-       		
-       		$phs = RecordBookModule::$instance->GetPhrases();
-       		$phs->Set("fullname", $d->fullname);
-       		$phs->Set("shortname", $d->shortname);
-       		$phs->Set("manager", $d->manager);
-       		
-       		Abricos::$phrases->Save();
-       	}
-       	
-       	public function ConfigToJSON(){
-       		$res = $this->Config();
-       		return $this->ResultToJSON('config', $res);
-       	}
-       	
-       	
-       	public function Config(){
-       		if (isset($this->_cache['Config'])){
-       			return $this->_cache['Config'];
-       		}
-       		
-       		$phrases = RecordBookModule::$instance->GetPhrases();
-       		$d = array();
-       		for ($i = 0; $i < $phrases->Count(); $i++){
-       			$ph = $phrases->GetByIndex($i);
-       			$d[$ph->id] = $ph->value;
-       		}
-       		
-       		return $this->_cache['Config'] = $this->models->InstanceClass('Config', $d);
        	}
        	
        	public function ExpeledGroupListToJSON(){

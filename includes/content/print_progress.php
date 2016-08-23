@@ -42,7 +42,7 @@ class PrintProgress {
 
 		$this->v = &$this->brick->param->var;
 
-		$phrases = RecordBookModule::$instance->GetPhrases();
+		$phrases = Abricos::GetModule('university')->GetPhrases();
 
 		$this->fullname = $phrases->Get('fullname')->value;
 		$this->shortname = $phrases->Get('shortname')->value;

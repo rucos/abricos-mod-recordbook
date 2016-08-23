@@ -175,12 +175,6 @@ Component.entryPoint = function(NS){
     		markListStatProj: {
     			type: 'modelList:MarkListStat'
     		},
-    		configSave: {
-    			args: ['data']
-    		},
-    		config: {
-    			type: 'model:Config'
-    		},
     		expeledGroupList: {
     			type: 'modelList:GroupList'
     		},
@@ -216,8 +210,7 @@ Component.entryPoint = function(NS){
         	ReportItem: {value: NS.ReportItem},
         	findGroup: {value: false},
         	findGroupVal: {value: ''},
-        	frmstudy: {value: 0},
-        	Config: {value: NS.Config}
+        	frmstudy: {value: 0}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
@@ -230,11 +223,6 @@ Component.entryPoint = function(NS){
         	managerGroups: {
         		view: function(){
         			return this.getURL('ws') + 'managerGroups/ManagerWidgetGroups';
-        		}
-        	},
-        	managerConfig: {
-        		view: function(){
-        			return this.getURL('ws') + 'managerConfig/ManagerWidgetConfig';
         		}
         	},
         	managerExpeled: {

@@ -73,10 +73,6 @@ Component.entryPoint = function(NS){
         appItem: NS.GroupModalItem
     });
     
-    NS.Config = Y.Base.create('config', SYS.AppModel, [], {
-        structureName: 'Config'
-    });
-    
     NS.ReportItem = Y.Base.create('reportItem', SYS.AppModel, [], {
         structureName: 'ReportItem'
     });

@@ -79,11 +79,6 @@ class GroupModalList extends AbricosModelList {
 
 }
 
-class RecordBookConfig extends AbricosModel {
-	protected $_structModule = 'recordbook';
-	protected $_structName = 'Config';
-}
-
 class ReportItem extends AbricosModel {
 	protected $_structModule = 'recordbook';
 	protected $_structName = 'ReportItem';

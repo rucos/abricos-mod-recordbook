@@ -25,7 +25,7 @@ if($dir[3] <= 0 || $dir[3] > 4){
 $id = intval($dir[2]);
 $type = intval($dir[3]);
 
-$phrases = RecordBookModule::$instance->GetPhrases();
+$phrases = Abricos::GetModule('university')->GetPhrases();
 $fullname = $phrases->Get('fullname')->value;
 $shortname = $phrases->Get('shortname')->value;
 

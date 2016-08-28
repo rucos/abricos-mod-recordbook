@@ -57,6 +57,20 @@ class RecordBookManager extends Ab_ModuleManager {
     			)
     	);
     }
+    
+    public function Bos_SummaryData(){
+    	if (!$this->IsAdminRole()){
+    		return;
+    	}
+    
+    	return array(
+    			array(
+    					"module" => "recordbook",
+    					"component" => "summary",
+    					"widget" => "SummaryWidget"
+    			)
+    	);
+    }
 
 }
 

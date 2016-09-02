@@ -441,7 +441,7 @@ class RecordBookQuery {
 		";
     	$db->query_write($sql);
     	
-    		$idSheet = mysql_insert_id();
+    		$idSheet = $db->insert_id();
     		$arrStud = array();
     		$valIns = "";
     		

@@ -3,3 +3,7 @@
 /release
 /node_modules
 /bower_components
+package.json
+gruntfile.js
+
+

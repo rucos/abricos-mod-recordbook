@@ -214,10 +214,10 @@ Component.entryPoint = function(NS){
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
-        	manager: {
+        	fieldManager: {
         		view: function(){
         			
-        			 return this.getURL('ws') + 'manager/ManagerWidget';
+        			 return this.getURL('ws') + 'fieldManager/FieldManagerWidget';
         		}
         	},
         	managerGroups: {

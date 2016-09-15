@@ -29,6 +29,8 @@ Component.entryPoint = function(NS){
             	} else {
             		this.set('waiting', false);
             	}
+            	
+            	this.fillProgramList();
         },
         destructor: function(){
         	
@@ -79,7 +81,7 @@ Component.entryPoint = function(NS){
 		        	lib.fieldSave(data, function(err, result){
 		        		this.set('waiting', false);
 		        			if(!err){
-		        				this.go('manager.view');
+		        				this.go('fieldManager.view');
 		        			} 
 		        	}, this);
         	}
@@ -87,7 +89,7 @@ Component.entryPoint = function(NS){
 }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget'},
+            templateBlockName: {value: 'widget,programList,programLi'},
             fieldid: {value: 0},
             fieldItem: {value: null}
         },
@@ -99,7 +101,7 @@ Component.entryPoint = function(NS){
         	},
         	cancel: {
     	       event: function(){
-                   this.go('manager.view');
+                   this.go('fieldManager.view');
                }
         	}
         }

@@ -46,7 +46,7 @@ Component.entryPoint = function(NS){
 	        		switch(idManager){
 	        			case "fieldsA" : 
 	        				this.setActive('fieldsLi');
-	        					this.go("manager.view");
+	        					this.go("fieldManager.view");
 	        						break;
 	        			case "groupsA": 
 	        				this.setActive('groupsLi');

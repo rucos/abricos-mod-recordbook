@@ -77,4 +77,12 @@ Component.entryPoint = function(NS){
         structureName: 'ReportItem'
     });
     
+    NS.ProgramItem = Y.Base.create('programItem', SYS.AppModel, [], {
+        structureName: 'ProgramItem'
+    });
+
+    NS.ProgramList = Y.Base.create('programList', SYS.AppModelList, [], {
+        appItem: NS.ProgramItem
+    });
+    
 };

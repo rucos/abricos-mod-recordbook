@@ -1,0 +1,34 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "code": {
+      "type": "string",
+      "json": "cd"
+    },
+    "name": {
+      "type": "string",
+      "json": "nm"
+    },
+    "level": {
+      "type": "string",
+      "json": "lvl"
+    },
+    "och": {
+      "type": "int",
+      "json": "o"
+    },
+    "ochzaoch": {
+      "type": "int",
+      "json": "oz"
+    },
+     "zaoch": {
+      "type": "int",
+      "json": "z"
+    }
+  }
+}

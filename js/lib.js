@@ -191,6 +191,10 @@ Component.entryPoint = function(NS){
     			args: ['data'],
     			attribute: false,
     			type: 'modelList:MarkListStat'
+    		},
+    		programList: {
+    			attribute: false,
+    			type: 'modelList:ProgramList'
     		}
         },
         ATTRS: {
@@ -210,13 +214,14 @@ Component.entryPoint = function(NS){
         	ReportItem: {value: NS.ReportItem},
         	findGroup: {value: false},
         	findGroupVal: {value: ''},
-        	frmstudy: {value: 0}
+        	frmstudy: {value: 0},
+        	ProgramList: {value: NS.ProgramList},
+        	ProgramItem: {value: NS.ProgramItem}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
         	fieldManager: {
         		view: function(){
-        			
         			 return this.getURL('ws') + 'fieldManager/FieldManagerWidget';
         		}
         	},

@@ -27,13 +27,15 @@ class RecordBook extends AbricosApplication {
 				'GroupModalList' => 'GroupModalList',
 				'MarkItemStat' => 'MarkItemStat',
 				'MarkListStat' => 'MarkListStat',
-				'ReportItem' => 'ReportItem'
+				'ReportItem' => 'ReportItem',
+				'ProgramItem' => 'ProgramItem',
+				'ProgramList' => 'ProgramList'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem, ProgramItem';
 	}
 
 	public function ResponseToJSON($d){
@@ -105,7 +107,8 @@ class RecordBook extends AbricosApplication {
             	return $this->FindStudReportToJSON($d->value);
             case "markStudReport":
             	return $this->MarkStudReportToJSON($d->data);
-            
+            case "programList":
+            	return $this->ProgramListToJSON();
         }
         return null;
     }
@@ -167,16 +170,12 @@ class RecordBook extends AbricosApplication {
     	}
     	
     	public function FieldSave($d){
-    		$d->id = intval($d->id);
-    		
     		$utmf = Abricos::TextParser(true);
-    		$utm = Abricos::TextParser();
-    		
-    		$d->fieldcode = $utmf->Parser($d->fieldcode);
-    		$d->field = $utmf->Parser($d->field);
-    		$d->frmstudy = $utmf->Parser($d->frmstudy);
-    		$d->qual = $utmf->Parser($d->qual);
+    		/*проверку на запоняемость*/
+    		$d->id = intval($d->id);
     		$d->depart = $utmf->Parser($d->depart);
+    		$d->frmstudy = intval($d->frmstudy);
+    		$d->levelid = intval($d->levelid);
     		$d->note = $utmf->Parser($d->note);
     		
     		if($d->id !== 0){
@@ -1012,6 +1011,22 @@ class RecordBook extends AbricosApplication {
         		}
         	}
         	return "";
+       	}
+       	
+       	public function ProgramListToJSON(){
+       		$res = $this->ProgramList();
+       		return $this->ResultToJSON('programList', $res);
+       	}
+       	
+       	public function ProgramList(){
+       		$list = $this->models->InstanceClass('ProgramList');
+       		 
+       		$rows = RecordBookQuery::ProgramList($this->db);
+       		 
+       		while ($dd = $this->db->fetch_array($rows)){
+       			$list->Add($this->models->InstanceClass('ProgramItem', $dd));
+       		}
+       		return $list;
        	}
        	
 }

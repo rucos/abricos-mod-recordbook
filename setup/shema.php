@@ -103,4 +103,25 @@ if ($updateManager->isInstall('0.2.2')){
 			)".$charset
 		);
 }
+
+if ($updateManager->isUpdate('0.2.3') && !$updateManager->isInstall()){
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_fieldstudy 
+		DROP fieldcode,
+		DROP field,
+		DROP qual
+	");
+	
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_fieldstudy
+		ADD edulevelid int(10) unsigned NOT NULL default 0 COMMENT 'id направления'
+	");
+	
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_fieldstudy
+		MODIFY frmstudy tinyint(1) unsigned NOT NULL default 0 COMMENT 'Форма обучения'
+	");
+
+
+}
 ?>

@@ -69,14 +69,12 @@ class RecordBookQuery {
     	 
          $sql = "
 			INSERT INTO ".$db->prefix."rb_fieldstudy (
-				fieldcode,field,frmstudy,qual,depart,note
+				frmstudy,depart,note,edulevelid
 			) VALUES (
-				'".bkstr($d->fieldcode)."',
-				'".bkstr($d->field)."',
-				'".bkstr($d->frmstudy)."',
-				'".bkstr($d->qual)."',
+				".bkint($d->frmstudy).",
 				'".bkstr($d->depart)."',
-				'".bkstr($d->note)."'
+				'".bkstr($d->note)."',
+				".bkint($d->levelid)."
 			)
 		";
       	$db->query_write($sql);
@@ -926,6 +924,24 @@ class RecordBookQuery {
 			LIMIT 1
 		";
     	return $db->query_first($sql);
+    }
+    
+    public static function ProgramList(Ab_Database $db){
+    	$sql = "
+			SELECT
+    				l.edulevelid as id,
+    				p.code,
+    				p.name,
+    				l.level,
+    				f.och,
+    				f.ochzaoch,
+    				f.zaoch
+    		FROM ".$db->prefix."un_program p
+    		INNER JOIN ".$db->prefix."un_edulevel l ON p.programid = l.programid
+    		INNER JOIN ".$db->prefix."un_eduform f ON l.edulevelid = f.edulevelid
+    		WHERE p.remove=0 AND l.remove=0
+		";
+    	return $db->query_read($sql); 
     }
 }
 

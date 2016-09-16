@@ -23,8 +23,11 @@
         </div>
 	</div>
 	<div class="panel-body">
-		<div id="{i#programList}"></div>
-
+		<div class="row">
+			<div id="{i#programList}" class="col-md-2"></div>
+			<div id="{i#programCurrent}" class="col-md-10"></div>
+		</div>
+		<hr>
 		<div class="input-group">
 		  <span class="input-group-addon">Кафедра</span>
 		  	<input id="{i#depart}" type="text" class="form-control">
@@ -40,14 +43,26 @@
 </div>
 
 <!--{programList}-->
-<div class="btn-group">
-  <button class="btn btn-default btn-lg dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+<div id="{i#divProgList}" class="btn-group">
+  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Направление <span class="caret"></span>
   </button>
-  <ul class="dropdown-menu">
+  <ul class="dropdown-menu" data-click="pickProgram">
     	{v#li}
   </ul>
 </div>
 
 <!--{programLi}-->
-<li><a href="">{v#program}</a></li>
+<li><a href="" data-levelid="{v#levelid}" data-formedu="{v#formEdu}">{v#program}</a></li>
+
+<!--{programFormEdu}-->
+<label>{v#nameProgram}</label>
+
+<div id="{i#radioList}" class="btn-group input-group" data-toggle="buttons" data-click="pickForm">
+{v#radio}
+</div>
+
+<!--{radioProgramFormEdu}-->
+  <label class="btn btn-primary"  data-form="{v#form}">
+    <input type="radio" autocomplete="off">{v#formEdu}
+  </label>

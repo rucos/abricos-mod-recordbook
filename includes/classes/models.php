@@ -83,4 +83,13 @@ class ReportItem extends AbricosModel {
 	protected $_structModule = 'recordbook';
 	protected $_structName = 'ReportItem';
 }
+
+class ProgramItem extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'ProgramItem';
+}
+
+class ProgramList extends AbricosModelList {
+
+}
 ?>

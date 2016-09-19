@@ -10,6 +10,7 @@
 class FieldItem extends AbricosModel {
     protected $_structModule = 'recordbook';
     protected $_structName = 'FieldItem';
+    
 }
 
 class FieldList extends AbricosModelList {

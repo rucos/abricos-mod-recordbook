@@ -143,10 +143,7 @@ class RecordBook extends AbricosApplication {
 	    public function FieldItemToJSON($fieldid){
 	    	$res = $this->FieldItem($fieldid);
 	    	
-    		return $this->ImplodeJSON(
-    				$this->ResultToJSON('fieldItem', $res),
-    				$this->ProgramListToJSON()
-    		);
+    		return 	$this->ResultToJSON('fieldItem', $res);
 	    }
 	    
     	public function FieldItem($fieldid){

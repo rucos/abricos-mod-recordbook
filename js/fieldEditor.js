@@ -24,16 +24,12 @@ Component.entryPoint = function(NS){
 	            	appInstance.fieldItem(fieldid, function(err, result){
 	            		this.set('waiting', false);
 	            			this.set('fieldItem', result.fieldItem);
-	            			this.set('programList', result.programList);
-	            			
-	            			this.renderProgramList();
 	            				this.renderFieldItem();
 	            	}, this);
             	} else {
             		this.set('waiting', false);
-            			this.fillProgramList();
             	}
-            	
+            	this.fillProgramList();
         },
         destructor: function(){
             if (this.listSubject){
@@ -64,49 +60,37 @@ Component.entryPoint = function(NS){
         	var tp = this.template,
         		lst = "";
         	
-        	for(var i = 0; i < 3; i++){
-        		if(formEdu[i] > 0){
-        			lst += tp.replace('radioProgramFormEdu', {
-        				formEdu: this.determFormEdu(i),
-        				form: i,
-        				active: (formNum - 1) === i ? 'active' : ''
-       				});
-        		}
-        	}
-        	
-        	tp.setHTML('programCurrent', tp.replace('programFormEdu', {
-        		nameProgram: nameProgram,
-        		radio: lst
-        	}));
+	        	for(var i = 0; i < 3; i++){
+	        		if(formEdu[i] > 0){
+	        			lst += tp.replace('radioProgramFormEdu', {
+	        				formEdu: this.determFormEdu(i),
+	        				form: i,
+	        				active: (formNum - 1) === i ? 'active' : ''
+	       				});
+	        		}
+	        	}
+	        	
+	        	tp.setHTML('programCurrent', tp.replace('programFormEdu', {
+	        		nameProgram: nameProgram,
+	        		radio: lst
+	        	}));
         },
         renderFieldItem: function(){
-        	var fieldItem = this.get('fieldItem'),
-        		programList = this.get('programList'),
+        	var fieldItem = this.get('fieldItem').toJSON(),
         		tp = this.template,
-        		edulevelid = fieldItem.get('edulevelid'),
-        		formEdu = "",
-        		nameProgram = "",
-        		formNum = fieldItem.get('frmstudy');
-        	
+        		edulevelid = fieldItem.edulevelid,
+        		formNum = fieldItem.frmstudy,
+        		formEdu = "" + fieldItem.och + fieldItem.ochzaoch + fieldItem.zaoch,
+        		nameProgram = fieldItem.code + " " + fieldItem.name + " " + fieldItem.level;
+        		  
         		this.set('currentLevelid', edulevelid);
-        	
-        		programList.each(function(program){
-        			var curLevelid = program.get('id');
-        			
-	        			if(curLevelid == edulevelid){
-	        				formEdu = "" + program.get('och') + program.get('ochzaoch') + program.get('zaoch');
-	        				nameProgram = program.get('code') + " " + program.get('name') + " " + program.get('level');
-	        					return;
-	        			}
-        		});
+        		this.set('currentFormEdu', formNum);
         		
         		this.parseFormEdu(formEdu, nameProgram, formNum);
         		
-        		this.set('currentFormEdu', formNum);
-
 	        	tp.setValue({
-	        		depart: fieldItem.get('depart'),
-	        		note: fieldItem.get('note')
+	        		depart: fieldItem.depart,
+	        		note: fieldItem.note
 	        	});
 	        	
 	        	     this.listSubject = new NS.SubjectListWidget({

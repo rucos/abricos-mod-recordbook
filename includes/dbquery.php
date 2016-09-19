@@ -16,16 +16,23 @@ class RecordBookQuery {
     	$sql = "
 			SELECT 
 					f.fieldid as id,
+    				l.edulevelid,
 					f.frmstudy,
     				p.code,
     				p.name,
     				l.level,
     				f.note,
 					f.depart,
-					f.remove
+					f.remove,
+    				ef.och,
+    				ef.ochzaoch,
+    				ef.zaoch,
+    				p.remove as prremove,
+    				l.remove as lvlremove
 			FROM ".$db->prefix."rb_fieldstudy f
 			INNER JOIN ".$db->prefix."un_edulevel l ON f.edulevelid=l.edulevelid
 			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
+			INNER JOIN ".$db->prefix."un_eduform ef ON l.edulevelid = ef.edulevelid
 			".$where."
 			ORDER BY remove ASC
 		";
@@ -35,14 +42,25 @@ class RecordBookQuery {
     public static function FieldItem(Ab_Database $db, $id){
     	$sql = "
 			SELECT
-					fieldid as id,
-    				edulevelid,
-					frmstudy,
-    				note,
-					depart,
-					remove
-			FROM ".$db->prefix."rb_fieldstudy
-			WHERE fieldid = ".bkint($id)."
+					f.fieldid as id,
+    				l.edulevelid,
+					f.frmstudy,
+    				p.code,
+    				p.name,
+    				l.level,
+    				f.note,
+					f.depart,
+					f.remove,
+    				ef.och,
+    				ef.ochzaoch,
+    				ef.zaoch,
+    				p.remove as prremove,
+    				l.remove as lvlremove
+			FROM ".$db->prefix."rb_fieldstudy f
+			INNER JOIN ".$db->prefix."un_edulevel l ON f.edulevelid=l.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
+			INNER JOIN ".$db->prefix."un_eduform ef ON l.edulevelid = ef.edulevelid
+			WHERE f.fieldid = ".bkint($id)."
 			LIMIT 1
 		";
     	return $db->query_first($sql);

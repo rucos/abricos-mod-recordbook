@@ -37,6 +37,26 @@
     "remove": {
       "type": "int",
       "json": "rem"
+    },
+    "och": {
+      "type": "int",
+      "json": "o"
+    },
+    "ochzaoch": {
+      "type": "int",
+      "json": "oz"
+    },
+     "zaoch": {
+      "type": "int",
+      "json": "z"
+    },
+    "prremove":{
+      "type": "int",
+      "json": "prr"
+    },
+    "lvlremove":{
+      "type": "int",
+      "json": "lvlr"
     }
   }
 }

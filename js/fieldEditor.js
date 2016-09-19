@@ -16,21 +16,24 @@ Component.entryPoint = function(NS){
         
         },
         onInitAppWidget: function(err, appInstance){
+        	var fieldid = this.get('fieldid') | 0;
+        	
         	this.set('waiting', true);
         	
-            	var fieldid = this.get('fieldid') | 0;
-            	
             	if(fieldid > 0){
 	            	appInstance.fieldItem(fieldid, function(err, result){
 	            		this.set('waiting', false);
 	            			this.set('fieldItem', result.fieldItem);
+	            			this.set('programList', result.programList);
+	            			
+	            			this.renderProgramList();
 	            				this.renderFieldItem();
 	            	}, this);
             	} else {
             		this.set('waiting', false);
+            			this.fillProgramList();
             	}
             	
-            	this.fillProgramList();
         },
         destructor: function(){
             if (this.listSubject){
@@ -61,7 +64,7 @@ Component.entryPoint = function(NS){
         	}));
         	
         },
-        parseFormEdu: function(formEdu, nameProgram){
+        parseFormEdu: function(formEdu, nameProgram, formNum){
         	var tp = this.template,
         		lst = "";
         	
@@ -69,7 +72,8 @@ Component.entryPoint = function(NS){
         		if(formEdu[i] > 0){
         			lst += tp.replace('radioProgramFormEdu', {
         				formEdu: this.determFormEdu(i),
-        				form: i
+        				form: i,
+        				active: (formNum - 1) === i ? 'active' : ''
        				});
         		}
         	}
@@ -80,11 +84,35 @@ Component.entryPoint = function(NS){
         	}));
         },
         renderFieldItem: function(){
-        	var fieldItem = this.get('fieldItem');
+        	var fieldItem = this.get('fieldItem'),
+        		programList = this.get('programList'),
+        		tp = this.template,
+        		edulevelid = fieldItem.get('edulevelid'),
+        		formEdu = "",
+        		nameProgram = "",
+        		formNum = fieldItem.get('frmstudy');
         	
-        	var tp = this.template;
-        		tp.setValue(fieldItem.toJSON());
+        		this.set('currentLevelid', edulevelid);
+        	
+        		programList.each(function(program){
+        			var curLevelid = program.get('id');
+        			
+	        			if(curLevelid == edulevelid){
+	        				formEdu = "" + program.get('och') + program.get('ochzaoch') + program.get('zaoch');
+	        				nameProgram = program.get('code') + " " + program.get('name') + " " + program.get('level');
+	        					return;
+	        			}
+        		});
         		
+        		this.parseFormEdu(formEdu, nameProgram, formNum);
+        		
+        		this.set('currentFormEdu', formNum);
+
+	        	tp.setValue({
+	        		depart: fieldItem.get('depart'),
+	        		note: fieldItem.get('note')
+	        	});
+	        	
 	        	     this.listSubject = new NS.SubjectListWidget({
 	                     srcNode: tp.gel('list'),
 	                     fieldid: this.get('fieldid')

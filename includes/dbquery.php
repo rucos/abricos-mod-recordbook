@@ -36,13 +36,11 @@ class RecordBookQuery {
     	$sql = "
 			SELECT
 					fieldid as id,
-					fieldcode,
-					field,
+    				edulevelid,
 					frmstudy,
-					qual,
     				note,
 					depart,
-    				remove
+					remove
 			FROM ".$db->prefix."rb_fieldstudy
 			WHERE fieldid = ".bkint($id)."
 			LIMIT 1
@@ -50,18 +48,16 @@ class RecordBookQuery {
     	return $db->query_first($sql);
     }
     
-    public static function FieldUpdate(Ab_Database $db, $id, $d){
+    public static function FieldUpdate(Ab_Database $db, $d){
     	
     	$sql = "
 			UPDATE ".$db->prefix."rb_fieldstudy
 			SET
-				fieldcode='".bkstr($d->fieldcode)."',
-				field='".bkstr($d->field)."',
-				frmstudy='".bkstr($d->frmstudy)."',
-				qual='".bkstr($d->qual)."',
+				frmstudy=".bkint($d->frmstudy).",
 				depart='".bkstr($d->depart)."',
-				note='".bkstr($d->note)."'
-			WHERE fieldid=".bkint($id)."
+				note='".bkstr($d->note)."',
+				edulevelid='".bkstr($d->levelid)."'
+			WHERE fieldid=".bkint($d->id)."
 			LIMIT 1
 		";
     	$db->query_write($sql);

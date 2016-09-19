@@ -142,22 +142,20 @@ class RecordBook extends AbricosApplication {
 	    
 	    public function FieldItemToJSON($fieldid){
 	    	$res = $this->FieldItem($fieldid);
-	    		return $this->ResultToJSON('fieldItem', $res);
+	    	
+    		return $this->ImplodeJSON(
+    				$this->ResultToJSON('fieldItem', $res),
+    				$this->ProgramListToJSON()
+    		);
 	    }
 	    
     	public function FieldItem($fieldid){
-    		if(!isset($this->_cache['FieldItem'])){
-    			$this->_cache['FieldItem'] = array();
-    		}
-    		if (isset($this->_cache['FieldItem'][$fieldid])){
-    			return $this->_cache['FieldItem'][$fieldid];
-    		}
     		
     		$d = RecordBookQuery::FieldItem($this->db, $fieldid);
     		
     		$field = $this->models->InstanceClass('FieldItem', $d);
     		
-    			return $this->_cache['FieldItem'][$fieldid] = $field;
+    			return $field;
     			
     	}
     	
@@ -176,7 +174,7 @@ class RecordBook extends AbricosApplication {
     		$d->note = $utmf->Parser($d->note);
     		
     		if($d->id !== 0){
-    			RecordBookQuery::FieldUpdate(Abricos::$db, $d->id, $d);
+    			RecordBookQuery::FieldUpdate(Abricos::$db, $d);
     		} else {
     			RecordBookQuery::FieldAppend(Abricos::$db, $d);
     		}

@@ -6,6 +6,10 @@
     "id": {
       "type": "int"
     },
+    "edulevelid": {
+      "type": "int",
+      "json": "eid"
+   },
     "frmstudy": {
       "type": "int",
       "json": "fs"

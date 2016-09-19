@@ -53,11 +53,7 @@ Component.entryPoint = function(NS){
         		lst = "";
         	
         	progList.each(function(prog){
-        		lst += tp.replace('programLi', {
-        			levelid: prog.get('id'),
-        			program: prog.get('code') + " " + prog.get('name') + " " + prog.get('level'),
-        			formEdu: "" + prog.get('och') + prog.get('ochzaoch') + prog.get('zaoch')
-        		});
+        		lst += tp.replace('programLi', prog.toJSON());
         	});
         	tp.setHTML('programList', tp.replace('programList', {
         		li: lst

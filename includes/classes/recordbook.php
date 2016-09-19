@@ -135,6 +135,10 @@ class RecordBook extends AbricosApplication {
 		    	$rows = RecordBookQuery::FieldList($this->db, $widget);
 		    	
 		    		while (($d = $this->db->fetch_array($rows))){
+		    			$d['formEdu'] = array($d['och'], $d['ochzaoch'], $d['zaoch']);
+		    			
+		    			$d['frmstudy'] = $this->DetermineFormStudy($d['formEdu'], $d['frmstudy']);
+		    			
 		    			$list->Add($this->models->InstanceClass('FieldItem', $d));
 		    		}
 		    		return $list;
@@ -146,14 +150,19 @@ class RecordBook extends AbricosApplication {
     		return 	$this->ResultToJSON('fieldItem', $res);
 	    }
 	    
+	    private function DetermineFormStudy($arr, $ind){
+	    	return $arr[$ind - 1] == 0 ? -1 : $ind;
+	    }
+	    
     	public function FieldItem($fieldid){
-    		
     		$d = RecordBookQuery::FieldItem($this->db, $fieldid);
     		
-    		$field = $this->models->InstanceClass('FieldItem', $d);
+    		$d['formEdu'] = array($d['och'], $d['ochzaoch'], $d['zaoch']);
     		
+   			$d['frmstudy'] = $this->DetermineFormStudy($d['formEdu'], $d['frmstudy']);
+   			
+    		$field = $this->models->InstanceClass('FieldItem', $d);
     			return $field;
-    			
     	}
     	
     	public function FieldSaveToJSON($d){
@@ -163,7 +172,7 @@ class RecordBook extends AbricosApplication {
     	
     	public function FieldSave($d){
     		$utmf = Abricos::TextParser(true);
-    		/*проверку на запоняемость*/
+    		
     		$d->id = intval($d->id);
     		$d->depart = $utmf->Parser($d->depart);
     		$d->frmstudy = intval($d->frmstudy);

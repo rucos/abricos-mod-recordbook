@@ -78,15 +78,23 @@ Component.entryPoint = function(NS){
         renderFieldItem: function(){
         	var fieldItem = this.get('fieldItem').toJSON(),
         		tp = this.template,
-        		edulevelid = fieldItem.edulevelid,
         		formNum = fieldItem.frmstudy,
-        		formEdu = "" + fieldItem.och + fieldItem.ochzaoch + fieldItem.zaoch,
+        		lvlremove = fieldItem.lvlremove,
         		nameProgram = fieldItem.code + " " + fieldItem.name + " " + fieldItem.level;
-        		  
-        		this.set('currentLevelid', edulevelid);
-        		this.set('currentFormEdu', formNum);
+        	
+        		if(lvlremove){
+        			tp.setHTML('contextLevelEdu', tp.replace('contextLevelEdu'));
+        		} else {
+        			this.set('currentLevelid', fieldItem.edulevelid);
+        		}
         		
-        		this.parseFormEdu(formEdu, nameProgram, formNum);
+        		if(formNum == -1){
+        			tp.setHTML('contextFormEdu', tp.replace('contextFormEdu'));
+        		} else {
+        			this.set('currentFormEdu', formNum);	
+        		}
+        		
+        		this.parseFormEdu(fieldItem.formEdu, nameProgram, formNum);
         		
 	        	tp.setValue({
 	        		depart: fieldItem.depart,
@@ -97,7 +105,6 @@ Component.entryPoint = function(NS){
 	                     srcNode: tp.gel('list'),
 	                     fieldid: this.get('fieldid')
 	                 });
-        			
         },
         save: function(){
         	var fieldid = this.get('fieldid'),
@@ -144,7 +151,7 @@ Component.entryPoint = function(NS){
 }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,programList,programLi,programFormEdu,radioProgramFormEdu'},
+            templateBlockName: {value: 'widget,programList,programLi,programFormEdu,radioProgramFormEdu, contextFormEdu,contextLevelEdu'},
             fieldid: {value: 0},
             fieldItem: {value: null},
             programList: {value: null},
@@ -177,6 +184,7 @@ Component.entryPoint = function(NS){
         			this.set('currentFormEdu', '');
         			
         			tp.gel('programList.divProgList').classList.remove('open');
+        			tp.setHTML('contextLevelEdu', "");
         			
         			this.parseFormEdu(formEdu, a.textContent);
         		}
@@ -192,6 +200,7 @@ Component.entryPoint = function(NS){
         			this.unSetRadio();
         			
         			lbl.classList.add('active');
+        			tp.setHTML('contextFormEdu', '');
         		}
         	}
         }

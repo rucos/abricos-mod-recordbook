@@ -38,25 +38,17 @@
       "type": "int",
       "json": "rem"
     },
-    "och": {
+	"formEdu":{
+	  "type": "array",
+      "json": "fdu"
+	},
+    "lvlremove":{
       "type": "int",
-      "json": "o"
-    },
-    "ochzaoch": {
-      "type": "int",
-      "json": "oz"
-    },
-     "zaoch": {
-      "type": "int",
-      "json": "z"
+      "json": "lvlr"
     },
     "prremove":{
       "type": "int",
       "json": "prr"
-    },
-    "lvlremove":{
-      "type": "int",
-      "json": "lvlr"
     }
   }
 }

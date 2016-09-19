@@ -115,7 +115,6 @@ Component.entryPoint = function(NS){
 	        			
 	        		}
         	} else {
-        		console.log(data);
 	         	this.set('waiting', true);
 		        	lib.fieldSave(data, function(err, result){
 		        		this.set('waiting', false);

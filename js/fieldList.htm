@@ -7,14 +7,12 @@
 <table class="table table-striped table-hover">
     <thead>
     <tr>
-   	 <th>Код направления</th>
-        <th>Направление</th>
-        <th>Форма обучения</th>
-        <th>Квалификация</th>
-        <th>Кафедра</th>
-        <th>Примечание</th>
-        <th></th>
-        <th></th>
+   	 <th>#</th>
+     <th>Рабочий план</th>
+     <th>Кафедра</th>
+     <th>Примечание</th>
+     <th></th>
+     <th></th>
     </tr>
     </thead>
     <tbody>{v#rows}</tbody>
@@ -22,10 +20,8 @@
 
 <!--{row}-->
 <tr {v#danger}>
-    <td>{v#fieldcode}</td>
-    <td>{v#field}</td>
-    <td>{v#frmstudy}</td>
-    <td>{v#qual}</td>
+    <td>{v#n}</td>
+    <td>{v#code} {v#name} {v#frmstudy} {v#level}</td>
     <td>{v#depart}</td>
     <td>{v#note}</td>
     <td>

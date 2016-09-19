@@ -15,15 +15,17 @@ class RecordBookQuery {
     	
     	$sql = "
 			SELECT 
-					fieldid as id,
-					fieldcode,
-					field,
-					frmstudy,
-					qual,
-    				note,
-					depart,
-					remove
-			FROM ".$db->prefix."rb_fieldstudy
+					f.fieldid as id,
+					f.frmstudy,
+    				p.code,
+    				p.name,
+    				l.level,
+    				f.note,
+					f.depart,
+					f.remove
+			FROM ".$db->prefix."rb_fieldstudy f
+			INNER JOIN ".$db->prefix."un_edulevel l ON f.edulevelid=l.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
 			".$where."
 			ORDER BY remove ASC
 		";

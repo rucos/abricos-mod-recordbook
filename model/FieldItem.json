@@ -6,21 +6,21 @@
     "id": {
       "type": "int"
     },
-    "fieldcode": {
-      "type": "string",
-      "json": "fc"
-    },
-    "field": {
-      "type": "string",
-      "json": "fd"
-    },
     "frmstudy": {
-      "type": "string",
-      "json": "bd"
+      "type": "int",
+      "json": "fs"
     },
-    "qual": {
+    "code": {
       "type": "string",
-      "json": "qual"
+      "json": "cd"
+    },
+    "name": {
+      "type": "string",
+      "json": "nm"
+    },
+    "level": {
+      "type": "string",
+      "json": "lvl"
     },
     "note": {
       "type": "string",

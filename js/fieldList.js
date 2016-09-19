@@ -17,7 +17,6 @@ Component.entryPoint = function(NS){
         },
         reloadList: function(){
         	this.set('waiting', true);
-        	
         	this.get('appInstance').fieldList('fieldList', function(err, result){
         		this.set('waiting', false);
         		this.set('fieldList', result.fieldList);
@@ -26,9 +25,10 @@ Component.entryPoint = function(NS){
         	
         },
         renderList: function(){
-        	var fieldList = this.get('fieldList');
-        	var lst = "";
-        	var tp = this.template;
+        	var fieldList = this.get('fieldList'),
+        		lst = "",
+        		tp = this.template,
+        		n = 0;
         	
         	fieldList.each(function(field){
         		var rem = field.get('remove');
@@ -37,14 +37,16 @@ Component.entryPoint = function(NS){
             		lst += tp.replace('row', [{
             			danger: 'class="danger"',
             			remove: 'восстановить',
-            			act: 'restore'
+            			act: 'restore',
+            			n: ++n
             		},field.toJSON()]);
             		
         		} else {
         	 		lst += tp.replace('row', [{
             			danger: '',
             			remove: 'удалить',
-            			act: 'remove-show'
+            			act: 'remove-show',
+            			n: ++n
             		},field.toJSON()]);
         		}
                 

@@ -130,9 +130,6 @@ class RecordBook extends AbricosApplication {
 				return false;
 			}
 			
-	    	if (isset($this->_cache['FieldList'])){
-	    		return $this->_cache['FieldList'];
-	    	}
 	    	$list = $this->models->InstanceClass('FieldList');
 	    
 		    	$rows = RecordBookQuery::FieldList($this->db, $widget);
@@ -140,7 +137,7 @@ class RecordBook extends AbricosApplication {
 		    		while (($d = $this->db->fetch_array($rows))){
 		    			$list->Add($this->models->InstanceClass('FieldItem', $d));
 		    		}
-		    		return $this->_cache['FieldList'] = $list;
+		    		return $list;
 	    }
 	    
 	    public function FieldItemToJSON($fieldid){

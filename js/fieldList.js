@@ -31,26 +31,24 @@ Component.entryPoint = function(NS){
         		n = 0;
         	
         	fieldList.each(function(field){
-        		var rem = field.get('remove');
+        		var rem = field.get('remove'),
+        			frmstudy = field.get('frmstudy') - 1,
+        			arr = [{
+		        			danger: '',
+		        			remove: 'удалить',
+		        			act: 'remove-show',
+		        			n: ++n,
+		        			frmstudy: this.get('appInstance').determFormEdu(frmstudy)
+        			}, field.toJSON()];
         		
         		if(rem === 1){
-            		lst += tp.replace('row', [{
-            			danger: 'class="danger"',
-            			remove: 'восстановить',
-            			act: 'restore',
-            			n: ++n
-            		},field.toJSON()]);
-            		
-        		} else {
-        	 		lst += tp.replace('row', [{
-            			danger: '',
-            			remove: 'удалить',
-            			act: 'remove-show',
-            			n: ++n
-            		},field.toJSON()]);
-        		}
-                
-            });
+            		arr[0].danger = 'class="danger"';
+            		arr[0].remove = 'восстановить';
+            		arr[0].act = 'restore';
+        		} 
+        		
+    	 		lst += tp.replace('row', arr);
+            }, this);
         		tp.setHTML('list', tp.replace('table', {rows: lst}));
         },
         remove: function(fieldid, restore){

@@ -63,7 +63,7 @@ Component.entryPoint = function(NS){
 	        	for(var i = 0; i < 3; i++){
 	        		if(formEdu[i] > 0){
 	        			lst += tp.replace('radioProgramFormEdu', {
-	        				formEdu: this.determFormEdu(i),
+	        				formEdu: this.get('appInstance').determFormEdu(i),
 	        				form: i,
 	        				active: (formNum - 1) === i ? 'active' : ''
 	       				});
@@ -131,14 +131,6 @@ Component.entryPoint = function(NS){
 		        			} 
 		        	}, this);
         	}
-        },
-        determFormEdu: function(key){
-        	var obj = {
-        		'0': 'очная форма',
-        		'1': 'очно-заочная форма',
-        		'2': 'заочная форма'
-        	};
-        	return obj[key];
         },
         unSetRadio: function(){
         	var radioList = this.template.gel('programFormEdu.radioList'),

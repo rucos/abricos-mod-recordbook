@@ -60,6 +60,14 @@ Component.entryPoint = function(NS){
         			case 105: return '5';
         		}
         	}
+        },
+        determFormEdu: function(key){
+        	var obj = {
+        		'0': 'очная форма',
+        		'1': 'очно-заочная форма',
+        		'2': 'заочная форма'
+        	};
+        	return obj[key];
         }
     }, [], {
         REQS: {

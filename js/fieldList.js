@@ -32,13 +32,15 @@ Component.entryPoint = function(NS){
         	
         	fieldList.each(function(field){
         		var rem = field.get('remove'),
-        			frmstudy = field.get('frmstudy') - 1,
+        			frmstudy = this.get('appInstance').determFormEdu(field.get('frmstudy') - 1),
         			arr = [{
 		        			danger: '',
 		        			remove: 'удалить',
 		        			act: 'remove-show',
 		        			n: ++n,
-		        			frmstudy: this.get('appInstance').determFormEdu(frmstudy)
+		        			frmstudy: frmstudy + this.showDanger(!frmstudy),
+		        			prDanger: this.showDanger(field.get('prremove')),
+		        			lvlDanger: this.showDanger(field.get('lvlremove'))
         			}, field.toJSON()];
         		
         		if(rem === 1){
@@ -50,6 +52,9 @@ Component.entryPoint = function(NS){
     	 		lst += tp.replace('row', arr);
             }, this);
         		tp.setHTML('list', tp.replace('table', {rows: lst}));
+        },
+        showDanger: function(remove){
+        	return remove ? this.template.replace('danger') : '';
         },
         remove: function(fieldid, restore){
         	
@@ -64,7 +69,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,table,row'},
+            templateBlockName: {value: 'widget,table,row,danger'},
             fieldList: {value: null}
         },
         CLICKS: {

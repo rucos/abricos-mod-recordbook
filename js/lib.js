@@ -67,7 +67,7 @@ Component.entryPoint = function(NS){
         		'1': 'очно-заочная форма',
         		'2': 'заочная форма'
         	};
-        	return obj[key];
+        	return obj[key] || '';
         }
     }, [], {
         REQS: {

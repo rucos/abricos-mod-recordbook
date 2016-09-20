@@ -101,10 +101,13 @@ Component.entryPoint = function(NS){
 	        		note: fieldItem.note
 	        	});
 	        	
-	        	     this.listSubject = new NS.SubjectListWidget({
-	                     srcNode: tp.gel('list'),
-	                     fieldid: this.get('fieldid')
-	                 });
+	        	this.showListSubject();
+        },
+        showListSubject: function(){
+	   	     this.listSubject = new NS.SubjectListWidget({
+	             srcNode: this.template.gel('list'),
+	             fieldid: this.get('fieldid')
+	         });
         },
         save: function(){
         	var fieldid = this.get('fieldid'),
@@ -134,7 +137,12 @@ Component.entryPoint = function(NS){
 		        	lib.fieldSave(data, function(err, result){
 		        		this.set('waiting', false);
 		        			if(!err){
-		        				this.go('fieldManager.view');
+		        				if(this.listSubject){
+		        					this.go('fieldManager.view');
+		        				} else {
+		        					this.set('fieldid', result.fieldSave);
+		        					this.showListSubject();
+		        				}
 		        			} 
 		        	}, this);
         	}
@@ -179,7 +187,7 @@ Component.entryPoint = function(NS){
         			if(!a.href){
         				return;
         			}
-        			
+
         			this.set('currentLevelid', targ.getData('levelid'));
         			this.set('currentFormEdu', '');
         			

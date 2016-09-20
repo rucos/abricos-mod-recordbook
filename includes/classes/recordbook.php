@@ -182,7 +182,7 @@ class RecordBook extends AbricosApplication {
     		if($d->id !== 0){
     			RecordBookQuery::FieldUpdate(Abricos::$db, $d);
     		} else {
-    			RecordBookQuery::FieldAppend(Abricos::$db, $d);
+    			return RecordBookQuery::FieldAppend(Abricos::$db, $d).'';
     		}
     		
     	}

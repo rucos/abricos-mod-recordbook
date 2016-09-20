@@ -94,6 +94,7 @@ class RecordBookQuery {
 			)
 		";
       	$db->query_write($sql);
+      	return $db->insert_id();
     }
     
     public static function FieldRemove(Ab_Database $db, $id, $restore){

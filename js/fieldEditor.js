@@ -80,6 +80,7 @@ Component.entryPoint = function(NS){
         		tp = this.template,
         		formNum = fieldItem.frmstudy,
         		lvlremove = fieldItem.lvlremove,
+        		prRemove = fieldItem.prremove,
         		nameProgram = fieldItem.code + " " + fieldItem.name + " " + fieldItem.level;
         	
         		if(lvlremove){
@@ -87,6 +88,10 @@ Component.entryPoint = function(NS){
         		} else {
         			this.set('currentLevelid', fieldItem.edulevelid);
         		}
+        		
+        		if(prRemove){
+        			tp.setHTML('contextProgram', tp.replace('contextProgram'));
+        		} 
         		
         		if(formNum == -1){
         			tp.setHTML('contextFormEdu', tp.replace('contextFormEdu'));
@@ -159,7 +164,7 @@ Component.entryPoint = function(NS){
 }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,programList,programLi,programFormEdu,radioProgramFormEdu, contextFormEdu,contextLevelEdu'},
+            templateBlockName: {value: 'widget,programList,programLi,programFormEdu,radioProgramFormEdu, contextFormEdu,contextLevelEdu,contextProgram'},
             fieldid: {value: 0},
             fieldItem: {value: null},
             programList: {value: null},
@@ -193,6 +198,7 @@ Component.entryPoint = function(NS){
         			
         			tp.gel('programList.divProgList').classList.remove('open');
         			tp.setHTML('contextLevelEdu', "");
+        			tp.setHTML('contextProgram', "");
         			
         			this.parseFormEdu(formEdu, a.textContent);
         		}

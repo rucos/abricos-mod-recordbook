@@ -7,7 +7,7 @@
             </div>
             <div class="col-md-5">
                 <div class="btn-toolbar pull-right">
-                    <button data-click="saveGroup" type="button" class=" btn btn-default" data-wait="disable">
+                    <button id="{i#btnSave}" data-click="saveGroup" type="button" class=" btn btn-default hide" data-wait="disable">
                         Сохранить изменения
                     </button>
            			<button data-click="cancel" type="button" class="btn btn-default" data-wait="disable">
@@ -48,14 +48,17 @@
 	    </div>
 	  </div>
 	  <div class="form-group">
-		    <label class="col-sm-2 control-label" >Рабочий план</label>
-		   		    <div class="col-sm-7">
+		    <label class="col-md-2 control-label" >Рабочий план</label>
+		    <div id="{i#listField}" class="col-md-2 {v#hide}"></div>
+		   	<div class="col-md-6">
 		    	<div id="{i#curentField}" class="alert alert-success" role="alert">
 		    		{v#code} {v#name} {v#level} {v#frmstudy} {v#note}
 		    	</div>
 		    </div>
-		    <div class="col-sm-2">
-		      	<div id="{i#listField}"></div>
+		    <div class="col-md-1">
+		    	<button id="{i#btnEdit}" data-click="edit" type="button" class=" btn btn-default hide" data-wait="disable">
+					Изменить план
+				</button>
 		    </div>
 	  </div>
 </form>

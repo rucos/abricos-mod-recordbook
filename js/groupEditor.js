@@ -21,7 +21,7 @@ Component.entryPoint = function(NS){
         		tp = this.template,
             	lst = "";
 
-        		if(groupid > 0){//редактитрование
+        		if(groupid > 0){
         			this.set('waiting', true);
 	    				appInstance.groupItem(groupid, function(err, result){
 	    					this.set('waiting', false);
@@ -32,13 +32,14 @@ Component.entryPoint = function(NS){
 	    				}, this);
 	    		} else {
 	    			tp.setHTML('groupItem', tp.replace('groupItem', this.constructItem()));
+	    				this.reqFieldList();
 	    		}
+        		this.get('boundingBox').on('change', this.change, this);
 //	        			 this.listStud = new NS.StudListWidget({
 //	  	                     srcNode: tp.gel('listStud'),
 //	  	                     groupid: this.get('groupid')
 //	  	                 });
-        			this.reqFieldList();	
-        		
+        			
         },
         destructor: function(){
         	if(this.listStud){
@@ -50,12 +51,14 @@ Component.entryPoint = function(NS){
         		tp = this.template,
         		frmStudy = groupItem.get('frmstudy');
         		
-        		tp.setHTML('groupItem', tp.replace('groupItem', [
-        		      this.setFormStudy(frmStudy), 
-        		      groupItem.toJSON()
-        		]));
+        		tp.setHTML('groupItem', tp.replace('groupItem', [{
+        				frmstudy: this.get('appInstance').determFormEdu(frmStudy),
+        				hide: 'hide'
+        			}, groupItem.toJSON()]));
         		
         		this.set('currentFieldid', groupItem.get('fieldid'));
+        		
+        		tp.removeClass('groupItem.btnEdit', 'hide');
         },
         reqFieldList: function(){
 	        this.set('waiting', true);
@@ -76,12 +79,11 @@ Component.entryPoint = function(NS){
 	        	fieldList.each(function(field){
 	        		var frmStudy = field.get('frmstudy');
 
-	        		lst += tp.replace('liField', [
-	        		    this.setFormStudy(frmStudy),
-	        			field.toJSON()
-	               	]);
+	        		lst += tp.replace('liField', [{
+        					frmstudy: this.get('appInstance').determFormEdu(frmStudy)
+        				}, field.toJSON()]);
 	            }, this);
-    		
+	        	
 	        	tp.setHTML('groupItem.listField', tp.replace('ulField', {li: lst}));
         },
         saveGroup: function(){
@@ -104,7 +106,7 @@ Component.entryPoint = function(NS){
         				case 'currentFieldid': alert( 'Укажите рабочий план' ); break;
         			}
 	        			try{
-	        				tp.gel(empty).focus();
+	        				tp.gel('groupItem.' + empty).focus();
 	        			} catch(e){
 	        				tp.addClass('groupItem.curentField', 'alert-danger');
 	        			}
@@ -130,14 +132,26 @@ Component.entryPoint = function(NS){
         		name: '',
         		level: '',
         		frmstudy: '',
-        		note: ''
+        		note: '',
+        		hide: ''
         	};
         },
-        setFormStudy: function(frmStudy){
-        	return {
-        		frmstudy: this.get('appInstance').determFormEdu(frmStudy)
-        	};
-        }
+        change: function(e){
+        	var input, idList;
+        	
+	        	if(!this.get('edit')){
+	            	input = e.target.getDOMNode();
+		        	idList = this.template.idMap.groupItem; 
+		        	
+			        	for(var i in idList){
+			        		if(idList[i] == input.id){
+			        			this.set('edit', true);
+			        			this.template.removeClass('btnSave', 'hide');
+			        				return;
+			        		}
+			        	}
+		        }
+		}
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
@@ -145,12 +159,19 @@ Component.entryPoint = function(NS){
             groupid: {value: 0},
             currentFieldid: {value: ''},
             groupItem: {value: null},
-            fieldList: {value: null}
+            fieldList: {value: null},
+            edit: {value: false}
         },
         CLICKS: {
         	saveGroup: {
         		event: function(){
-        			this.saveGroup();
+        			var edit = this.get('edit');
+        			
+	        			if(edit){
+	        				this.saveGroup();        				
+	        			} else {
+	        				this.cancel();
+	        			}
         		}
         	},
         	cancel: {
@@ -175,6 +196,20 @@ Component.entryPoint = function(NS){
         			
         			this.set('currentFieldid', targ.getData('id'));
         		}
+        	},
+        	edit: {
+        		event: function(e){
+        			var tp = this.template;
+        			
+        			e.target.hide();
+        			
+            		this.set('edit', true);
+        			
+        			this.reqFieldList();
+        			
+        			tp.removeClass('groupItem.listField', 'hide');
+        			tp.removeClass('btnSave', 'hide');
+            	}
         	}
         }
     });

@@ -22,21 +22,17 @@
       "type": "int",
       "json": "grrem"
     },
-    "field": {
+    "code": {
       "type": "string",
-      "json": "fi"
+      "json": "cd"
     },
-    "fieldid": {
-      "type": "int",
-      "json": "fid"
-    },
-    "fieldcode": {
+    "name": {
       "type": "string",
-      "json": "fc"
+      "json": "nm"
     },
-     "frmstudy": {
+    "level": {
       "type": "string",
-      "json": "fs"
+      "json": "lvl"
     },
     "note": {
       "type": "string",
@@ -45,6 +41,14 @@
     "remove": {
       "type": "int",
       "json": "fldrem"
+    },
+    "fieldid": {
+      "type": "int",
+      "json": "fldid"
+    },
+    "frmstudy": {
+      "type": "int",
+      "json": "fs"
     }
   }
 }

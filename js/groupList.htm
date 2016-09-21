@@ -1,11 +1,14 @@
 <!--{widget}-->
 <div>
-    <ul class="nav nav-pills">
+    <ul class="nav nav-pills" data-click="showGroupList">
 		  <li>
-		  	<button id="{i#ochForm}" data-value="ochForm" data-click="showGroupList" class="btn btn-default" data-wait="disable">Очная форма</button>
+		  	<button id="{i#o}" data-value="1"  class="btn btn-default" data-wait="disable">Очная форма</button>
 		  </li>
 		  <li>
-		  	<button id="{i#zaochForm}" data-value="zaochForm"  data-click="showGroupList" class="btn btn-default" data-wait="disable">Заочная форма</button>
+		  	<button id="{i#ozo}" data-value="2" class="btn btn-default" data-wait="disable">Очно-заочная форма</button>
+		  </li>
+		  <li>
+		  	<button id="{i#z}" data-value="3" class="btn btn-default" data-wait="disable">Заочная форма</button>
 		  </li>
 	</ul>
         <span data-wait="show" class="pull-right">
@@ -42,7 +45,7 @@
     <tr>
 	   	 <th>№группы</th>
 	   	 <th>Год поступления</th>
-	   	 <th>Направление</th>
+	   	 <th>Рабочий план</th>
 	     <th>Список группы</th>
 	     <th>Ведомости</th>
 	     <th>Успеваемость</th>
@@ -57,7 +60,7 @@
 <tr class="{v#success} {v#danger}">
     <td>{v#numgroup}({v#numcrs}) </td>
     <td>{v#dateline}</td>
-    <td>{v#fieldcode} {v#field} {v#frmstudy} {v#note} {v#label}</td>
+    <td>{v#code} {v#name} {v#level} {v#note} {v#label}</td>
     <td>
     	 <button data-click="showListGroup" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
             Список группы

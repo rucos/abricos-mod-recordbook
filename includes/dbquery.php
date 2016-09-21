@@ -194,13 +194,16 @@ class RecordBookQuery {
     				g.numcrs,
     				g.dateline,
     				g.remove as grRemove,
-    				f.fieldid,
-    				f.frmstudy,
+    				p.code,
+    				p.name,
+    				e.level,
     				f.note,
     				f.remove
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
-    		WHERE f.frmstudy = '".bkstr($d->frmstudy)."'
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
+    		WHERE f.frmstudy = ".bkint($d->frmstudy)."
     		ORDER BY id DESC
     		LIMIT ".$from.",".$limit."
 		";
@@ -213,7 +216,7 @@ class RecordBookQuery {
 			SELECT COUNT( g.groupid ) as cnt
 			FROM ".$db->prefix."rb_groups g
 			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
-			WHERE f.frmstudy = '".bkstr($frmstudy)."'
+			WHERE f.frmstudy = ".bkint($frmstudy)."
 		";
     	$row = $db->query_first($sql);
     	return $row['cnt'];
@@ -240,13 +243,17 @@ class RecordBookQuery {
     				g.numgroup,
     				g.numcrs,
     				g.dateline,
-    				f.field,
     				f.fieldid,
-    				f.fieldcode,
     				f.frmstudy,
-    				f.note
+    				f.frmstudy,
+    				f.note,
+    				p.code,
+    				p.name,
+    				e.level
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
     		WHERE g.groupid = ".bkint($groupid)."
     		LIMIT 1
 		";
@@ -258,7 +265,7 @@ class RecordBookQuery {
     	$sql = "
 			UPDATE ".$db->prefix."rb_groups
 			SET 
-				fieldid=".bkint($group->currentFieldId).",
+				fieldid=".bkint($group->currentFieldid).",
 				numgroup='".bkstr($group->numgroup)."',
 				numcrs=".bkint($group->numcrs).",
 				dateline=".bkint($group->year)."

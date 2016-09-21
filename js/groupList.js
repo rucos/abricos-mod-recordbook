@@ -36,9 +36,9 @@ Component.entryPoint = function(NS){
         },
         showGroupList: function(){
         	var lib = this.get('appInstance'),
-    		find = lib.get('findGroup'),
-    		valFind = lib.get('findGroupVal'),
-    		tp = this.template;
+	    		find = lib.get('findGroup'),
+	    		valFind = lib.get('findGroupVal'),
+	    		tp = this.template;
     	
 	    	if(find){
 	    		tp.show('allGroup');
@@ -51,15 +51,15 @@ Component.entryPoint = function(NS){
         countGroup: function(){
         	var lib = this.get('appInstance'),
         		data = {
-        		type: 'groupList',
-        		frmstudy: lib.get('frmstudy')
-        	};
+	        		type: 'groupList',
+	        		frmstudy: lib.get('frmstudy')
+	        	};
         	
           	this.set('waiting', true);
           		lib.countPaginator(data, function(err, result){
 	    			this.set('waiting', false);
 	    				this.pagination.set('countRow', result.countPaginator);
-	    				this.reloadList();
+	    					this.reloadList();
 	    		}, this);
         },
         reloadList: function(){
@@ -90,14 +90,13 @@ Component.entryPoint = function(NS){
         		lib = this.get('appInstance'),
         		find = lib.get('findGroup');
         	
-        	
         	groupList.each(function(group){
         		lst += tp.replace('row', [{
         			success: find ? 'success' : '',
         			label: group.get('remove') ? tp.replace('label') : "",
         			danger: group.get('grRemove') ? 'danger' : '',
         			remove: group.get('grRemove') ? 'Восстановить' : 'Удалить'
-        		},group.toJSON()]);
+        		}, group.toJSON()]);
         	});
         		tp.setHTML('list', tp.replace('table', {rows: lst}));
         		
@@ -148,16 +147,17 @@ Component.entryPoint = function(NS){
             			}
             	}, this);
         },
-        setColorButton: function(frmstudy){
-        	var tp = this.template;
-        		
-			if(frmstudy === 'очная'){
-				tp.addClass('ochForm', 'btn-primary');
-				tp.removeClass('zaochForm', 'btn-primary');
-			} else {
-				tp.removeClass('ochForm', 'btn-primary');
-				tp.addClass('zaochForm', 'btn-primary');
-			}
+        setColorButton: function(ind){
+        	var tp = this.template,
+        		arr = ['o', 'ozo', 'z'];
+        	
+        	if(ind){
+        		tp.addClass(arr[ind - 1], 'btn-primary');
+        	} else {
+            	arr.forEach(function(button){
+            		tp.removeClass(button, 'btn-primary');
+            	});
+        	}
         }
     }, {
         ATTRS: {
@@ -241,17 +241,19 @@ Component.entryPoint = function(NS){
             showGroupList: {
         		event: function(e){
         			var tp = this.template,
-        				val = e.target.getData('value'),
-        				lib = this.get('appInstance');
-        				
-        			if(val === 'ochForm'){
-        				lib.set('frmstudy', 'очная');        				
-        			} else {
-        				lib.set('frmstudy', 'заочная');
+        				targ = e.target,
+        				val = targ.getData('value'),
+        				button = targ.getDOMNode();
+        			
+        			if(!val){
+        				return;
         			}
+        				
+        			this.get('appInstance').set('frmstudy', val);        				
         			
-        			this.setColorButton(val === 'ochForm' ? 'очная' : 'заочная');
+        			this.setColorButton();
         			
+        			button.classList.add('btn-primary');
         			tp.show('groupList');
         				
         			this.showGroupList();

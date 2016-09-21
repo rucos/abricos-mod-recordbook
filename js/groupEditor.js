@@ -31,7 +31,7 @@ Component.entryPoint = function(NS){
 		    				}
 	    				}, this);
 	    		} else {
-	    			tp.setValue('year', new Date().getFullYear());
+	    			tp.setHTML('groupItem', tp.replace('groupItem', this.constructItem()));
 	    		}
 //	        			 this.listStud = new NS.StudListWidget({
 //	  	                     srcNode: tp.gel('listStud'),
@@ -46,21 +46,16 @@ Component.entryPoint = function(NS){
         	}
         },
         renderGroupItem: function(){
-//        	var groupItem = this.get('groupItem'),
-//        		tp = this.template;
-//        	
-//        		tp.setValue('numgroup', groupItem.get('numgroup'));
-//        		
-//        		tp.setValue('numcrs', groupItem.get('numcrs'));
-//        		
-//         		tp.setValue('inpfield', groupItem.get('fieldcode') + " " 
-//						+ groupItem.get('field') + " "
-//						+ groupItem.get('frmstudy') + " "
-//						+ groupItem.get('note'));
-//         		
-//         		tp.setValue('year', groupItem.get('dateline'));
-//        		
-//        		this.set('currentFieldId', groupItem.get('fieldid'));
+        	var groupItem = this.get('groupItem'),
+        		tp = this.template,
+        		frmStudy = groupItem.get('frmstudy');
+        		
+        		tp.setHTML('groupItem', tp.replace('groupItem', [
+        		      this.setFormStudy(frmStudy), 
+        		      groupItem.toJSON()
+        		]));
+        		
+        		this.set('currentFieldid', groupItem.get('fieldid'));
         },
         reqFieldList: function(){
 	        this.set('waiting', true);
@@ -80,25 +75,24 @@ Component.entryPoint = function(NS){
         	
 	        	fieldList.each(function(field){
 	        		var frmStudy = field.get('frmstudy');
-	        		
-	        		lst += tp.replace('liField', [{
-	        				frmstudy: this.get('appInstance').determFormEdu(frmStudy)
-	        			}, 
+
+	        		lst += tp.replace('liField', [
+	        		    this.setFormStudy(frmStudy),
 	        			field.toJSON()
 	               	]);
 	            }, this);
     		
-	        	tp.setHTML('listField', tp.replace('ulField', {li: lst}));
+	        	tp.setHTML('groupItem.listField', tp.replace('ulField', {li: lst}));
         },
         saveGroup: function(){
         	var tp = this.template,
         		lib = this.get('appInstance'),
         		obj = {
-        			numgroup: tp.getValue('numgroup'),
+        			numgroup: tp.getValue('groupItem.numgroup'),
             		currentFieldid: this.get('currentFieldid'),
             		groupid: this.get('groupid'),
-            		numcrs: tp.getValue('numcrs'),
-            		year: tp.getValue('year')
+            		numcrs: tp.getValue('groupItem.numcrs'),
+            		year: tp.getValue('groupItem.year')
         		},
         		empty = lib.isEmptyInput(obj);
         	
@@ -112,7 +106,7 @@ Component.entryPoint = function(NS){
 	        			try{
 	        				tp.gel(empty).focus();
 	        			} catch(e){
-	        				tp.addClass('curentField', 'alert-danger');
+	        				tp.addClass('groupItem.curentField', 'alert-danger');
 	        			}
         		} else {
         			this.set('waiting', true);
@@ -126,11 +120,28 @@ Component.entryPoint = function(NS){
         },
         cancel: function(){
 			this.go('managerGroups.view');
+        },
+        constructItem: function(obj){
+        	return obj || {
+        		numgroup: '',
+        		numcrs: 1,
+        		dateline: new Date().getFullYear(),
+        		code: '',
+        		name: '',
+        		level: '',
+        		frmstudy: '',
+        		note: ''
+        	};
+        },
+        setFormStudy: function(frmStudy){
+        	return {
+        		frmstudy: this.get('appInstance').determFormEdu(frmStudy)
+        	};
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, liField, ulField'},
+            templateBlockName: {value: 'widget, liField, ulField, groupItem'},
             groupid: {value: 0},
             currentFieldid: {value: ''},
             groupItem: {value: null},
@@ -157,10 +168,10 @@ Component.entryPoint = function(NS){
         	  			return;
         	  		}
         	  		
-        			tp.removeClass('listField', 'open');
-        			tp.removeClass('curentField', 'alert-danger');
+        			tp.removeClass('groupItem.listField', 'open');
+        			tp.removeClass('groupItem.curentField', 'alert-danger');
         			
-        			tp.setHTML('curentField', a.textContent);
+        			tp.setHTML('groupItem.curentField', a.textContent);
         			
         			this.set('currentFieldid', targ.getData('id'));
         		}

@@ -347,8 +347,7 @@ class RecordBook extends AbricosApplication {
        	
        	public function GroupList($d){
        		$d->page = intval($d->page);
-       		$utmf = Abricos::TextParser(true);
-       		$d->frmstudy = $utmf->Parser($d->frmstudy);
+       		$d->frmstudy = intval($d->frmstudy);
        		
        		$list = $this->models->InstanceClass('GroupList');
        		 
@@ -390,6 +389,7 @@ class RecordBook extends AbricosApplication {
        	}
        	 
        	public function GroupItem($groupid){
+       		$groupid = intval($groupid);
        		
        		$d = RecordBookQuery::GroupItem($this->db, $groupid);
        	
@@ -616,18 +616,15 @@ class RecordBook extends AbricosApplication {
        	
        	public function CountPaginator($d){
        		
-       		$utmf = Abricos::TextParser(true);
-       		$d->type = $utmf->Parser($d->type);
-      		
        		switch($d->type){
        			case 'subjectList': 
        				$d->fieldid = intval($d->fieldid);
        					$row = RecordBookQuery::CountSubject($this->db, $d->fieldid); 
        						break;
        			case 'groupList': 
-       				$d->frmstudy = $utmf->Parser($d->frmstudy);
-       				$row = RecordBookQuery::CountGroup($this->db, $d->frmstudy); 
-       					break;
+       				$d->frmstudy = intval($d->frmstudy);
+       					$row = RecordBookQuery::CountGroup($this->db, $d->frmstudy); 
+       						break;
        		}
        			return $row;
        	}

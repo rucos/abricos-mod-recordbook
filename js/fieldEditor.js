@@ -60,12 +60,12 @@ Component.entryPoint = function(NS){
         	var tp = this.template,
         		lst = "";
         	
-	        	for(var i = 0; i < 3; i++){
-	        		if(formEdu[i] > 0){
+	        	for(var i = 1; i <= 3; i++){
+	        		if(formEdu[i - 1] > 0){
 	        			lst += tp.replace('radioProgramFormEdu', {
 	        				formEdu: this.get('appInstance').determFormEdu(i),
 	        				form: i,
-	        				active: (formNum - 1) === i ? 'active' : ''
+	        				active: formNum === i ? 'active' : ''
 	       				});
 	        		}
 	        	}
@@ -209,7 +209,7 @@ Component.entryPoint = function(NS){
         				targ = e.target,
         				lbl = e.target.getDOMNode();
         			
-        			this.set('currentFormEdu', +targ.getData('form') + 1);
+        			this.set('currentFormEdu', +targ.getData('form'));
         			
         			this.unSetRadio();
         			

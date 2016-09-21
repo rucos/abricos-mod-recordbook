@@ -32,7 +32,7 @@ Component.entryPoint = function(NS){
         	
         	fieldList.each(function(field){
         		var rem = field.get('remove'),
-        			frmstudy = this.get('appInstance').determFormEdu(field.get('frmstudy') - 1),
+        			frmstudy = this.get('appInstance').determFormEdu(field.get('frmstudy')),
         			arr = [{
 		        			danger: '',
 		        			remove: 'удалить',

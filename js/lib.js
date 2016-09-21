@@ -63,9 +63,9 @@ Component.entryPoint = function(NS){
         },
         determFormEdu: function(key){
         	var obj = {
-        		'0': 'очная форма',
-        		'1': 'очно-заочная форма',
-        		'2': 'заочная форма'
+        		'1': 'очная форма',
+        		'2': 'очно-заочная форма',
+        		'3': 'заочная форма'
         	};
         	return obj[key] || '';
         }

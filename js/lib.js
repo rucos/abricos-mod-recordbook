@@ -104,7 +104,7 @@ Component.entryPoint = function(NS){
                 type: 'modelList:GroupList'
     		},
     		groupSave: {
-    			args: ['group']
+    			args: ['data']
     		},
     		groupItem: {
     			args: ['groupid'],
@@ -258,12 +258,7 @@ Component.entryPoint = function(NS){
         	},
         	group: {
         		editor: function(groupid, groupList){
-        			var url = this.getURL('ws') + 'groupEditor/GroupEditorWidget/' + (groupid | 0) + '/'; 
-        			if(groupList){
-        				return url + groupList;//показать список группы
-        			} else {
-        				return url;//добавление or изменение группы
-        			}
+        			return this.getURL('ws') + 'groupEditor/GroupEditorWidget/' + (groupid | 0) + '/'; 
                 },
         		create: function(){
         			return this.getURL('group.editor');

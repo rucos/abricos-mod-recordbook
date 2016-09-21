@@ -11,7 +11,7 @@ class RecordBookQuery {
 
     public static function FieldList(Ab_Database $db, $widget){
 
-    	$where = $widget === 'groupEditor' ? "WHERE remove=0" : "";
+    	$where = $widget === 'groupEditor' ? "WHERE f.remove=0" : "";
     	
     	$sql = "
 			SELECT 
@@ -34,7 +34,7 @@ class RecordBookQuery {
 			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
 			INNER JOIN ".$db->prefix."un_eduform ef ON l.edulevelid = ef.edulevelid
 			".$where."
-			ORDER BY remove ASC
+			ORDER BY f.remove ASC
 		";
 		return $db->query_read($sql);
     }
@@ -194,9 +194,7 @@ class RecordBookQuery {
     				g.numcrs,
     				g.dateline,
     				g.remove as grRemove,
-    				f.field,
     				f.fieldid,
-    				f.fieldcode,
     				f.frmstudy,
     				f.note,
     				f.remove
@@ -222,11 +220,10 @@ class RecordBookQuery {
     }
     
     public static function GroupAppend(Ab_Database $db, $group){
-    	 
     	$sql = "
 			INSERT INTO ".$db->prefix."rb_groups (fieldid, numgroup, numcrs, dateline)
 					VALUES (
-						".bkint($group->currentFieldId).",
+						".bkint($group->currentFieldid).",
 						'".bkstr($group->numgroup)."',
 							".bkint($group->numcrs).",
 							".bkint($group->year)."

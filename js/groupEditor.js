@@ -30,99 +30,99 @@ Component.entryPoint = function(NS){
 		    						this.renderGroupItem();
 		    				}
 	    				}, this);
-	    		} 
-        		
-        		if(this.get('groupListShow')){
-        			tp.gel('numgroup').disabled = true;
-        			tp.gel('numcrs').disabled = true;
-        			tp.gel('year').disabled = true;
-	        			 this.listStud = new NS.StudListWidget({
-	  	                     srcNode: tp.gel('listStud'),
-	  	                     groupid: this.get('groupid')
-	  	                 });
-        		}
-        			this.fillDropDownMenu();	
+	    		} else {
+	    			tp.setValue('year', new Date().getFullYear());
+	    		}
+//	        			 this.listStud = new NS.StudListWidget({
+//	  	                     srcNode: tp.gel('listStud'),
+//	  	                     groupid: this.get('groupid')
+//	  	                 });
+        			this.reqFieldList();	
         		
         },
         destructor: function(){
-        	this.set('currentFieldId', 0);
-	        	if(this.listStud){
-	        		this.listStud.destroy();
-	        	}
+        	if(this.listStud){
+        		this.listStud.destroy();
+        	}
         },
         renderGroupItem: function(){
-        	var groupItem = this.get('groupItem'),
-        		tp = this.template;
-        	
-        		tp.setValue('numgroup', groupItem.get('numgroup'));
-        		
-        		tp.setValue('numcrs', groupItem.get('numcrs'));
-        		
-         		tp.setValue('inpfield', groupItem.get('fieldcode') + " " 
-						+ groupItem.get('field') + " "
-						+ groupItem.get('frmstudy') + " "
-						+ groupItem.get('note'));
-         		
-         		tp.setValue('year', groupItem.get('dateline'));
-        		
-        		this.set('currentFieldId', groupItem.get('fieldid'));
+//        	var groupItem = this.get('groupItem'),
+//        		tp = this.template;
+//        	
+//        		tp.setValue('numgroup', groupItem.get('numgroup'));
+//        		
+//        		tp.setValue('numcrs', groupItem.get('numcrs'));
+//        		
+//         		tp.setValue('inpfield', groupItem.get('fieldcode') + " " 
+//						+ groupItem.get('field') + " "
+//						+ groupItem.get('frmstudy') + " "
+//						+ groupItem.get('note'));
+//         		
+//         		tp.setValue('year', groupItem.get('dateline'));
+//        		
+//        		this.set('currentFieldId', groupItem.get('fieldid'));
         },
-        fillDropDownMenu: function(){
-        	var tp = this.template,
-        		lst = "";
-        	
-        	if(!this.get('groupListShow')){
-	        	this.set('waiting', true);
+        reqFieldList: function(){
+	        this.set('waiting', true);
 	       		this.get('appInstance').fieldList('groupEditor', function(err, result){
 	    			this.set('waiting', false);
 		    			if(!err){
-			        		result.fieldList.each(function(field){
-			            		lst += tp.replace('liField', [
-			                   		   field.toJSON()
-			                   	]);
-			                });
+		    				this.set('fieldList', result.fieldList);
+		    					this.fillFieldList();
 		        		}
-	    			tp.setHTML('list', tp.replace('ulField', {li: lst}));
+	    		
 	        	}, this);
-        	}
-        	else {
-        		tp.setHTML('list', tp.replace('ulField', {li: lst}));
-        	}
+        },
+        fillFieldList: function(){
+        	var tp = this.template,
+        		fieldList = this.get('fieldList'),
+        		lst = "";
+        	
+	        	fieldList.each(function(field){
+	        		var frmStudy = field.get('frmstudy');
+	        		
+	        		lst += tp.replace('liField', [{
+	        				frmstudy: this.get('appInstance').determFormEdu(frmStudy)
+	        			}, 
+	        			field.toJSON()
+	               	]);
+	            }, this);
+    		
+	        	tp.setHTML('listField', tp.replace('ulField', {li: lst}));
         },
         saveGroup: function(){
-        	if(!this.get('groupListShow')){
-	        	var tp = this.template,
-	        		lib = this.get('appInstance'),
-	        		obj = {
-	        			numgroup: tp.getValue('numgroup'),
-	            		currentFieldId: this.get('currentFieldId'),
-	            		groupid: this.get('groupid'),
-	            		numcrs: tp.getValue('numcrs'),
-	            		year: tp.getValue('year')
-	        		};
-	        	
-	        		var empty = lib.isEmptyInput(obj);
-	        		if(empty){
-	        			switch(empty){
-	        				case 'numgroup': alert( 'Укажите номер группы' ); break;
-	        				case 'numcrs': alert( 'Укажите номер курса' ); break;
+        	var tp = this.template,
+        		lib = this.get('appInstance'),
+        		obj = {
+        			numgroup: tp.getValue('numgroup'),
+            		currentFieldid: this.get('currentFieldid'),
+            		groupid: this.get('groupid'),
+            		numcrs: tp.getValue('numcrs'),
+            		year: tp.getValue('year')
+        		},
+        		empty = lib.isEmptyInput(obj);
+        	
+        		if(empty){
+        			switch(empty){
+        				case 'numgroup': alert( 'Укажите номер группы' ); break;
+        				case 'numcrs': alert( 'Укажите номер курса' ); break;
+        				case 'year': alert( 'Укажите год зачисления' ); break;
+        				case 'currentFieldid': alert( 'Укажите рабочий план' ); break;
+        			}
+	        			try{
+	        				tp.gel(empty).focus();
+	        			} catch(e){
+	        				tp.addClass('curentField', 'alert-danger');
 	        			}
-	        			tp.gel(empty).focus();
-	        		} else {
-	        			this.set('waiting', true);
-			        	    lib.groupSave(obj, function(err, result){
-			        	    	this.set('waiting', false);
+        		} else {
+        			this.set('waiting', true);
+		        	    lib.groupSave(obj, function(err, result){
+		        	    	this.set('waiting', false);
 			        	    	if(!err){
-			        	    		if(obj.groupid === 0) {
-			        	    			lib.set('currentPageGroup', 1);	
-			        	    		}
 			        	    		this.cancel();
 			        	    	}
-			        	    }, this)
-	        		}
-        	} else {
-        		this.cancel();
-        	}
+		        	    }, this)
+        		}
         },
         cancel: function(){
 			this.go('managerGroups.view');
@@ -132,9 +132,9 @@ Component.entryPoint = function(NS){
         	component: {value: COMPONENT},
             templateBlockName: {value: 'widget, liField, ulField'},
             groupid: {value: 0},
-            currentFieldId: {value: 0},
+            currentFieldid: {value: ''},
             groupItem: {value: null},
-            groupListShow: {value: null}
+            fieldList: {value: null}
         },
         CLICKS: {
         	saveGroup: {
@@ -147,7 +147,7 @@ Component.entryPoint = function(NS){
         			this.cancel();
         		}
         	},
-        	add: {
+        	addCurrentField: {
         		event: function(e){
         	  		var tp = this.template,
         	  			targ = e.target,
@@ -157,11 +157,12 @@ Component.entryPoint = function(NS){
         	  			return;
         	  		}
         	  		
-        			tp.setValue('inpfield', a.textContent);
+        			tp.removeClass('listField', 'open');
+        			tp.removeClass('curentField', 'alert-danger');
         			
-        			tp.removeClass('widget.list', 'open');
+        			tp.setHTML('curentField', a.textContent);
         			
-        			this.set('currentFieldId', targ.getData('id'));
+        			this.set('currentFieldid', targ.getData('id'));
         		}
         	}
         }
@@ -169,8 +170,7 @@ Component.entryPoint = function(NS){
 
     NS.GroupEditorWidget.parseURLParam = function(args){
         return {
-        	groupid: args[0] | 0,
-        	groupListShow: args[1]
+        	groupid: args[0] | 0
         };
     };
 };

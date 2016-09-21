@@ -61,7 +61,7 @@ class RecordBook extends AbricosApplication {
             case "groupList":
             	return $this->GroupListToJSON($d->data);
             case "groupSave":
-            	return $this->GroupSaveToJSON($d->group);
+            	return $this->GroupSaveToJSON($d->data);
             case "groupItem":
             	return $this->GroupItemToJSON($d->groupid);
             case "groupRemove":
@@ -350,10 +350,6 @@ class RecordBook extends AbricosApplication {
        		$utmf = Abricos::TextParser(true);
        		$d->frmstudy = $utmf->Parser($d->frmstudy);
        		
-       		if (isset($this->_cache[$d->frmstudy]['GroupList'])){
-       			return $this->_cache[$d->frmstudy]['GroupList'];
-       		}
-       		
        		$list = $this->models->InstanceClass('GroupList');
        		 
        		$rows = RecordBookQuery::GroupList($this->db, $d);
@@ -362,30 +358,30 @@ class RecordBook extends AbricosApplication {
        			$list->Add($this->models->InstanceClass('GroupItem', $dd));
        		}
        	
-       		return $this->_cache[$d->frmstudy]['GroupList'] = $list;
+       		return $list;
        	}
        	
-       	public function GroupSaveToJSON($group){
+       	public function GroupSaveToJSON($d){
        		 
-       		$res = $this->GroupSave($group);
+       		$res = $this->GroupSave($d);
        		return $this->ResultToJSON('groupSave', $res);
        	}
        	
-       	public function GroupSave($group){
-       		$group->groupid = intval($group->groupid);
-       		$group->numcrs = intval($group->numcrs);
-       		$utmf = Abricos::TextParser(true);
-       		$utm = Abricos::TextParser();
-       		$group->numgroup = $utmf->Parser($group->numgroup);
-       		$group->currentFieldId = intval($group->currentFieldId);
-       		$group->year = intval($group->year);
+       	public function GroupSave($d){
+       		$d->groupid = intval($d->groupid);
+       		$d->numcrs = intval($d->numcrs);
        		
-       		if($group->groupid > 0){
-        		RecordBookQuery::GroupEdit($this->db, $group);
+       		$utmf = Abricos::TextParser(true);
+       		
+       		$d->numgroup = $utmf->Parser($d->numgroup);
+       		$d->currentFieldid = intval($d->currentFieldid);
+       		$d->year = intval($d->year);
+       		
+       		if($d->groupid > 0){
+        		RecordBookQuery::GroupEdit($this->db, $d);
        		}else {
-       			RecordBookQuery::GroupAppend($this->db, $group);       			
+       			RecordBookQuery::GroupAppend($this->db, $d);			
        		}
-       	
        	}
        	
        	public function GroupItemToJSON($groupid){

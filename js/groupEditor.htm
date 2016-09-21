@@ -22,41 +22,45 @@
         </div>
 	</div>
 	<div class="panel-body">
-	
-		<div class="row">
-			<div class="col-lg-3">
-					<div class="input-group">
-					  <span class="input-group-addon">Номер группы</span>
-					  	<input id="{i#numgroup}" type="text" class="form-control">
-					</div>
-					<div class="input-group">
-					  <span class="input-group-addon">Номер курса</span>
-					  	<input id="{i#numcrs}" type="number" min="1" max="5" class="form-control"  maxlength="1">
-					</div>
-					<div class="input-group">
-					  <span class="input-group-addon">Год зачисления</span>
-					  	<input id="{i#year}" type="number" class="form-control"  maxlength="4" min="2011" value="2016">
-					  	
-					</div>
-			</div>
-			<div class="col-lg-9">
-		    <div class="input-group">
-		      <div class="input-group-btn">
-		     		<div id="{i#list}"></div>
-		      </div>
-		      <textarea class="form-control" id={i#inpfield} disabled></textarea>
+		<form class="form-horizontal">
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" >Номер группы</label>
+		    <div class="col-sm-10">
+		      <input id="{i#numgroup}" class="form-control" type="text" placeholder="Например: 28101">
 		    </div>
 		  </div>
-		 </div>
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" >Номер курса</label>
+		    <div class="col-sm-2">
+		      <input id="{i#numcrs}" type="number" min="1" max="5" class="form-control"  maxlength="1" value="1">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" >Год зачисления</label>
+		    <div class="col-sm-2">
+		      <input id="{i#year}" type="number" class="form-control"  maxlength="4" min="2011">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label class="col-sm-2 control-label" >Рабочий план</label>
+	    		    <div class="col-sm-7">
+		    	<div id="{i#curentField}" class="alert alert-success" role="alert"></div>
+		    </div>
+		    <div class="col-sm-2">
+		      	<div id="{i#listField}"></div>
+		    </div>
+		  </div>
+		</form>
+		
 		 <div id="{i#listStud}"></div>
 	</div>
 </div>
 
 <!--{ulField}-->
-<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Направление <span class="caret"></span></button>
-<ul class="dropdown-menu" data-click="add">
+<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Выберете из списка.. <span class="caret"></span></button>
+<ul class="dropdown-menu" data-click="addCurrentField">
 {v#li}
 </ul>
 
 <!--{liField}-->
-<li><a href="" data-id="{v#id}">{v#fieldcode} {v#field} {v#frmstudy} {v#note}</a></li>
+<li><a href="" data-id="{v#id}">{v#code} {v#name} {v#level} {v#frmstudy} {v#note}</a></li>

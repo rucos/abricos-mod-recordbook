@@ -210,6 +210,17 @@ Component.entryPoint = function(NS){
         			tp.removeClass('groupItem.listField', 'hide');
         			tp.removeClass('btnSave', 'hide');
             	}
+        	},
+        	choiceGroupMenu: {
+        		event: function(e){
+        			var targ = e.target,
+        				a = targ.getDOMNode(),
+        				tp = this.template;
+        			
+        			if(!a.href){
+        				return;
+        			}
+        		}
         	}
         }
     });

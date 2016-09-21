@@ -23,7 +23,14 @@
 	</div>
 	<div class="panel-body">
 		<div id="{i#groupItem}"></div>
-		 <div id="{i#listStud}"></div>
+		<div id="{i#groupMenu}" class="hide">
+			<ul class="nav nav-tabs" data-click="choiceGroupMenu">
+			  <li role="presentation" class="active"><a href="">Список группы</a></li>
+			  <li role="presentation"><a href="">Ведомости</a></li>
+			  <li role="presentation"><a href="">Успеваемость</a></li>
+			</ul>
+				<div id="{i#groupMenuitem}"></div>
+		</div>
 	</div>
 </div>
 
@@ -31,7 +38,7 @@
 <form class="form-horizontal">
 	  <div class="form-group">
 	    <label class="col-sm-2 control-label" >Номер группы</label>
-	    <div class="col-sm-10">
+	    <div class="col-sm-2">
 	      <input id="{i#numgroup}" class="form-control" type="text" placeholder="Например: 28101" value="{v#numgroup}">
 	    </div>
 	  </div>

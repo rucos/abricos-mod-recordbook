@@ -50,7 +50,6 @@
 	     <th>Ведомости</th>
 	     <th>Успеваемость</th>
 	     <th></th>
-	     <th></th>
     </tr>
     </thead>
     <tbody>{v#rows}</tbody>
@@ -75,11 +74,6 @@
     	<button data-click="showProgress" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
     		Успеваемость
     	</button>
-    </td>
-    <td>
-        <button data-click="edit" data-id="{v#id}"  class="btn btn-default btn-xs" data-wait="disable">
-            Править
-        </button>
     </td>
     <td>
          <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs"

@@ -196,13 +196,12 @@ Component.entryPoint = function(NS){
         	},
         	showListGroup: {
         		event: function(e){
-        			this.go('group.editor', this.getId(e), 'groupList/');
+        			this.go('group.editor', this.getId(e), 'groupList');
         		}
         	},
         	showSheet: {
         		event: function(e){
-        			var groupid = this.getId(e);
-        			this.go('group.sheetEditor', groupid);
+//        			this.go('group.sheetEditor', this.getId(e));
         		}
         	},
         	find: {
@@ -263,7 +262,7 @@ Component.entryPoint = function(NS){
         		event: function(e){
         			var groupid = e.target.getData('id');
         			
-        			this.go('group.progressView', groupid);
+//        			this.go('group.progressView', groupid, 'groupSheet/');
         		}
         	}
         }

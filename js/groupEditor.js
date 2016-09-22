@@ -37,8 +37,8 @@ Component.entryPoint = function(NS){
         		this.get('boundingBox').on('change', this.change, this);
         },
         destructor: function(){
-        	if(this.listStud){
-        		this.listStud.destroy();
+        	if(this.groupMenu){
+        		this.groupMenu.destroy();
         	}
         },
         renderGroupItem: function(){
@@ -156,26 +156,33 @@ Component.entryPoint = function(NS){
 		},
 		parseGroupMenu: function(){
 			var groupMenu = this.get('groupMenu'),
-				tp = this.template;
+				tp = this.template,
+				obj = {
+	             	groupid: this.get('groupid')
+				};
 			
-//			switch(groupMenu){
-//				case 'groupList':
-//					break;
-//				case ''
-//			}
+			tp.setHTML('groupMenu', tp.replace('groupMenu'));
 			
-			 this.listStud = new NS.StudListWidget({
-	              srcNode: tp.gel('groupMenuitem'),
-	              groupid: this.get('groupid')
-	          });
+			obj.srcNode = tp.gel('groupMenu.groupMenuItem');
 			
-			tp.addClass(groupMenu, 'active');
-			tp.show('groupMenu');
+			switch(groupMenu){
+				case 'groupList':
+					 this.groupMenu = new NS.StudListWidget(obj);
+					break;
+				case 'groupSheet':
+					 this.groupMenu = new NS.SheetEditorWidget(obj);
+						break;
+				case 'groupProgress':
+					 this.groupMenu = new NS.ProgressViewWidget(obj);
+						break;
+			}
+			
+			tp.addClass('groupMenu.' + groupMenu, 'active');
 		}
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, liField, ulField, groupItem'},
+            templateBlockName: {value: 'widget, liField, ulField, groupItem, groupMenu'},
             groupid: {value: 0},
             currentFieldid: {value: ''},
             groupItem: {value: null},
@@ -234,6 +241,7 @@ Component.entryPoint = function(NS){
         	choiceGroupMenu: {
         		event: function(e){
         			var targ = e.target,
+        				groupMenu = targ.getData('groupMenu'),
         				a = targ.getDOMNode(),
         				tp = this.template;
         			
@@ -241,7 +249,8 @@ Component.entryPoint = function(NS){
         				return;
         			}
         			
-        			
+        			this.set('groupMenu', groupMenu);
+        			this.parseGroupMenu();
         		}
         	}
         }

@@ -23,16 +23,23 @@
 	</div>
 	<div class="panel-body">
 		<div id="{i#groupItem}"></div>
-		<div id="{i#groupMenu}" class="hide">
-			<ul class="nav nav-tabs" data-click="choiceGroupMenu">
-			  <li id="{i#groupList}" role="presentation"><a href="">Список группы</a></li>
-			  <li id="{i#groupSheet}" role="presentation"><a href="">Ведомости</a></li>
-			  <li id="{i#groupProgress}" role="presentation"><a href="">Успеваемость</a></li>
-			</ul>
-				<div id="{i#groupMenuitem}"></div>
-		</div>
+		<div id="{i#groupMenu}"></div>
 	</div>
 </div>
+
+<!--{groupMenu}-->
+	<ul class="nav nav-tabs" data-click="choiceGroupMenu">
+	  <li id="{i#groupList}" role="presentation">
+	  	<a href=""  data-groupMenu="groupList">Список группы</a>
+	  </li>
+	  <li id="{i#groupSheet}" role="presentation">
+	  	<a href="" data-groupMenu="groupSheet">Ведомости</a>
+	  </li>
+	  <li id="{i#groupProgress}" role="presentation">
+	  	<a href="" data-groupMenu="groupProgress">Успеваемость</a>
+	  </li>
+	</ul>
+	<div id="{i#groupMenuItem}"></div>
 
 <!--{groupItem}-->
 <form class="form-horizontal">

@@ -240,17 +240,20 @@ Component.entryPoint = function(NS){
         	},
         	choiceGroupMenu: {
         		event: function(e){
-        			var targ = e.target,
-        				groupMenu = targ.getData('groupMenu'),
-        				a = targ.getDOMNode(),
-        				tp = this.template;
-        			
+        			var tp = this.template,
+        				targ = e.target,
+        				curGroupMenu = targ.getData('groupMenu'),
+        				grMenu = this.get('groupMenu'),
+        				a = targ.getDOMNode();
+        				
         			if(!a.href){
         				return;
         			}
         			
-        			this.set('groupMenu', groupMenu);
-        			this.parseGroupMenu();
+        			if(grMenu != curGroupMenu){
+            			this.set('groupMenu', curGroupMenu);
+            			this.parseGroupMenu();
+        			}
         		}
         	}
         }

@@ -61,17 +61,17 @@
     <td>{v#dateline}</td>
     <td>{v#code} {v#name} {v#level} {v#note} {v#label}</td>
     <td>
-    	 <button data-click="showListGroup" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    	 <button data-click="showGroupMenu" data-id="{v#id}" data-groupMenu="groupList" class="btn btn-default btn-xs" data-wait="disable">
             Список группы
         </button>
     </td>
     <td>
-    	<button data-click="showSheet" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    	<button data-click="showGroupMenu" data-id="{v#id}" data-groupMenu="groupSheet" class="btn btn-default btn-xs" data-wait="disable">
     		Ведомости
     	</button>
     </td>
     <td>
-    	<button data-click="showProgress" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    	<button data-click="showGroupMenu" data-id="{v#id}" data-groupMenu="groupProgress" class="btn btn-default btn-xs" data-wait="disable">
     		Успеваемость
     	</button>
     </td>

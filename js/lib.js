@@ -268,12 +268,6 @@ Component.entryPoint = function(NS){
                 },
         		create: function(){
         			return this.getURL('group.editor');
-        		},
-        		sheetEditor: function(groupid, groupMenu){
-        			return this.getURL('ws') + 'sheetEditor/SheetEditorWidget/' + groupid + '/' + groupMenu;
-        		},
-        		progressView: function(groupid, groupMenu){
-        			return this.getURL('ws') + 'progressView/ProgressViewWidget/' + groupid + '/' + groupMenu;
         		}
         	}
         }

@@ -194,14 +194,13 @@ Component.entryPoint = function(NS){
        				this.remove(this.getId(e), 1);
         		}
         	},
-        	showListGroup: {
+        	showGroupMenu: {
         		event: function(e){
-        			this.go('group.editor', this.getId(e), 'groupList');
-        		}
-        	},
-        	showSheet: {
-        		event: function(e){
-//        			this.go('group.sheetEditor', this.getId(e));
+        			var targ = e.target,
+        				id = targ.getData('id'),
+        				menu = targ.getData('groupMenu');
+        			
+        			this.go('group.editor', id, menu);
         		}
         	},
         	find: {
@@ -256,13 +255,6 @@ Component.entryPoint = function(NS){
         			tp.show('groupList');
         				
         			this.showGroupList();
-        		}
-        	},
-        	showProgress: {
-        		event: function(e){
-        			var groupid = e.target.getData('id');
-        			
-//        			this.go('group.progressView', groupid, 'groupSheet/');
         		}
         	}
         }

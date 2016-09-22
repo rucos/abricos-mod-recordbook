@@ -228,6 +228,7 @@ Component.entryPoint = function(NS){
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
+        	groupEditor: "groupEditor/GroupEditorWidget/",
         	fieldManager: {
         		view: function(){
         			 return this.getURL('ws') + 'fieldManager/FieldManagerWidget';
@@ -257,17 +258,22 @@ Component.entryPoint = function(NS){
                 }
         	},
         	group: {
-        		editor: function(groupid, groupList){
-        			return this.getURL('ws') + 'groupEditor/GroupEditorWidget/' + (groupid | 0) + '/'; 
+        		editor: function(groupid, groupMenu){
+        			var url = this.getURL('ws') + this.getURL('groupEditor') + (groupid | 0) + '/';
+        			
+        			if(groupMenu){
+        				url += groupMenu;
+        			}
+        			return url;
                 },
         		create: function(){
         			return this.getURL('group.editor');
         		},
-        		sheetEditor: function(groupid){
-        			return this.getURL('ws') + 'sheetEditor/SheetEditorWidget/' + groupid + '/';
+        		sheetEditor: function(groupid, groupMenu){
+        			return this.getURL('ws') + 'sheetEditor/SheetEditorWidget/' + groupid + '/' + groupMenu;
         		},
-        		progressView: function(groupid){
-        			return this.getURL('ws') + 'progressView/ProgressViewWidget/' + groupid + '/';
+        		progressView: function(groupid, groupMenu){
+        			return this.getURL('ws') + 'progressView/ProgressViewWidget/' + groupid + '/' + groupMenu;
         		}
         	}
         }

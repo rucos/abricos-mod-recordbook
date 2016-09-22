@@ -3,7 +3,7 @@ Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
         {name: '{C#MODNAME}', files: ['lib.js']},
-        {name: '{C#MODNAME}', files: ['studList.js']}
+        {name: '{C#MODNAME}', files: ['studList.js', 'progressView.js', 'sheetEditor.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -35,11 +35,6 @@ Component.entryPoint = function(NS){
 	    				this.reqFieldList();
 	    		}
         		this.get('boundingBox').on('change', this.change, this);
-//	        			 this.listStud = new NS.StudListWidget({
-//	  	                     srcNode: tp.gel('listStud'),
-//	  	                     groupid: this.get('groupid')
-//	  	                 });
-        			
         },
         destructor: function(){
         	if(this.listStud){
@@ -59,6 +54,8 @@ Component.entryPoint = function(NS){
         		this.set('currentFieldid', groupItem.get('fieldid'));
         		
         		tp.removeClass('groupItem.btnEdit', 'hide');
+        		
+        		this.parseGroupMenu();
         },
         reqFieldList: function(){
 	        this.set('waiting', true);
@@ -145,12 +142,35 @@ Component.entryPoint = function(NS){
 		        	
 			        	for(var i in idList){
 			        		if(idList[i] == input.id){
-			        			this.set('edit', true);
-			        			this.template.removeClass('btnSave', 'hide');
+			        			this.setEditFlag();
 			        				return;
 			        		}
 			        	}
 		        }
+		},
+		setEditFlag: function(){
+			if(!this.get('edit')){
+				this.set('edit', true);
+				this.template.removeClass('btnSave', 'hide');
+			}
+		},
+		parseGroupMenu: function(){
+			var groupMenu = this.get('groupMenu'),
+				tp = this.template;
+			
+//			switch(groupMenu){
+//				case 'groupList':
+//					break;
+//				case ''
+//			}
+			
+			 this.listStud = new NS.StudListWidget({
+	              srcNode: tp.gel('groupMenuitem'),
+	              groupid: this.get('groupid')
+	          });
+			
+			tp.addClass(groupMenu, 'active');
+			tp.show('groupMenu');
 		}
     }, {
         ATTRS: {
@@ -160,7 +180,8 @@ Component.entryPoint = function(NS){
             currentFieldid: {value: ''},
             groupItem: {value: null},
             fieldList: {value: null},
-            edit: {value: false}
+            edit: {value: false},
+            groupMenu: {value: ''}
         },
         CLICKS: {
         	saveGroup: {
@@ -195,6 +216,8 @@ Component.entryPoint = function(NS){
         			tp.setHTML('groupItem.curentField', a.textContent);
         			
         			this.set('currentFieldid', targ.getData('id'));
+        			
+        			this.setEditFlag();
         		}
         	},
         	edit: {
@@ -203,12 +226,9 @@ Component.entryPoint = function(NS){
         			
         			e.target.hide();
         			
-            		this.set('edit', true);
-        			
         			this.reqFieldList();
         			
         			tp.removeClass('groupItem.listField', 'hide');
-        			tp.removeClass('btnSave', 'hide');
             	}
         	},
         	choiceGroupMenu: {
@@ -220,6 +240,8 @@ Component.entryPoint = function(NS){
         			if(!a.href){
         				return;
         			}
+        			
+        			
         		}
         	}
         }
@@ -227,7 +249,8 @@ Component.entryPoint = function(NS){
 
     NS.GroupEditorWidget.parseURLParam = function(args){
         return {
-        	groupid: args[0] | 0
+        	groupid: args[0] | 0,
+        	groupMenu: args[1] || ''
         };
     };
 };

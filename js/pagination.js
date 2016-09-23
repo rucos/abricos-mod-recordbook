@@ -100,29 +100,26 @@ Component.entryPoint = function(NS){
         	this.resetPagination();
         },
         resetPagination: function(){
-        	this.set('filterSemestr', 0);
-        	this.set('filterCourse', 0);
+        	this.set('semestr', 0);
+        	this.set('course', 0);
         },
         act: function(){
-        	var parent = this.get('parent');
-        	
-  			switch(parent.name){
-				case 'reportListWidget':
-					parent.reloadMarkList();
-						break;
-				case 'subjectListWidget':
-					parent.find();
-						break;
-  			}
+        	var callback = this.get('callback'),
+        		filterSemestr = this.get('semestr'),
+        		filterCourse = this.get('course');
+        		
+        	if(filterSemestr && filterCourse){
+        		callback();        		
+        	}
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
             templateBlockName: {value: 'widget, paginatorCourse'},
-            filterSemestr: {value: 0},
-            filterCourse: {value: 0},
+            semestr: {value: 0},
+            course: {value: 0},
             show: {value: false},
-            parent: ''
+            callback: ''
         },
         CLICKS: {
         	setFilter: {
@@ -130,25 +127,26 @@ Component.entryPoint = function(NS){
         			var label = e.target.getDOMNode(),
         				value = label.textContent;
         			
-        			if(label.tagName == 'LABEL'){
-        				switch(value){
-        					case "Осенний" :
-        						this.set('filterSemestr', 1);
-        							value = 1;
-        								break;
-        					case "Весенний" : 
-        						this.set('filterSemestr', 2);
-        							value = 2;
-        								break;
-        					default:
-        						this.set('filterCourse', value);
-        							break;
-        				}
-        				this.setActive(label.parentNode.children, value);
-        			} else {
+        			if(label.tagName != 'LABEL'){
         				return;
-        			}
-        			this.act();
+        			} 
+        			
+    				switch(value){
+						case "Осенний" :
+							this.set('semestr', 1);
+								value = 1;
+									break;
+						case "Весенний" : 
+							this.set('semestr', 2);
+								value = 2;
+									break;
+						default:
+							this.set('course', +value);
+								break;
+					}
+    				
+    				this.setActive(label.parentNode.children, value);
+        				this.act();
         		}
         	}
         }

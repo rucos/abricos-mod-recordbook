@@ -13,10 +13,13 @@ Component.entryPoint = function(NS){
  
     NS.ReportListWidget = Y.Base.create('reportListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
+        	var self = this;
 
         	this.paginationCourse = new NS.PaginationCourseWidget({
         		srcNode: this.template.gel('pagCourse'),
-        		parent: this
+        		callback: function(){
+        			self.reloadMarkList();
+        		}
         	});
         },
         destructor: function(){

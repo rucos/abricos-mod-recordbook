@@ -2,7 +2,7 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -16,45 +16,41 @@ Component.entryPoint = function(NS){
         	
         },
         onInitAppWidget: function(err, appInstance){
-        	var groupid = this.get('groupid');
-        		
-        	this.set('waiting', true);
-        	appInstance.groupItem(groupid, function(err, result){
-        		this.set('waiting', false);
-        			if(!err){
-        				this.set('groupItem', result.groupItem);
-        					this.renderGroupItem();
-        			}
-        	}, this);
+        	var tp = this.template,
+        		self = this;
+        	
+        		this.paginator = new NS.PaginationCourseWidget({
+                    srcNode: tp.gel('pag'),
+                    show: true,
+                    callback: function(){
+                    	self.reqSheetList();
+                    }
+                    
+        		});
+        	
 	        	this.get('boundingBox').on('change', this.change, this);
         },
         destructor: function(){
-        	
-        },
-        renderGroupItem: function(){
-        	var groupItem = this.get('groupItem'),
-        		tp = this.template;
-        		this.set('currentCourse', groupItem.get('numcrs'));
-		        	tp.setHTML('groupRenderItem', tp.replace('groupRenderItem', [groupItem.toJSON()]));
+        	if(this.paginator){
+        		this.paginator.destroy();
+        	}
         },
         reqSheetList: function(){
-        	var objData = {
+        	var data = {
     			groupid: this.get('groupid'),
-        		currentSemestr: this.get('currentSemestr'),
-        		numcrs: this.get('currentCourse'),
-        		fieldid: this.get('groupItem').get('fieldid')
+        		currentSemestr: this.paginator.get('semestr'),
+        		numcrs: this.paginator.get('course'),
+        		fieldid: this.get('fieldid')
         	};
-        	if(!objData.currentSemestr){
-        		return;
-        	}
+        	
         	this.set('waiting', true);
-        	this.get('appInstance').sheetList(objData, function(err, result){
-        		this.set('waiting', false);
-        		if(!err){
-        			this.set('sheetList', result.sheetList);
-        			this.renderSheetList();
-        		}
-        	}, this);
+	        	this.get('appInstance').sheetList(data, function(err, result){
+	        		this.set('waiting', false);
+	        		if(!err){
+	        			this.set('sheetList', result.sheetList);
+	        				this.renderSheetList();
+	        		}
+	        	}, this);
         },
         renderSheetList: function(){
         	var sheetList = this.get('sheetList'),
@@ -100,9 +96,9 @@ Component.entryPoint = function(NS){
         		curType = this.get('currentType'),
         		lib = this.get('appInstance'),
         		data = {
-        			numcrs: this.get('currentCourse'),
-        			semestr: this.get('currentSemestr'),
-        			fieldid: groupItem.get('fieldid'),
+        			numcrs: this.paginator.get('course'),
+        			semestr: this.paginator.get('semestr'),
+        			fieldid: this.get('fieldid'),
         			type: curType,
         			from: 'sheetEditorWidget'
         		};
@@ -527,12 +523,10 @@ Component.entryPoint = function(NS){
         ATTRS: {
         	component: {value: COMPONENT},
             templateBlockName: {
-            	value: 'widget, groupRenderItem, label, tableSheet, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, rowEditSheet, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
+            	value: 'widget, label, tableSheet, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, rowEditSheet, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
             },
             groupid: {value: 0},
-            groupItem: {value: null},
-            currentSemestr: {value: 0},
-            currentCourse: {value: 0},
+            fieldid: {value: 0},
             sheetList: {value: null},
             dataTable: {value: ''},
             currentSubject: {value: 0},

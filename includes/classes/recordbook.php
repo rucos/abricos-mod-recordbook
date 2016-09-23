@@ -73,7 +73,7 @@ class RecordBook extends AbricosApplication {
             case "studRemove":
             	return  $this->StudRemoveToJSON($d->data);
             case "sheetList":
-            	return  $this->SheetListToJSON($d->objData);
+            	return  $this->SheetListToJSON($d->data);
             case "sheetSave":
             	return  $this->SheetAddToJSON($d->objData);
             case "sheetRemove":
@@ -469,21 +469,17 @@ class RecordBook extends AbricosApplication {
        		return $this->ResultToJSON('sheetList', $res);
        	}
        	
-       	public function SheetList($objData){
-       	
-       		if (isset($this->_cache['SheetList'][$objData->groupid][$objData->currentSemestr])){
-       			return $this->_cache['SheetList'][$objData->groupid][$objData->currentSemestr];
-       		}
+       	public function SheetList($d){
        		 
        		$list = $this->models->InstanceClass('SheetList');
        	
-       		$rows = RecordBookQuery::SheetList($this->db, $objData);
+       		$rows = RecordBookQuery::SheetList($this->db, $d);
        	
-       		while (($d = $this->db->fetch_array($rows))){
-       			$list->Add($this->models->InstanceClass('SheetItem', $d));
+       		while (($dd = $this->db->fetch_array($rows))){
+       			$list->Add($this->models->InstanceClass('SheetItem', $dd));
        		}
        	
-       		return $this->_cache['SheetList'][$objData->groupid][$objData->currentSemestr] = $list;
+       		return $list;
        	}
        	
        	public function SheetAddToJSON($d){

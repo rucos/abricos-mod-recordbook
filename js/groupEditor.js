@@ -170,7 +170,9 @@ Component.entryPoint = function(NS){
 					 this.groupMenu = new NS.StudListWidget(obj);
 					break;
 				case 'groupSheet':
-					 this.groupMenu = new NS.SheetEditorWidget(obj);
+					obj.fieldid = this.get('groupItem').get('fieldid');
+					
+					this.groupMenu = new NS.SheetEditorWidget(obj);
 						break;
 				case 'groupProgress':
 					 this.groupMenu = new NS.ProgressViewWidget(obj);

@@ -127,7 +127,7 @@ Component.entryPoint = function(NS){
     		},
     		sheetList: {
     			attribute: false,
-    			args: ['objData'],
+    			args: ['data'],
     			type: 'modelList:SheetList'
     		},
     		sheetSave: {

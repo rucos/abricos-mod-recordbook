@@ -425,7 +425,8 @@ class RecordBookQuery {
     				s.fioteacher,
     				sj.remove,
     				sj.project
-			FROM ".$db->prefix."rb_sheet s INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			FROM ".$db->prefix."rb_sheet s 
+			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
 			WHERE s.groupid = ".bkint($d->groupid)."
 						AND sj.semestr = ".bkint($d->currentSemestr)." 
 								AND sj.numcrs = ".bkint($d->numcrs)."

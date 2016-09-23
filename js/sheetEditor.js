@@ -23,9 +23,9 @@ Component.entryPoint = function(NS){
                     srcNode: tp.gel('pag'),
                     show: true,
                     callback: function(){
+                    	self.showSheetAddPanel();
                     	self.reqSheetList();
                     }
-                    
         		});
         	
 	        	this.get('boundingBox').on('change', this.change, this);
@@ -34,6 +34,12 @@ Component.entryPoint = function(NS){
         	if(this.paginator){
         		this.paginator.destroy();
         	}
+        },
+        showSheetAddPanel: function(){
+        	var tp = this.template;
+        		if(!this.get('sheetList')){
+            		tp.setHTML('sheetAddPanel', tp.replace('sheetAddPanel'));
+        		}
         },
         reqSheetList: function(){
         	var data = {
@@ -61,13 +67,17 @@ Component.entryPoint = function(NS){
         	sheetList.each(function(sheet){
         		
         		switch(sheet.get('type')){
-	        		 case 1:  type = 'label-success';
+	        		 case 1:  
+	        			 type = 'label-success';
 	        			 	break;
-	        		 case 2: type = 'label-info';
+	        		 case 2: 
+	        			 type = 'label-info';
 	        		 		break;
-	        		 case 3: type = 'label-warning';
+	        		 case 3: 
+	        			 type = 'label-warning';
 	        		 		break;
-	        		 case 4: type = 'label-primary';
+	        		 case 4: 
+	        			 type = 'label-primary';
      		 				break;
         		}
         		
@@ -523,7 +533,7 @@ Component.entryPoint = function(NS){
         ATTRS: {
         	component: {value: COMPONENT},
             templateBlockName: {
-            	value: 'widget, label, tableSheet, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, rowEditSheet, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
+            	value: 'widget, sheetAddPanel, label, tableSheet, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, rowEditSheet, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
             },
             groupid: {value: 0},
             fieldid: {value: 0},
@@ -562,43 +572,6 @@ Component.entryPoint = function(NS){
                        this.template.toggleView(false, 'rowSheet.removegroup-' + sheetid, 'rowSheet.remove-' + sheetid);
                    }
             },
-            changeCourse: {
-            	event: function(e){
-            		var numCourse = e.target.getData('value'),
-            			tp = this.template;
-            		
-            			if(!numCourse){
-            				return;
-            			}
-            			
-            			tp.setValue('groupRenderItem.inpCourse', numCourse);
-            			tp.removeClass('groupRenderItem.divCourse', 'open');
-            			tp.setHTML('tablMark', '');
-            			this.set('currentCourse', numCourse);
-            			this.set('currentSheet', 0);
-        				this.set('currentAttProc', '');
-	            			this.reqSheetList();
-            	}
-            },
-        	addSemestr: {
-        		event: function(e){
-        			var valCurSem = e.target.getData('value'),
-        				tp = this.template;
-        			
-        			if(!valCurSem){
-        				return;
-        			}
-        			
-        			tp.toggleView(false,'markPanel' ,'sheetPanel');
-        			tp.gel('groupRenderItem.inpSemestr').value = e.target.getHTML();
-        			tp.removeClass('groupRenderItem.divSemestr', 'open');
-        			tp.setHTML('tablMark', '');
-        				this.set('currentSemestr', valCurSem);
-        				this.set('currentSheet', 0);
-        				this.set('currentAttProc', '');
-        					this.reqSheetList();
-        		}
-        	},
         	addSubject: {
         		event: function(e){
         			var subjectid = e.target.getData('id'),

@@ -269,6 +269,11 @@ Component.entryPoint = function(NS){
         		create: function(){
         			return this.getURL('group.editor');
         		}
+        	},
+        	managerTeacher: {
+        		view: function(){
+        			return this.getURL('ws') + 'teacherManager/TeacherManagerWidget';
+        		}
         	}
         }
     });

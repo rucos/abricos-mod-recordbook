@@ -43,6 +43,7 @@ Component.entryPoint = function(NS){
         			var idManager = e.target.getData('id'),
         				tp = this.template;
         			
+        			
 	        		switch(idManager){
 	        			case "fieldsA" : 
 	        				this.setActive('fieldsLi');
@@ -63,6 +64,10 @@ Component.entryPoint = function(NS){
 	        			case "reportA":
 	        				this.setActive('reportLi');
 	        					this.go("managerReport.view");
+	        						break;
+	        			case "teacherA":
+	        				this.setActive('teacherLi');
+	        					this.go("managerTeacher.view");
 	        						break;
 	        		}
         		}

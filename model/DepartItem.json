@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "type": "model",
+  "rolefn": "IsAdminRole",
+  "fields": {
+    "id": {
+      "type": "int"
+    },
+    "namedepart": {
+      "type": "string",
+      "json": "nd"
+   },
+    "shortname": {
+      "type": "string",
+      "json": "sn"
+    },
+    "remove": {
+      "type": "int",
+      "json": "rm"
+    }
+  }
+}

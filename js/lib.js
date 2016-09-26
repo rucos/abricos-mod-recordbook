@@ -203,7 +203,19 @@ Component.entryPoint = function(NS){
     		programList: {
     			attribute: false,
     			type: 'modelList:ProgramList'
-    		}
+    		},
+    		departList: {
+    			attribute: false,
+    			type: 'modelList:DepartList'
+    		},
+    		departSave: {
+    			args: ['data']
+    		},
+    		departItem: {
+    			args: ['departid'],
+    			attribute: false,
+    			type: 'model:DepartItem'
+    		},
         },
         ATTRS: {
         	isLoadAppStructure: {value: true},
@@ -224,7 +236,9 @@ Component.entryPoint = function(NS){
         	findGroupVal: {value: ''},
         	frmstudy: {value: 0},
         	ProgramList: {value: NS.ProgramList},
-        	ProgramItem: {value: NS.ProgramItem}
+        	ProgramItem: {value: NS.ProgramItem},
+        	DepartList: {value: NS.DepartList},
+        	DepartItem: {value: NS.DepartItem}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
@@ -270,9 +284,9 @@ Component.entryPoint = function(NS){
         			return this.getURL('group.editor');
         		}
         	},
-        	managerTeacher: {
+        	managerDepart: {
         		view: function(){
-        			return this.getURL('ws') + 'teacherManager/TeacherManagerWidget';
+        			return this.getURL('ws') + 'departManager/DepartManagerWidget';
         		}
         	}
         }

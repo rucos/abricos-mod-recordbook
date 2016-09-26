@@ -965,6 +965,55 @@ class RecordBookQuery {
 		";
     	return $db->query_read($sql); 
     }
+    
+    public static function DepartList(Ab_Database $db){
+    	$sql = "
+			SELECT
+    				departid as id,
+    				namedepart,
+    				shortname,
+    				remove
+    		FROM ".$db->prefix."rb_departs
+		";
+    	return $db->query_read($sql);
+    }
+
+    public static function DepartItem(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+    				departid as id,
+    				namedepart,
+    				shortname,
+    				remove
+    		FROM ".$db->prefix."rb_departs
+    		WHERE departid=".bkint($id)."
+		";
+    	return $db->query_first($sql);
+    }
+    
+    public static function DepartAppend(Ab_Database $db, $d){
+         $sql = "
+			INSERT INTO ".$db->prefix."rb_departs (
+				namedepart,shortname
+			) VALUES (
+				'".bkstr($d->namedepart)."',
+				'".bkstr($d->shortname)."'
+			)
+		";
+      	$db->query_write($sql);
+    }
+    
+    public static function DepartUpdate(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_departs
+			SET
+				namedepart='".bkstr($d->namedepart)."',
+				shortname='".bkstr($d->shortname)."'
+			WHERE departid=".bkint($d->id)."
+			LIMIT 1
+		";
+    	$db->query_write($sql);
+    }
 }
 
 ?>

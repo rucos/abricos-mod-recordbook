@@ -1,0 +1,79 @@
+<!--{widget}-->
+<div class="manager">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+          	<h3 class="panel-title">Кафедры</h3>
+       </div>
+        <div class="panel-body">
+            	<div class="list-group">
+	            	<div class="row">
+						  <div class="col-md-4">
+						  		<div id="{i#departList}"></div>
+						  </div>
+						  <div class="col-md-8">
+						  		<div id="{i#teacherList}"></div>
+						  </div>
+					</div>
+				</div>
+        </div>
+   </div>
+</div>
+
+
+<!--{departList}-->
+<a href="" data-click="add-show">+Добавить кафедру</a>
+<div id="{i#addWidget}"></div>
+<div class="list-group">
+	{v#lst}
+</div>
+
+<!--{departItem}-->
+<div id="{i#item}-{v#id}" class="list-group-item" data-id="{v#id}" data-click="choiceDepart">
+	    <h4 class="list-group-item-heading">
+	    	{v#shortname}
+	    </h4>
+	    <div class="btn-group pull-right">
+			    <button class="btn btn-default btn-xs fa fa-pencil"
+			            title="Редактировать" data-click="edit-show" data-id="{v#id}">
+			    </button>
+			    <button class="btn btn-default btn-xs fa fa-trash-o"
+			            title="Удалить" data-click="remove-show"  data-id="{v#id}">
+			    </button>
+		</div>
+		<div id="{i#remove}-{v#id}"></div>
+	    <p class="list-group-item-text">
+	    	{v#namedepart}
+	    </p>
+</div>
+
+<!--{remove}-->
+<div class="alert alert-danger">
+    Вы действительно хотите удалить текущее значение?
+    <div class="text-center">
+        <button data-id="{v#id}" data-click="departRemove" data-wait="disable" class="btn btn-danger btn-xs">
+            Удалить
+        </button>
+        <button data-id="{v#id}" data-click="remove-hide" data-wait="disable" class="btn btn-default btn-xs">
+            Отмена
+        </button>
+    </div>
+</div>
+
+<!--{addWidget}-->
+<div class="list-group-item">
+	    <p class="list-group-item-heading">
+	    	<input class="form-control" id="{i#shortname}" placeholder="Краткое наименование" value="{v#shortname}">
+	    </p>
+	    <p class="list-group-item-text">
+	    	<textarea class="form-control" id="{i#namedepart}" placeholder="Полное наименование">{v#namedepart}</textarea>
+	    </p>
+	    <br>
+	    <div class="row">
+   			<div class="col-md-6">
+				<button type="button" class="btn btn-primary btn-sm" data-id="{v#id}" data-click="save">{v#act}</button>
+			</div>
+			<div class="col-md-6">
+				<button type="button" class="btn btn-default btn-sm" data-id="{v#id}" data-click="cancel">Отмена</button>
+			</div>
+	    </div>
+</div>

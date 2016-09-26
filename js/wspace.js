@@ -70,9 +70,9 @@ Component.entryPoint = function(NS){
 	        				this.setActive('reportLi');
 	        					this.go("managerReport.view");
 	        						break;
-	        			case "teacherA":
-	        				this.setActive('teacherLi');
-	        					this.go("managerTeacher.view");
+	        			case "departA":
+	        				this.setActive('departLi');
+	        					this.go("managerDepart.view");
 	        						break;
 	        		}
         		}

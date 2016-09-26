@@ -85,4 +85,12 @@ Component.entryPoint = function(NS){
         appItem: NS.ProgramItem
     });
     
+    NS.DepartItem = Y.Base.create('departItem', SYS.AppModel, [], {
+        structureName: 'DepartItem'
+    });
+
+    NS.DepartList = Y.Base.create('departList', SYS.AppModelList, [], {
+        appItem: NS.DepartItem
+    });
+    
 };

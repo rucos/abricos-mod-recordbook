@@ -93,4 +93,13 @@ class ProgramItem extends AbricosModel {
 class ProgramList extends AbricosModelList {
 
 }
+
+class DepartItem extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'DepartItem';
+}
+
+class DepartList extends AbricosModelList {
+
+}
 ?>

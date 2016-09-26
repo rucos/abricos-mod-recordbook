@@ -29,13 +29,15 @@ class RecordBook extends AbricosApplication {
 				'MarkListStat' => 'MarkListStat',
 				'ReportItem' => 'ReportItem',
 				'ProgramItem' => 'ProgramItem',
-				'ProgramList' => 'ProgramList'
+				'ProgramList' => 'ProgramList',
+				'DepartList' => 'DepartList',
+				'DepartItem' => 'DepartItem'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem, ProgramItem';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem, ProgramItem, DepartItem';
 	}
 
 	public function ResponseToJSON($d){
@@ -109,6 +111,12 @@ class RecordBook extends AbricosApplication {
             	return $this->MarkStudReportToJSON($d->data);
             case "programList":
             	return $this->ProgramListToJSON();
+            case "departList":
+            	return $this->DepartListToJSON();
+            case "departItem":
+           		return $this->DepartItemToJSON($d->departid);
+            case "departSave":
+            	return $this->DepartSaveToJSON($d->data);
         }
         return null;
     }
@@ -1017,6 +1025,55 @@ class RecordBook extends AbricosApplication {
        			$list->Add($this->models->InstanceClass('ProgramItem', $dd));
        		}
        		return $list;
+       	}
+       	
+       	public function DepartListToJSON(){
+       		$res = $this->DepartList();
+       		return $this->ResultToJSON('departList', $res);
+       	}
+       	
+       	public function DepartList(){
+       		$list = $this->models->InstanceClass('DepartList');
+       	
+       		$rows = RecordBookQuery::DepartList($this->db);
+       	
+       		while ($d = $this->db->fetch_array($rows)){
+       			$list->Add($this->models->InstanceClass('DepartItem', $d));
+       		}
+       		return $list;
+       	}
+       	
+       	public function DepartItemToJSON($id){
+       		$res = $this->DepartItem($id);
+       		return $this->ResultToJSON('departItem', $res);
+       	}
+       	
+       	public function DepartItem($id){
+       		$id = intval($id);
+       	
+       		$rows = RecordBookQuery::DepartItem($this->db, $id);
+       	
+       		return $this->models->InstanceClass('DepartItem', $rows);
+       	}
+       	
+       	public function DepartSaveToJSON($d){
+       		$res = $this->DepartSave($d);
+       		return $this->ResultToJSON('departSave', $res);
+       	}
+       	
+       	public function DepartSave($d){
+       		$utmf = Abricos::TextParser(true);
+       		
+       		$d->id = intval($d->id);
+       		$d->namedepart = $utmf->Parser($d->namedepart);
+       		$d->shortname = $utmf->Parser($d->shortname);
+       		
+       		if($d->id > 0){
+       			RecordBookQuery::DepartUpdate($this->db, $d);       			
+       		} else {
+       			RecordBookQuery::DepartAppend($this->db, $d);
+       		}
+       	
        	}
        	
 }

@@ -40,9 +40,14 @@ Component.entryPoint = function(NS){
         CLICKS: {
         	changeActive: {
         		event: function(e){
-        			var idManager = e.target.getData('id'),
-        				tp = this.template;
+        			var targ = e.target,
+        				idManager = targ.getData('id'),
+        				tp = this.template,
+        				a = targ.getDOMNode();
         			
+        			if(!a.href){
+        				return;
+        			}
         			
 	        		switch(idManager){
 	        			case "fieldsA" : 

@@ -35,7 +35,19 @@ Component.entryPoint = function(NS){
         		lst = "";
         	
 	        	departList.each(function(depart){
-	        		lst += tp.replace('departItem', depart.toJSON());
+	        		var remove = depart.get('remove'),
+	        			id = depart.get('id'),
+	        			obj = {
+	        				btnrestore: tp.replace('buttonRemove', {id: id}),
+	        				danger: ''
+	        			};
+	        		
+	        		if(remove){
+	        			obj.btnrestore = tp.replace('buttonRestore', {id: id});
+	        			obj.danger = 'list-group-item-danger';
+	        		}
+	        		
+	        		lst += tp.replace('departItem', [obj, depart.toJSON()]);
 	        	});
 	        	
 	        	tp.setHTML('departList', tp.replace('departList', {
@@ -74,15 +86,14 @@ Component.entryPoint = function(NS){
         		
 	        	tp.setHTML(element, tp.replace('addWidget', replObj));
         },
-        departSave: function(id){
+        departSave: function(id, remove){
         	var tp = this.template,
         		data = {
 	        		id: id,
 	        		namedepart: tp.getValue('addWidget.namedepart'),
 	        		shortname: tp.getValue('addWidget.shortname')
 	        	},
-	        	lib = this.get('appInstance'),
-	        	empty = lib.isEmptyInput(data);
+	        	empty = this.get('appInstance').isEmptyInput(data);
         	
         	if(empty){
         		switch(empty){
@@ -93,21 +104,40 @@ Component.entryPoint = function(NS){
         		
         		return;
         	} 
-	        	this.set('waiting', true);
-	        		lib.departSave(data, function(err, result){
-		        		this.set('waiting', false);
-			        		if(!err){
-			        			this.reloadList();
-			        		}
-		        	}, this);
+        		this.reqDepartSave(data);
+        },
+        reqDepartSave: function(data){
+         	this.set('waiting', true);
+         	this.get('appInstance').departSave(data, function(err, result){
+	        		this.set('waiting', false);
+		        		if(!err){
+		        			this.reloadList();
+		        		}
+	        	}, this);
         },
         cancelAddWidget: function(id){
         	var tp = this.template,
         		repobj = this.get('departItem').toJSON(),
-        		element = tp.one('departItem.item-' + id).getDOMNode(); 
+        		element = tp.one('departItem.item-' + id).getDOMNode();
+        	
+        		if(repobj.remove){
+        			repobj.btnrestore = tp.replace('buttonRestore', {id: id});
+        			repobj.danger = 'list-group-item-danger';
+        		} else {
+        			repobj.btnrestore = tp.replace('buttonRemove', {id: id});
+        			repobj.danger = '';
+        		}
         	
         		element.outerHTML = tp.replace('departItem', repobj);
     				this.set('departItem', null);
+        },
+        showRemoveWidget: function(id, show){
+        	var tp = this.template,
+        		replace = show || tp.replace('removeWidget', {
+        			id: id
+        		});
+        	
+   				tp.setHTML('departItem.remove-' + id, replace);
         },
         destructor: function(){
             if (this.listWidget){
@@ -117,7 +147,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
             component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,departList,departItem,addWidget'},
+            templateBlockName: {value: 'widget,departList,departItem,addWidget,removeWidget,buttonRestore,buttonRemove'},
             departList: {value: null},
             departItem: {value: null}
         },
@@ -127,18 +157,32 @@ Component.entryPoint = function(NS){
         			this.renderItem();
         		}
         	},
-        	save: {
-        		event: function(e){
-        			var id = e.target.getData('id');
-
-        				this.departSave(id);
-        		}
-        	},
         	'edit-show': {
         		event: function(e){
         			var id = e.target.getData('id');
         					
         			this.loadItem(id);
+        		}
+        	},
+        	'remove-show':{
+        		event: function(e){
+        			var id = e.target.getData('id');
+        			
+        			this.showRemoveWidget(id);
+        		}
+        	},
+        	'remove-cancel':{
+        		event: function(e){
+        			var id = e.target.getData('id');
+        			
+        			this.showRemoveWidget(id, ' ');
+        		}
+        	},
+        	save: {
+        		event: function(e){
+        			var id = e.target.getData('id');
+
+        				this.departSave(id);
         		}
         	},
         	cancel: {
@@ -150,6 +194,16 @@ Component.entryPoint = function(NS){
         			} else {
         				this.template.setHTML('departList.addWidget', '');
         			}
+        		}
+        	},
+        	remove: {
+        		event: function(e){
+        			var targ = e.target, 
+        				data = {
+        				id: targ.getData('id'),
+        				remove: targ.getData('remove')
+        			};
+        			this.reqDepartSave(data);
         		}
         	},
         	choiceDepart: {

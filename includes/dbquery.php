@@ -1014,6 +1014,17 @@ class RecordBookQuery {
 		";
     	$db->query_write($sql);
     }
+    
+    public static function DepartRemove(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_departs
+			SET
+				remove=".bkint($d->remove)."
+			WHERE departid=".bkint($d->id)."
+			LIMIT 1
+		";
+    	$db->query_write($sql);
+    }
 }
 
 ?>

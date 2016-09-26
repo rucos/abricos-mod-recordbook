@@ -28,17 +28,15 @@
 </div>
 
 <!--{departItem}-->
-<div id="{i#item}-{v#id}" class="list-group-item" data-id="{v#id}" data-click="choiceDepart">
+<div id="{i#item}-{v#id}" class="list-group-item {v#danger}" data-id="{v#id}" data-click="choiceDepart">
 	    <h4 class="list-group-item-heading">
 	    	{v#shortname}
 	    </h4>
 	    <div class="btn-group pull-right">
-			    <button class="btn btn-default btn-xs fa fa-pencil"
-			            title="Редактировать" data-click="edit-show" data-id="{v#id}">
-			    </button>
-			    <button class="btn btn-default btn-xs fa fa-trash-o"
-			            title="Удалить" data-click="remove-show"  data-id="{v#id}">
-			    </button>
+			<button class="btn btn-default btn-xs fa fa-pencil"
+			        title="Редактировать" data-click="edit-show" data-id="{v#id}">
+			</button>
+			{v#btnrestore}
 		</div>
 		<div id="{i#remove}-{v#id}"></div>
 	    <p class="list-group-item-text">
@@ -46,14 +44,20 @@
 	    </p>
 </div>
 
-<!--{remove}-->
+<!--{buttonRestore}-->
+<button class="btn btn-default btn-xs fa fa-reply" title="Восстановить запись" data-click="remove" data-id="{v#id}" data-remove="0"></button>
+
+<!--{buttonRemove}-->
+<button class="btn btn-default btn-xs fa fa-trash-o" title="Удалить" data-click="remove-show"  data-id="{v#id}"></button>
+			    
+<!--{removeWidget}-->
 <div class="alert alert-danger">
-    Вы действительно хотите удалить текущее значение?
+    Вы действительно хотите удалить?
     <div class="text-center">
-        <button data-id="{v#id}" data-click="departRemove" data-wait="disable" class="btn btn-danger btn-xs">
+        <button data-id="{v#id}" data-remove="1" data-click="remove" data-wait="disable" class="btn btn-danger btn-xs">
             Удалить
         </button>
-        <button data-id="{v#id}" data-click="remove-hide" data-wait="disable" class="btn btn-default btn-xs">
+        <button data-id="{v#id}" data-click="remove-cancel" data-wait="disable" class="btn btn-default btn-xs">
             Отмена
         </button>
     </div>

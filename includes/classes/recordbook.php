@@ -1057,25 +1057,31 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function DepartSaveToJSON($d){
-       		$res = $this->DepartSave($d);
+       		$res = $this->DepartSave($d);       			
        		return $this->ResultToJSON('departSave', $res);
        	}
        	
        	public function DepartSave($d){
-       		$utmf = Abricos::TextParser(true);
-       		
        		$d->id = intval($d->id);
-       		$d->namedepart = $utmf->Parser($d->namedepart);
-       		$d->shortname = $utmf->Parser($d->shortname);
        		
-       		if($d->id > 0){
-       			RecordBookQuery::DepartUpdate($this->db, $d);       			
+       		if(!isset($d->remove)){
+       			$utmf = Abricos::TextParser(true);
+       			 
+       			$d->namedepart = $utmf->Parser($d->namedepart);
+       			$d->shortname = $utmf->Parser($d->shortname);
+       			 
+       			if($d->id > 0){
+       				RecordBookQuery::DepartUpdate($this->db, $d);
+       			} else {
+       				RecordBookQuery::DepartAppend($this->db, $d);
+       			}
        		} else {
-       			RecordBookQuery::DepartAppend($this->db, $d);
+       			$d->remove = intval($d->remove);
+       				RecordBookQuery::DepartRemove($this->db, $d);
+       			
        		}
        	
        	}
-       	
 }
 
 ?>

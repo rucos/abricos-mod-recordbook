@@ -35,24 +35,27 @@ Component.entryPoint = function(NS){
         		lst = "";
         	
 	        	departList.each(function(depart){
-	        		var remove = depart.get('remove'),
-	        			id = depart.get('id'),
-	        			obj = {
-	        				btnrestore: tp.replace('buttonRemove', {id: id}),
-	        				danger: ''
-	        			};
+	        		var replObj = this.determRemoveButton(depart.toJSON());
 	        		
-	        		if(remove){
-	        			obj.btnrestore = tp.replace('buttonRestore', {id: id});
-	        			obj.danger = 'list-group-item-danger';
-	        		}
-	        		
-	        		lst += tp.replace('departItem', [obj, depart.toJSON()]);
-	        	});
+	        			lst += tp.replace('departItem', replObj);
+	        	}, this);
 	        	
 	        	tp.setHTML('departList', tp.replace('departList', {
 	        		lst: lst
 	        	}));
+        },
+        determRemoveButton: function(obj){
+        	var tp = this.template;
+        	
+	       		if(obj.remove){
+	       			obj.btnrestore = tp.replace('buttonRestore', {id: obj.id});
+	       			obj.danger = 'list-group-item-danger';
+	    		} else {
+	    			obj.btnrestore = tp.replace('buttonRemove', {id: obj.id});
+	    			obj.danger = "";
+	    		}
+	       		
+	       		return obj;
         },
         loadItem: function(departid){
         	this.set('waiting', true);
@@ -115,22 +118,6 @@ Component.entryPoint = function(NS){
 		        		}
 	        	}, this);
         },
-        cancelAddWidget: function(id){
-        	var tp = this.template,
-        		repobj = this.get('departItem').toJSON(),
-        		element = tp.one('departItem.item-' + id).getDOMNode();
-        	
-        		if(repobj.remove){
-        			repobj.btnrestore = tp.replace('buttonRestore', {id: id});
-        			repobj.danger = 'list-group-item-danger';
-        		} else {
-        			repobj.btnrestore = tp.replace('buttonRemove', {id: id});
-        			repobj.danger = '';
-        		}
-        	
-        		element.outerHTML = tp.replace('departItem', repobj);
-    				this.set('departItem', null);
-        },
         showRemoveWidget: function(id, show){
         	var tp = this.template,
         		replace = show || tp.replace('removeWidget', {
@@ -138,6 +125,14 @@ Component.entryPoint = function(NS){
         		});
         	
    				tp.setHTML('departItem.remove-' + id, replace);
+        },
+        cancelAddWidget: function(id){
+        	var tp = this.template,
+        		repobj = this.determRemoveButton(this.get('departItem').toJSON()),
+        		element = tp.one('departItem.item-' + id).getDOMNode();
+        	
+        		element.outerHTML = tp.replace('departItem', repobj);
+    				this.set('departItem', null);
         },
         destructor: function(){
             if (this.listWidget){

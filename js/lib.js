@@ -68,6 +68,14 @@ Component.entryPoint = function(NS){
         		'3': 'заочная форма'
         	};
         	return obj[key] || '';
+        },
+        unSetActive: function(element){
+        	var collect = element.childNodes,
+        		len = collect.length;
+        		
+        		for(var i = 0; i < len; i++){
+        			collect[i].classList.remove('active');
+        		}
         }
     }, [], {
         REQS: {

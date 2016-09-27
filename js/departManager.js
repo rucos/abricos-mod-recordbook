@@ -19,6 +19,11 @@ Component.entryPoint = function(NS){
 //	            });
             this.reloadList();
         },
+        destructor: function(){
+            if (this.listWidget){
+                this.listWidget.destroy();
+            }
+        },
         reloadList: function(){
         	this.set('waiting', true);
 	        	this.get('appInstance').departList(function(err, result){
@@ -43,6 +48,7 @@ Component.entryPoint = function(NS){
 	        	tp.setHTML('departList', tp.replace('departList', {
 	        		lst: lst
 	        	}));
+	        	this.setActive();
         },
         determRemoveButton: function(obj){
         	var tp = this.template;
@@ -133,18 +139,23 @@ Component.entryPoint = function(NS){
         	
         		element.outerHTML = tp.replace('departItem', repobj);
     				this.set('departItem', null);
+    				this.setActive();
         },
-        destructor: function(){
-            if (this.listWidget){
-                this.listWidget.destroy();
-            }
+        setActive: function(){
+        	var tp = this.template,
+        		id = this.get('curDepartid');
+        	
+	        	if(id){
+	        		tp.one('departItem.item-' + id).addClass('active');
+	        	}
         }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
             templateBlockName: {value: 'widget,departList,departItem,addWidget,removeWidget,buttonRestore,buttonRemove'},
             departList: {value: null},
-            departItem: {value: null}
+            departItem: {value: null},
+            curDepartid: {value: 0}
         },
         CLICKS: {
         	'add-show': {
@@ -203,7 +214,18 @@ Component.entryPoint = function(NS){
         	},
         	choiceDepart: {
         		event: function(e){
+        			var targ = e.target,
+        				parent = targ.getDOMNode().parentNode,
+        				id = targ.getData('id') || parent.dataset.id,
+        				tp = this.template;
         			
+        			if(!id){
+        				return;
+        			}
+        			this.get('appInstance').unSetActive(tp.gel('departList.departList'));
+        			
+        			this.set('curDepartid', id);
+        			this.setActive();
         		}
         	}
         

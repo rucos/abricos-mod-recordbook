@@ -230,7 +230,9 @@ Component.entryPoint = function(NS){
         			this.set('curDepartid', id);
         			this.setActive();
         			
-        			this.teacherWidget.reloadList(id);
+        			
+        			this.teacherWidget.set('departid', id);
+        			this.teacherWidget.reloadList();
         		}
         	}
         

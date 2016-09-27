@@ -228,6 +228,9 @@ Component.entryPoint = function(NS){
     			args: ['departid'],
     			attribute: false,
     			type: 'modelList:TeacherList'
+    		},
+    		teacherSave: {
+    			args: ['data']
     		}
         },
         ATTRS: {

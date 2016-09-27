@@ -121,6 +121,8 @@ class RecordBook extends AbricosApplication {
             	return $this->DepartSaveToJSON($d->data);
            	case "teacherList":
            		return $this->TeacherListToJSON($d->departid);
+           	case "teacherSave":
+           		return $this->TeacherSaveToJSON($d->data);
         }
         return null;
     }
@@ -1103,6 +1105,33 @@ class RecordBook extends AbricosApplication {
        			$list->Add($this->models->InstanceClass('TeacherItem', $d));
        		}
        		return $list;
+       	}
+       	
+       	public function TeacherSaveToJSON($d){
+       		$res = $this->TeacherSave($d);
+       		return $this->ResultToJSON('teacherSave', $res);
+       	}
+       	
+       	public function TeacherSave($d){
+       		$d->id = intval($d->id);
+       		$d->departid = intval($d->departid);
+       		 
+//        		if(!isset($d->remove)){
+       			$utmf = Abricos::TextParser(true);
+       			 
+       			$d->fio = $utmf->Parser($d->fio);
+       			 
+       			if($d->id > 0){
+       				RecordBookQuery::TeacherUpdate($this->db, $d);
+       			} else {
+       				RecordBookQuery::TeacherAppend($this->db, $d);
+       			}
+//        		} else {
+//        			$d->remove = intval($d->remove);
+//        			RecordBookQuery::DepartRemove($this->db, $d);
+       	
+//        		}
+       	
        	}
 }
 

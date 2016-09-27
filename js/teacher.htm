@@ -15,7 +15,7 @@
 </table>
 
 <!--{row}-->
-<tr>
+<tr id="{i#row}-{v#id}">
  	<td>{v#fio}</td>
     <td>
         <button data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
@@ -39,14 +39,12 @@
 
 
 <!--{addRow}-->
-<tr>
+<tr id="{i#row}-{v#id}">
  	<td>
- 		<textarea id="{i#fio}" class="form-control">
- 			{v#fio}
- 		</textarea>
+ 		<textarea id="{i#fio}" class="form-control">{v#fio}</textarea>
  	</td>
     <td>
-        <button data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+        <button data-id="{v#id}" data-click="save" class="btn btn-default btn-xs" data-wait="disable">
             {v#act}
         </button>
     </td>

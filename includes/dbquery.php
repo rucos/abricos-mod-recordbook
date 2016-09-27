@@ -1037,6 +1037,18 @@ class RecordBookQuery {
 		";
     	return $db->query_read($sql);
     }
+    
+    public static function TeacherAppend(Ab_Database $db, $d){
+    	$sql = "
+			INSERT INTO ".$db->prefix."rb_teacher (
+				departid,fio
+			) VALUES (
+				".bkint($d->departid).",
+				'".bkstr($d->fio)."'
+			)
+		";
+    	$db->query_write($sql);
+    }
 }
 
 ?>

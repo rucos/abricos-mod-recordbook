@@ -35,14 +35,56 @@ Component.entryPoint = function(NS){
         		lst = "";
         	
 	        	teacherList.each(function(teacher){
-	        		lst += tp.replace('row', teacher.toJSON());
-	        	});
+	        		var replObj = teacher.toJSON();
+	        		
+	        		lst += tp.replace('row', {
+	        			id: replObj.id,
+	        			cells: this.replaceCellsTable(replObj)
+	        		});
+	        	}, this);
 	        	
 	        	tp.setHTML('list', tp.replace('table', {
 	        		rows: lst
 	        	}));
         },
-        addRowShow: function(){
+        replaceCellsTable: function(obj){
+        	var tp = this.template,
+        		template = '';
+        	
+        	if(obj.remove){
+        		template= 'restoreBtn';
+        		obj.danger = 'class="danger"';
+        	} else {
+        		template= 'removeBtn';
+        		obj.danger = '';
+        	}
+        	
+        	return tp.replace('cells', [{
+        				btn:  tp.replace(template, {
+                				id: obj.id
+                			 }) 
+					}, obj]); 
+        },
+        loadTeacherItem: function(teacherid){
+         	this.set('waiting', true);
+	         	this.get('appInstance').teacherItem(teacherid, function(err, result){
+		        		this.set('waiting', false);
+			        		if(!err){
+			        			this.set('teacherItem', result.teacherItem)
+			        				this.editRowShow();
+			        		}
+		       }, this);
+        },
+        editRowShow: function(){
+        	var teacherItem = this.get('teacherItem').toJSON(),
+        		tp = this.template;
+        	
+	        	teacherItem.act = 'Изменить';
+	        	
+	        	tp.setHTML('row.row-' + teacherItem.id, tp.replace('addRow', teacherItem));
+        	
+        },
+        addRowShow: function(id){
         	var tp = this.template,
         		table = tp.gel('table.tblTeacher'),
         		row = table.insertRow(1); 
@@ -50,8 +92,18 @@ Component.entryPoint = function(NS){
 	        	row.innerHTML = tp.replace('addRow', {
 	        		act: 'Добавить',
 	        		fio: '',
-	        		id: 0
+	        		id: id
 	        	});
+        },
+        hideRowShow: function(){
+        	var teacherItem = this.get('teacherItem'),
+    			tp = this.template;
+
+	        	if(teacherItem){
+	        		tp.setHTML('row.row-' + teacherItem.get('id'), this.replaceCellsTable(teacherItem.toJSON()));
+	        	} else {
+	        		tp.gel('table.tblTeacher').rows[1].remove();
+	        	}
         },
         save: function(id){
         	var tp = this.template,
@@ -71,6 +123,7 @@ Component.entryPoint = function(NS){
         		this.reqTeacherSave(data);
         		
         		this.set('addRow', false);
+        		this.set('teacherItem', null);
         },
         reqTeacherSave: function(data){
          	this.set('waiting', true);
@@ -80,31 +133,91 @@ Component.entryPoint = function(NS){
 			        			this.reloadList();
 			        		}
 		       }, this);
+        },
+        removeShow: function(id, show){
+        	var tp = this.template,
+        		btn = tp.one('removeBtn.remove-' + id).getDOMNode(),
+        		btnGr = tp.one('removeBtn.removegroup-' + id).getDOMNode();
+        	
+	        	if(show){
+	        		btn.classList.add('hide');
+	        		btnGr.classList.remove('hide');
+	        	} else {
+	        		btnGr.classList.add('hide');
+	        		btn.classList.remove('hide');
+	        	}
+        },
+        remove: function(id, remove){
+        	var data = {
+        		id: id,
+        		remove: remove
+        	};
+        	
+        	this.reqTeacherSave(data);
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,table,row,addRow'},
+            templateBlockName: {value: 'widget,table,row,cells,addRow,restoreBtn,removeBtn'},
             teacherList: {value: null},
+            teacherItem: {value: null},
             addRow: {value: false},
             departid: {value: 0}
         },
         CLICKS: {
         	'add-show': {
         		event: function(e){
-        			var addRow = this.get('addRow');
+        			var addRow = this.get('addRow'),
+        				id = +e.target.getData('id') || 0;
         			
 	        			if(!addRow){
 	        				this.set('addRow', true);
-	        					this.addRowShow();
+	        					if(id){
+	        						this.loadTeacherItem(id);
+	        					} else {
+	        						this.set('teacherItem', null);
+	        							this.addRowShow(id);	        						
+	        					}
 	        			}
         		}
+        	},
+        	'remove-show': {
+          		event: function(e){
+	       			var id = e.target.getData('id');
+		       			this.removeShow(id, true);
+	       		}
+        	},
+        	'remove-cancel': {
+          		event: function(e){
+	       			var id = e.target.getData('id');
+		       			this.removeShow(id, false);
+	       		}
         	},
 	       	save: {
 	       		event: function(e){
 	       			var id = e.target.getData('id');
 		       		
 		       			this.save(id);
+	       		}
+	        },
+	        remove:{
+	       		event: function(e){
+	       			var id = e.target.getData('id');
+		       		
+		       			this.remove(id, 1);
+	       		}
+	        },
+	        restore: {
+	        	event: function(e){
+	       			var id = e.target.getData('id');
+		       		
+	       				this.remove(id, 0);
+	        	}
+	        },
+	        cancel: {
+	       		event: function(e){
+	       			this.set('addRow', false);
+	       			this.hideRowShow();
 	       		}
 	        }
         }

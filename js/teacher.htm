@@ -16,13 +16,21 @@
 
 <!--{row}-->
 <tr id="{i#row}-{v#id}">
- 	<td>{v#fio}</td>
+	{v#cells}
+</tr>
+
+<!--{cells}-->
+ 	<td {v#danger}>{v#fio}</td>
     <td>
-        <button data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+        <button data-id="{v#id}" data-click="add-show" class="btn btn-default btn-xs" data-wait="disable">
             Править
         </button>
     </td>
     <td>
+		{v#btn}
+	</td>
+    
+<!--{removeBtn}-->
          <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs" data-id="{v#id}" data-wait="disable">
             Удалить
         </button>
@@ -34,23 +42,24 @@
                 Отмена
             </button>
         </div>
-    </td>
-</tr>
 
+
+<!--{restoreBtn}-->
+<button data-click="restore" type="button" class="btn btn-default btn-xs" data-id="{v#id}" data-wait="disable">
+	Восстановить
+</button>
 
 <!--{addRow}-->
-<tr id="{i#row}-{v#id}">
- 	<td>
- 		<textarea id="{i#fio}" class="form-control">{v#fio}</textarea>
- 	</td>
-    <td>
-        <button data-id="{v#id}" data-click="save" class="btn btn-default btn-xs" data-wait="disable">
-            {v#act}
-        </button>
-    </td>
-    <td>
-         <button data-id="{v#id}" data-click="cancel" class="btn btn-default btn-xs" data-wait="disable">
-            Отмена
-        </button>
-    </td>
-</tr>
+	<td>
+		<textarea id="{i#fio}" class="form-control">{v#fio}</textarea>
+	</td>
+   <td>
+       <button data-id="{v#id}" data-click="save" class="btn btn-default btn-xs" data-wait="disable">
+           {v#act}
+       </button>
+   </td>
+   <td>
+        <button data-click="cancel" class="btn btn-default btn-xs" data-wait="disable">
+           Отмена
+       </button>
+   </td>

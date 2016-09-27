@@ -987,6 +987,7 @@ class RecordBookQuery {
     				remove
     		FROM ".$db->prefix."rb_departs
     		WHERE departid=".bkint($id)."
+    		LIMIT 1
 		";
     	return $db->query_first($sql);
     }
@@ -1046,6 +1047,42 @@ class RecordBookQuery {
 				".bkint($d->departid).",
 				'".bkstr($d->fio)."'
 			)
+		";
+    	$db->query_write($sql);
+    }
+    
+    public static function TeacherItem(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+	    			teacherid as id,
+	    			fio,
+	    			remove
+    		FROM ".$db->prefix."rb_teacher
+    		WHERE  teacherid=".bkint($id)."
+    		LIMIT 1
+		";
+    	return $db->query_first($sql);
+    }
+    
+    public static function TeacherUpdate(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_teacher
+			SET
+				departid=".bkint($d->departid).",
+				fio='".bkstr($d->fio)."'
+			WHERE teacherid=".bkint($d->id)."
+			LIMIT 1
+		";
+    	$db->query_write($sql);
+    }
+    
+    public static function TeacherRemove(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_teacher
+			SET
+				remove=".bkint($d->remove)."
+			WHERE teacherid=".bkint($d->id)."
+			LIMIT 1
 		";
     	$db->query_write($sql);
     }

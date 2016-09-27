@@ -231,6 +231,11 @@ Component.entryPoint = function(NS){
     		},
     		teacherSave: {
     			args: ['data']
+    		},
+    		teacherItem: {
+    			args: ['teacherid'],
+    			attribute: false,
+    			type: 'model:TeacherItem'
     		}
         },
         ATTRS: {

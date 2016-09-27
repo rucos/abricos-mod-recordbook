@@ -123,6 +123,8 @@ class RecordBook extends AbricosApplication {
            		return $this->TeacherListToJSON($d->departid);
            	case "teacherSave":
            		return $this->TeacherSaveToJSON($d->data);
+           	case "teacherItem":
+           		return $this->TeacherItemToJSON($d->teacherid);
         }
         return null;
     }
@@ -1114,11 +1116,11 @@ class RecordBook extends AbricosApplication {
        	
        	public function TeacherSave($d){
        		$d->id = intval($d->id);
-       		$d->departid = intval($d->departid);
        		 
-//        		if(!isset($d->remove)){
+       		if(!isset($d->remove)){
+       			$d->departid = intval($d->departid);
+       			
        			$utmf = Abricos::TextParser(true);
-       			 
        			$d->fio = $utmf->Parser($d->fio);
        			 
        			if($d->id > 0){
@@ -1126,12 +1128,24 @@ class RecordBook extends AbricosApplication {
        			} else {
        				RecordBookQuery::TeacherAppend($this->db, $d);
        			}
-//        		} else {
-//        			$d->remove = intval($d->remove);
-//        			RecordBookQuery::DepartRemove($this->db, $d);
+       		} else {
+       			$d->remove = intval($d->remove);
+       			RecordBookQuery::TeacherRemove($this->db, $d);
        	
-//        		}
+       		}
+       	}
        	
+       	public function TeacherItemToJSON($id){
+       		$res = $this->TeacherItem($id);
+       		return $this->ResultToJSON('teacherItem', $res);
+       	}
+       	
+       	public function TeacherItem($id){
+       		$id = intval($id);
+       	
+       		$rows = RecordBookQuery::TeacherItem($this->db, $id);
+       	
+       		return $this->models->InstanceClass('TeacherItem', $rows);
        	}
 }
 

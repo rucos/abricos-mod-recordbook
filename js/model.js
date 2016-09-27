@@ -93,4 +93,12 @@ Component.entryPoint = function(NS){
         appItem: NS.DepartItem
     });
     
+    NS.TeacherItem = Y.Base.create('teacherItem', SYS.AppModel, [], {
+        structureName: 'TeacherItem'
+    });
+
+    NS.TeacherList = Y.Base.create('teacherList', SYS.AppModelList, [], {
+        appItem: NS.TeacherItem
+    });
+    
 };

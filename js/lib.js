@@ -224,6 +224,11 @@ Component.entryPoint = function(NS){
     			attribute: false,
     			type: 'model:DepartItem'
     		},
+    		teacherList: {
+    			args: ['departid'],
+    			attribute: false,
+    			type: 'modelList:TeacherList'
+    		}
         },
         ATTRS: {
         	isLoadAppStructure: {value: true},
@@ -246,7 +251,9 @@ Component.entryPoint = function(NS){
         	ProgramList: {value: NS.ProgramList},
         	ProgramItem: {value: NS.ProgramItem},
         	DepartList: {value: NS.DepartList},
-        	DepartItem: {value: NS.DepartItem}
+        	DepartItem: {value: NS.DepartItem},
+        	TeacherList: {value: NS.TeacherList},
+        	TeacherItem: {value: NS.TeacherItem}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",

@@ -31,13 +31,15 @@ class RecordBook extends AbricosApplication {
 				'ProgramItem' => 'ProgramItem',
 				'ProgramList' => 'ProgramList',
 				'DepartList' => 'DepartList',
-				'DepartItem' => 'DepartItem'
+				'DepartItem' => 'DepartItem',
+				'TeacherList' => 'TeacherList',
+				'TeacherItem' => 'TeacherItem'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem, ProgramItem, DepartItem';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem, ProgramItem, DepartItem, TeacherItem';
 	}
 
 	public function ResponseToJSON($d){
@@ -117,6 +119,8 @@ class RecordBook extends AbricosApplication {
            		return $this->DepartItemToJSON($d->departid);
             case "departSave":
             	return $this->DepartSaveToJSON($d->data);
+           	case "teacherList":
+           		return $this->TeacherListToJSON($d->departid);
         }
         return null;
     }
@@ -1081,6 +1085,24 @@ class RecordBook extends AbricosApplication {
        			
        		}
        	
+       	}
+       	
+       	public function TeacherListToJSON($departid){
+       		$res = $this->TeacherList($departid);
+       		return $this->ResultToJSON('teacherList', $res);
+       	}
+       	
+       	public function TeacherList($departid){
+       		$departid = intval($departid);
+       	
+       		$list = $this->models->InstanceClass('TeacherList');
+       	
+       		$rows = RecordBookQuery::TeacherList($this->db, $departid);
+       	
+       		while ($d = $this->db->fetch_array($rows)){
+       			$list->Add($this->models->InstanceClass('TeacherItem', $d));
+       		}
+       		return $list;
        	}
 }
 

@@ -17,19 +17,44 @@ Component.entryPoint = function(NS){
         onInitAppWidget: function(err, appInstance){
         	
         },
-        reloadList: function(){
-        	
+        reloadList: function(departid){
+        	this.set('waiting', true);
+	        	this.get('appInstance').teacherList(departid, function(err, result){
+	        		this.set('waiting', false);
+		        		if(!err){
+		        			this.set('teacherList', result.teacherList);
+		        				this.renderList();
+		        		}
+	        	}, this);
         },
         renderList: function(){
+        	var teacherList = this.get('teacherList'),
+        		tp = this.template,
+        		lst = "";
+        	
+	        	teacherList.each(function(teacher){
+	        		lst += tp.replace('row', teacher.toJSON());
+	        	});
+	        	
+	        	tp.setHTML('list', tp.replace('table', {
+	        		rows: lst
+	        	}));
+        },
+        addRowShow: function(){
 
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget'}
+            templateBlockName: {value: 'widget,table,row,addRow'},
+            teacherList: {value: null}
         },
         CLICKS: {
-     
+        	'add-show': {
+        		event: function(e){
+        			this.addRowShow();
+        		}
+        	}
         }
     });
 };

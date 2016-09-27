@@ -1025,6 +1025,18 @@ class RecordBookQuery {
 		";
     	$db->query_write($sql);
     }
+    
+    public static function TeacherList(Ab_Database $db, $departid){
+    	$sql = "
+			SELECT
+    				teacherid as id,
+    				fio,
+    				remove
+    		FROM ".$db->prefix."rb_teacher
+    		WHERE departid=".bkint($departid)."
+		";
+    	return $db->query_read($sql);
+    }
 }
 
 ?>

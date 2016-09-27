@@ -1,4 +1,58 @@
 <!--{widget}-->
-<div>
-	
-</div>
+<div id="{i#list}"></div>
+
+<!--{table}-->
+<a href="" data-click="add-show">+Добавить преподавателя</a>
+<table id="{i#tblTeacher}" class="table table-striped table-hover">
+    <thead>
+    <tr>
+     	<th>ФИО Преподавателя</th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>{v#rows}</tbody>
+</table>
+
+<!--{row}-->
+<tr>
+ 	<td>{v#fio}</td>
+    <td>
+        <button data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+            Править
+        </button>
+    </td>
+    <td>
+         <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs" data-id="{v#id}" data-wait="disable">
+            Удалить
+        </button>
+         <div id="{i#removegroup}-{v#id}"  class="btn-group hide">
+            <button data-click="remove" type="button" class="btn btn-danger btn-xs" data-id="{v#id}" data-wait="disable">
+                Удалить?
+            </button>
+            <button data-click="remove-cancel" type="button" class="btn btn-default btn-xs" data-id="{v#id}" data-wait="disable">
+                Отмена
+            </button>
+        </div>
+    </td>
+</tr>
+
+
+<!--{addRow}-->
+<tr>
+ 	<td>
+ 		<textarea id="{i#fio}" class="form-control">
+ 			{v#fio}
+ 		</textarea>
+ 	</td>
+    <td>
+        <button data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+            {v#act}
+        </button>
+    </td>
+    <td>
+         <button data-id="{v#id}" data-click="cancel" class="btn btn-default btn-xs" data-wait="disable">
+            Отмена
+        </button>
+    </td>
+</tr>

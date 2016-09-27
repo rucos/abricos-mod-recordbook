@@ -14,14 +14,16 @@ Component.entryPoint = function(NS){
     NS.DepartManagerWidget = Y.Base.create('departManagerWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
             var tp = this.template;
-//	            this.listWidget = new NS.TeacherListWidget({
-//	                srcNode: tp.gel('list')
-//	            });
-            this.reloadList();
+            
+	            this.teacherWidget = new NS.TeacherListWidget({
+	                srcNode: tp.gel('teacherList')
+	            });
+	            
+	            this.reloadList();
         },
         destructor: function(){
-            if (this.listWidget){
-                this.listWidget.destroy();
+            if (this.teacherWidget){
+                this.teacherWidget.destroy();
             }
         },
         reloadList: function(){
@@ -227,6 +229,8 @@ Component.entryPoint = function(NS){
         			
         			this.set('curDepartid', id);
         			this.setActive();
+        			
+        			this.teacherWidget.reloadList(id);
         		}
         	}
         

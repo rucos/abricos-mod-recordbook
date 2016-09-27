@@ -102,4 +102,13 @@ class DepartItem extends AbricosModel {
 class DepartList extends AbricosModelList {
 
 }
+
+class TeacherItem extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'TeacherItem';
+}
+
+class TeacherList extends AbricosModelList {
+
+}
 ?>

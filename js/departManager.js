@@ -189,6 +189,7 @@ Component.entryPoint = function(NS){
         			var id = e.target.getData('id');
 
         				this.departSave(id);
+        				this.set('departItem', null);
         		}
         	},
         	cancel: {

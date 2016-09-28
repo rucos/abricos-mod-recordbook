@@ -88,69 +88,78 @@ Component.entryPoint = function(NS){
         		}, sheet.toJSON()]);
         	});
         	tp.setHTML('listSheet', tp.replace('tableSheet', {rows: lst}));
-        		this.set('dataTable', lst);
         },
-        addSheetShow: function(flag){
-        	var dataTable = this.get('dataTable'),
-        		tp = this.template,
-        		lst = "";
-        	
-        	if(flag){
-        		this.reqListSubject();
-        	} else {
-        		tp.setHTML('listSheet', tp.replace('tableSheet', {rows: dataTable}));
-        	}
+        addSheetShow: function(show){
+        	var tp = this.template,
+        		lst = "",
+        		element = 'tableSheet.rowAddSheet';
+        		
+        		if(show){
+        			tp.show(element);
+        			tp.setHTML(element, tp.replace('rowAddSheet'));
+        				this.reqListSubject();        			
+        		} else {
+        			tp.hide(element);
+        			tp.setHTML(element, '');
+        		}
         },
         reqListSubject: function(){
         	var groupItem = this.get('groupItem'),
-        		curType = this.get('currentType'),
-        		lib = this.get('appInstance'),
         		data = {
         			numcrs: this.paginator.get('course'),
         			semestr: this.paginator.get('semestr'),
         			fieldid: this.get('fieldid'),
-        			type: curType,
+        			type: this.get('currentType'),
         			from: 'sheetEditorWidget'
         		};
         	
-        	this.set('waiting', true);
-        	lib.subjectList(data, function(err, result){
-        		this.set('waiting', false);
-	        		if(!err){
-	        			var tp = this.template,
-	        				dataTable = this.get('dataTable'),
-	        				lst = "";
-	        			
-	        			result.subjectList.each(function(subject){
-	        				lst += tp.replace('liSubject', [subject.toJSON()]);
-	        			});
-	        			
-	        			var ulHtml = tp.replace('ulSubject', {li: lst}),
-	        				row = tp.replace('rowAddSheet', {
-	        					ul: ulHtml
-	        				});
-	        			tp.setHTML('listSheet', tp.replace('tableSheet', {rows: row + dataTable}));
-	        		}
-        	}, this);
+	        	this.set('waiting', true);
+		        	this.get('appInstance').subjectList(data, function(err, result){
+		        		this.set('waiting', false);
+			        		if(!err){
+			        			this.set('subjectList', result.subjectList);
+			        				this.renderListSubject();
+			        		}
+		        	}, this);
+        },
+        renderListSubject: function(){
+        	var tp = this.template,
+        		subjectList = this.get('subjectList'),
+        		curType = this.get('currentType'),
+        		lst = "";
         	
-        		if(curType == 2 || curType == 4){
-        			this.set('waiting', true);
-        			lib.studList(groupItem.get('id'), function(err, result){
-        				this.set('waiting', false);
-        					this.set('studList', result.studList);
-        						this.renderStudList();
-        			}, this);
-        		}
+				subjectList.each(function(subject){
+					lst += tp.replace('liSubject', [subject.toJSON()]);
+				});
+			
+				tp.setHTML('rowAddSheet.divSubject', tp.replace('ulSubject', {
+					li: lst
+				}));
+				
+					if(curType == 2 || curType == 4){
+						this.reqStudList();
+	        		}
+				
+        },
+        reqStudList: function(){
+        	var groupid = this.get('groupid');
+        	
+				this.set('waiting', true);
+					this.get('appInstance').studList(groupid, function(err, result){
+						this.set('waiting', false);
+							this.set('studList', result.studList);
+								this.renderStudList();
+					}, this);
         },
         renderStudList: function(){
         	var tp = this.template,
         		studList = this.get('studList'),
         		lst = "";
         	
-        	studList.each(function(stud){
-        		lst += tp.replace('rowStud',[stud.toJSON()]);
-        	});
-        	tp.setHTML('rowAddSheet.studList', lst);
+	        	studList.each(function(stud){
+	        		lst += tp.replace('rowStud',[stud.toJSON()]);
+	        	});
+	        	tp.setHTML('rowAddSheet.studList', lst);
         },
         actSheet: function(id, blockName){
         	var tp = this.template,
@@ -538,7 +547,7 @@ Component.entryPoint = function(NS){
             groupid: {value: 0},
             fieldid: {value: 0},
             sheetList: {value: null},
-            dataTable: {value: ''},
+            subjectList: {value: null},
             currentSubject: {value: 0},
             markList: {value: null},
             currentIdSheet: {value: 0},
@@ -552,11 +561,13 @@ Component.entryPoint = function(NS){
         		event: function(e){
         			this.set('currentType', e.target.getData('type')); 
         				this.addSheetShow(true);
+        				this.set('addFlag', true);	
         		}
         	},
         	'cancel-addSheetShow': {
         		event: function(e){
         			this.set('currentType', 0); 
+        		
         				this.addSheetShow(false);
         		}
         	},

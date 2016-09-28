@@ -68,7 +68,10 @@
      <th></th>
     </tr>
     </thead>
-    <tbody>{v#rows}</tbody>
+    <tbody>
+    	<tr id="{i#rowAddSheet}" class="hide"></tr>
+    	{v#rows}
+    </tbody>
 </table>
 
 <!--{rowSheet}-->
@@ -114,13 +117,10 @@
 <span class="label label-danger">Удален из учебного плана</span>
 
 <!--{rowAddSheet}-->
-<tr>
 	<td></td>
     <td width="40%">    
     	<div class="input-group">
-		      <div class="input-group-btn" id="{i#divSubject}">
-		     		{v#ul}
-		      </div>
+		      <div class="input-group-btn" id="{i#divSubject}"></div>
 		      <input type="text" class="form-control" id={i#inpSubject} disabled>
 	    </div>
 	    <div id="{i#studList}"></div>
@@ -137,7 +137,6 @@
             Отмена
         </button>
     </td>
-</tr>
 
 <!--{rowEditSheet}-->
 <tr>

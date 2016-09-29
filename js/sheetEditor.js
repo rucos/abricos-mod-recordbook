@@ -619,8 +619,13 @@ Component.entryPoint = function(NS){
         	},
         	'editSheet-show': {
         		event: function(e){
-        			var sheetid = e.target.getData('id');
+        			var sheetid = e.target.getData('id'),
+        				sheetItem = this.get('sheetItem');
         			
+        				if(sheetItem){
+        					this.editSheetShow();
+        				}
+        				
         				this.reqSheetItem(sheetid);
         		}
         	},

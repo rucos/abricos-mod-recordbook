@@ -422,11 +422,12 @@ class RecordBookQuery {
 					s.thirdattproc,
 					s.date,
     				s.type,
-    				s.fioteacher,
+    				t.fio,
     				sj.remove,
     				sj.project
 			FROM ".$db->prefix."rb_sheet s 
 			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			INNER JOIN ".$db->prefix."rb_teacher t ON t.teacherid = s.teacherid
 			WHERE s.groupid = ".bkint($d->groupid)."
 						AND sj.semestr = ".bkint($d->currentSemestr)." 
 								AND sj.numcrs = ".bkint($d->numcrs)."

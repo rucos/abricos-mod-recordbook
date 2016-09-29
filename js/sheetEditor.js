@@ -218,6 +218,7 @@ Component.entryPoint = function(NS){
 		        			this.reqSheetList();
 		        			this.set('currentSubject', 0);
 		        			this.set('currentType', 0);
+		        			this.set('currentTeacher', '');
 		        		}
 	        	}, this);
         },
@@ -588,6 +589,7 @@ Component.entryPoint = function(NS){
         			}
         			
         			this.set('currentType', targ.getData('type')); 
+        			this.set('currentTeacher', '');
         				this.addSheetShow(true);
         				this.set('addFlag', true);	
         		}

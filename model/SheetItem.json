@@ -38,7 +38,7 @@
       "type": "int",
       "json": "ts"
     },
-    "fioteacher": {
+    "fio": {
       "type": "string",
       "json": "ft"
     },

@@ -75,8 +75,8 @@
 </table>
 
 <!--{rowSheet}-->
-<tr>
-	<td><label class="label {v#typeClass}">#</label></td>
+<tr id="{i#rowSheet}-{v#id}">
+	<td><label class="label {v#type}">#</label></td>
     <td>{v#namesubject} - {v#formcontrol} {v#isRemove}</td>
     <td>{v#date}</td>
     <td>{v#fio}</td>
@@ -121,25 +121,25 @@
     <td>    
     	<div class="input-group">
 		      <div class="input-group-btn" id="{i#divSubject}"></div>
-		      <div id="{i#nameSubject}" class="alert"></div>
+		      <div id="{i#nameSubject}" class="alert">{v#namesubject} - {v#formcontrol}</div>
 	    </div>
 	    <div id="{i#studList}"></div>
 	</td>
-    <td><input type="date" class="form-control" id="{i#inpDate}"></td>
+    <td><input type="date" class="form-control" id="{i#inpDate}" value="{v#date}"></td>
     <td>
     	<button data-click="depart-modal-show" class="btn btn-default btn-sm" data-wait="disable">
             Выбрать..
         </button>
         <div id="{i#departModal}"></div>
-        <div id="{i#teacher}"></div>
+        <div id="{i#teacher}">{v#fio}</div>
     </td>
     <td>
-        <button data-click="saveAddSheet" class="btn btn-default btn-sm" data-wait="disable">
-            Добавить
+        <button data-id="{v#id}" data-click="saveAddSheet" class="btn btn-default btn-sm" data-wait="disable">
+            {v#act}
         </button>
     </td>
     <td>
-         <button data-click="cancel-addSheetShow" class="btn btn-default btn-sm" data-wait="disable">
+         <button data-id="{v#id}" data-click="cancel-addSheetShow" class="btn btn-default btn-sm" data-wait="disable">
             Отмена
         </button>
     </td>
@@ -156,36 +156,12 @@
         <div id="{i#departList}"></div>
       </div>
       <div class="modal-footer">
+       	<button type="button" data-click="choice-teacher" class="btn btn-primary">Выбрать</button>
         <button type="button" data-click="depart-modal-hide" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-        <button type="button" data-click="choice-teacher" class="btn btn-primary">Выбрать</button>
       </div>
     </div>
   </div>
 </div>
-
-
-<!--{rowEditSheet}-->
-<tr>
-	<td></td>
-    <td width="40%">    
-	    <input type="text" class="form-control" id={i#inpSubject} value="{v#subject}" disabled>
-	    <div id="{i#studList}"></div>
-	</td>
-    <td width="10%">
-    	<input type="date" class="form-control" id="{i#inpDate}" value="{v#date}">
-    </td>
-    <td width="20%"><input type="text" class="form-control" id="{i#inpFioteacher}" value="{v#fioteacher}"></td>
-    <td>
-        <button data-id="{v#id}" data-click="saveEditSheet" class="btn btn-default btn-xs" data-wait="disable">
-            Сохранить
-        </button>
-    </td>
-    <td>
-         <button data-click="cancel-addSheetShow" class="btn btn-default btn-xs" data-wait="disable">
-            Отмена
-        </button>
-    </td>
-</tr>
 
 <!--{ulSubject}-->
 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Предмет <span class="caret"></span></button>

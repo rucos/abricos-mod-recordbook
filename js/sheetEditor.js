@@ -79,43 +79,32 @@ Component.entryPoint = function(NS){
         		type = "";
         	
         	sheetList.each(function(sheet){
-        		
-        		switch(sheet.get('type')){
-	        		 case 1:  
-	        			 type = 'label-success';
-	        			 	break;
-	        		 case 2: 
-	        			 type = 'label-info';
-	        		 		break;
-	        		 case 3: 
-	        			 type = 'label-warning';
-	        		 		break;
-	        		 case 4: 
-	        			 type = 'label-primary';
-     		 				break;
-        		}
-        		
-        		lst += tp.replace('rowSheet', [{
-        			date: Brick.dateExt.convert(sheet.get('date'), 2),
-        			typeClass: type,
-        			isRemove: sheet.get('remove') ? tp.replace('label') : ''
-        		}, sheet.toJSON()]);
-        	});
+        		lst += this.renderSheetItem(sheet.toJSON());
+        	}, this);
         	tp.setHTML('listSheet', tp.replace('tableSheet', {rows: lst}));
         },
-        addSheetShow: function(show){
-        	var tp = this.template,
-        		lst = "",
-        		element = 'tableSheet.rowAddSheet';
+        renderSheetItem: function(obj){
+        	var tp = this.template;
+        	
+	       		switch(obj.type){
+			   		 case 1:  
+			   			 obj.type = 'label-success';
+			   			 	break;
+			   		 case 2: 
+			   			 obj.type = 'label-info';
+			   		 		break;
+			   		 case 3: 
+			   			 obj.type = 'label-warning';
+			   		 		break;
+			   		 case 4: 
+			   			 obj.type = 'label-primary';
+				 				break;
+				}
         		
-        		if(show){
-        			tp.show(element);
-        			tp.setHTML(element, tp.replace('rowAddSheet'));
-        				this.reqListSubject();        			
-        		} else {
-        			tp.hide(element);
-        			tp.setHTML(element, '');
-        		}
+	       		return tp.replace('rowSheet', [{
+    					date: Brick.dateExt.convert(obj.date, 2),
+    					isRemove: obj.remove ? tp.replace('label') : ''
+    				}, obj]) 
         },
         reqListSubject: function(){
         	var groupItem = this.get('groupItem'),
@@ -175,17 +164,13 @@ Component.entryPoint = function(NS){
 	        	});
 	        	tp.setHTML('rowAddSheet.studList', lst);
         },
-        actSheet: function(id, blockName){
+        actSheet: function(id){
         	var tp = this.template,
-        		valDate = tp.getValue(blockName+'.inpDate').split('-'),
-        		stud = id ? 
-        					tp.gel('rowEditSheet.studList').children :
-        						tp.gel('rowAddSheet.studList').children,
+        		valDate = tp.getValue('rowAddSheet.inpDate'),
+        		stud = tp.gel('rowAddSheet.studList').children || false,
         		arrStudId = [],
-        		lib = this.get('appInstance'),
-    			nameSubject = tp.gel(blockName+'.nameSubject').textContent;
-    		
-    		var type = this.get('currentType');
+    			nameSubject = tp.gel('rowAddSheet.nameSubject').textContent,
+    			type = this.get('currentType');
     		
         	if(type == 2 || type == 4){
             	for(var i = 0; i < stud.length; i++){
@@ -195,9 +180,10 @@ Component.entryPoint = function(NS){
     	        		}
             	}
         	}
+        	
 			var data = {
 	        			idSubject: this.get('currentSubject'),
-	        			date: lib.getDate(valDate),//получить в мсек
+	        			date: Date.parse(valDate) / 1000,
 	        			groupid: this.get('groupid'),
 	        			idSheet: id,
 	        			typeSheet: this.get('currentType'),
@@ -211,16 +197,19 @@ Component.entryPoint = function(NS){
 						return false;
 				}
 				
-	        	this.set('waiting', true);
-	        	lib.sheetSave(data, function(err, result){
-	        		this.set('waiting', false);
-		        		if(!err){
-		        			this.reqSheetList();
-		        			this.set('currentSubject', 0);
-		        			this.set('currentType', 0);
-		        			this.set('currentTeacher', '');
-		        		}
-	        	}, this);
+				this.sheetSave(data);
+        },
+        sheetSave: function(data){
+           	this.set('waiting', true);
+           	this.get('appInstance').sheetSave(data, function(err, result){
+        		this.set('waiting', false);
+	        		if(!err){
+	        			this.reqSheetList();
+	        			this.set('currentSubject', 0);
+	        			this.set('currentType', 0);
+	        			this.set('currentTeacher', '');
+	        		}
+        	}, this);
         },
         removeSheet: function(sid){
         	this.set('waiting', true);
@@ -231,17 +220,55 @@ Component.entryPoint = function(NS){
         			}
         	}, this);
         },
-        editSheet: function(id, row){
+        reqSheetItem: function(sheetid){
+        	this.set('waiting', true);
+	        	this.get('appInstance').sheetItem(sheetid, function(err, result){
+	        		this.set('waiting', false);
+		        		if(!err){
+		        			this.set('sheetItem', result.sheetItem);
+		        			this.editSheetShow(true);
+		        		}
+	        	}, this);
+        },
+        addSheetShow: function(show){
         	var tp = this.template,
-        		lst = "";
+        		lst = "",
+        		element = 'tableSheet.rowAddSheet';
+        		
+        		if(show){
+        			tp.show(element);
+        			tp.setHTML(element, tp.replace('rowAddSheet', {
+        				id: 0,
+        				namesubject: '',
+        				fio: '',
+        				act: 'Добавить',
+        				date: '',
+        				formcontrol: ''
+        			}));
+        				this.reqListSubject();        			
+        		} else {
+        			tp.hide(element);
+        			tp.setHTML(element, '');
+        		}
+        },
+        editSheetShow: function(show){
+        	var sheetItem = this.get('sheetItem').toJSON(),
+        		tp = this.template,
+        		id = sheetItem.id;
         	
-        	lst += tp.replace('rowEditSheet', [{
-        		subject: row.cells[1].innerHTML,
-        		date: this.get('appInstance').setDate(row.cells[2].innerHTML),
-        		id: id,
-        		fioteacher: row.cells[3].innerHTML
-        	}]);
-        	row.innerHTML = lst;
+        		if(show){
+    	        	sheetItem.act = 'Изменить';
+    	        	sheetItem.date = this.get('appInstance').setDate(Brick.dateExt.convert(sheetItem.date, 2));
+    	        	
+    	        	tp.setHTML('rowSheet.rowSheet-' + id, tp.replace('rowAddSheet', sheetItem));
+    	        	
+    	        	
+    	        	this.set('currentTeacher', {
+    	        		id: sheetItem.teacherid
+    	        	});
+        		} else {
+        			tp.one('rowSheet.rowSheet-' + id).getDOMNode().outerHTML = this.renderSheetItem(sheetItem);
+        		}
         },
         reqMarkList: function(obj){
         	var idSheet = this.get('currentIdSheet');
@@ -563,7 +590,7 @@ Component.entryPoint = function(NS){
         ATTRS: {
         	component: {value: COMPONENT},
             templateBlockName: {
-            	value: 'widget, sheetAddPanel, label, tableSheet, departModal, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, rowEditSheet, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
+            	value: 'widget, sheetAddPanel, label, tableSheet, departModal, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
             },
             groupid: {value: 0},
             fieldid: {value: 0},
@@ -576,7 +603,8 @@ Component.entryPoint = function(NS){
             currentType: {value: 0},
             studList: {value: null},
             currentFormControl: {value: null},
-            currentTeacher: {value: ''}
+            currentTeacher: {value: ''},
+            sheetItem: {value: null}
         },
         CLICKS: {
         	'addSheet-show': {
@@ -591,14 +619,19 @@ Component.entryPoint = function(NS){
         			this.set('currentType', targ.getData('type')); 
         			this.set('currentTeacher', '');
         				this.addSheetShow(true);
-        				this.set('addFlag', true);	
         		}
         	},
         	'cancel-addSheetShow': {
         		event: function(e){
-        			this.set('currentType', 0); 
-        		
-        				this.addSheetShow(false);
+        			var id = +e.target.getData('id');
+        			
+        				this.set('currentType', 0); 
+        				
+        				if(id){
+        					this.editSheetShow();
+        				} else {
+        					this.addSheetShow();        					
+        				}
         		}
         	},
            	'remove-show': {
@@ -629,12 +662,9 @@ Component.entryPoint = function(NS){
         	},
         	saveAddSheet: {
         		event: function(e){
-        			this.actSheet(0, 'rowAddSheet');
-        		}
-        	},
-        	saveEditSheet: {
-        		event: function(e){
-        			this.actSheet(e.target.getData('id'), 'rowEditSheet');
+        			var id = +e.target.getData('id');
+        			
+        				this.actSheet(id);
         		}
         	},
         	removeSheet: {
@@ -646,7 +676,8 @@ Component.entryPoint = function(NS){
         	editSheet: {
         		event: function(e){
         			var sheetid = e.target.getData('id');
-        				this.editSheet(sheetid, e.target.getDOMNode().parentNode.parentNode);
+        			
+        				this.reqSheetItem(sheetid);
         		}
         	},
         	showMark: {

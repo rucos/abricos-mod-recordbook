@@ -437,6 +437,33 @@ class RecordBookQuery {
     	return $db->query_read($sql);
     }
     
+    public static function SheetItemlist(Ab_Database $db, $id){//workaround: name function edit 
+    
+    	$sql = "
+			SELECT
+					s.sheetid as id,
+					s.subjectid,
+    				sj.namesubject,
+    				sj.formcontrol,
+					s.firstattproc,
+					s.secondattproc,
+					s.thirdattproc,
+					s.date,
+    				s.type,
+    				t.departid,
+    				t.teacherid,
+    				t.fio,
+    				sj.remove,
+    				sj.project
+			FROM ".$db->prefix."rb_sheet s
+			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			INNER JOIN ".$db->prefix."rb_teacher t ON t.teacherid = s.teacherid
+			WHERE s.sheetid = ".bkint($id)."
+			LIMIT 1
+		";
+    	return $db->query_first($sql);
+    }
+    
     public static function SheetAppend(Ab_Database $db, $d){
     
     	$a = array(30, 30, 40);
@@ -523,7 +550,7 @@ class RecordBookQuery {
 				UPDATE ".$db->prefix."rb_sheet
 				SET
 					date=".bkint($d->date).",
-					fioteacher='".bkstr($d->fioteacher)."'
+					teacherid=".bkint($d->teacherid)."
 				WHERE sheetid=".bkint($d->idSheet)."
 				LIMIT 1
 		";

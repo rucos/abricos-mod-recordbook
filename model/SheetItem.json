@@ -38,6 +38,14 @@
       "type": "int",
       "json": "ts"
     },
+    "departid": {
+      "type": "int",
+      "json": "did"
+    },
+    "teacherid": {
+      "type": "int",
+      "json": "tid"
+    },
     "fio": {
       "type": "string",
       "json": "ft"

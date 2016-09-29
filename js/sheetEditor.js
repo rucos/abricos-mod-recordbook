@@ -199,27 +199,6 @@ Component.entryPoint = function(NS){
 				
 				this.sheetSave(data);
         },
-        sheetSave: function(data){
-           	this.set('waiting', true);
-           	this.get('appInstance').sheetSave(data, function(err, result){
-        		this.set('waiting', false);
-	        		if(!err){
-	        			this.reqSheetList();
-	        			this.set('currentSubject', 0);
-	        			this.set('currentType', 0);
-	        			this.set('currentTeacher', '');
-	        		}
-        	}, this);
-        },
-        removeSheet: function(sid){
-        	this.set('waiting', true);
-        	this.get('appInstance').sheetRemove(sid, function(err, result){
-        		this.set('waiting', false);
-        			if(!err){
-        				this.reqSheetList();
-        			}
-        	}, this);
-        },
         reqSheetItem: function(sheetid){
         	this.set('waiting', true);
 	        	this.get('appInstance').sheetItem(sheetid, function(err, result){
@@ -269,6 +248,30 @@ Component.entryPoint = function(NS){
         		} else {
         			tp.one('rowSheet.rowSheet-' + id).getDOMNode().outerHTML = this.renderSheetItem(sheetItem);
         		}
+        },
+        sheetSave: function(data){
+           	this.set('waiting', true);
+           	this.get('appInstance').sheetSave(data, function(err, result){
+        		this.set('waiting', false);
+	        		if(!err){
+	        			this.reqSheetList();
+	        			this.set('currentSubject', 0);
+	        			this.set('currentType', 0);
+	        			this.set('currentTeacher', '');
+	        		}
+        	}, this);
+        },
+        removeShow: function(show, id){
+        	this.template.toggleView(show, 'rowSheet.removegroup-' + id, 'rowSheet.remove-' + id);
+        },
+        sheetRemove: function(id){
+        	this.set('waiting', true);
+        	this.get('appInstance').sheetRemove(id, function(err, result){
+        		this.set('waiting', false);
+        			if(!err){
+        				this.reqSheetList();
+        			}
+        	}, this);
         },
         reqMarkList: function(obj){
         	var idSheet = this.get('currentIdSheet');
@@ -433,14 +436,14 @@ Component.entryPoint = function(NS){
 	        		}
         },
         udpateSheet: function(){
-        	var objData = {
+        	var data = {
         		idSheet: this.get('currentIdSheet'),
         		attProc: this.get('currentAttProc')
         	};
         	this.set('waiting', true);
-        	this.get('appInstance').updateWeight(objData, function(err, result){
-        		this.set('waiting', false);
-        	}, this);
+	        	this.get('appInstance').updateWeight(data, function(err, result){
+	        		this.set('waiting', false);
+	        	}, this);
         },
         reCalcMarkTable: function(){
         	var rows = this.template.gel('tableMarkOch.tableMark').rows,
@@ -578,13 +581,6 @@ Component.entryPoint = function(NS){
         		printWin = window.open(url, 'recordbookPrint', 'width=1050,height=800');
             	
         	printWin.focus();
-        },
-        parseTeacher: function(){
-        	var currentTeacher = this.get('currentTeacher');
-        	
-        	this.template.setHTML('rowAddSheet.teacher', currentTeacher.fio);
-        	
-        	
         }
     }, {
         ATTRS: {
@@ -621,7 +617,14 @@ Component.entryPoint = function(NS){
         				this.addSheetShow(true);
         		}
         	},
-        	'cancel-addSheetShow': {
+        	'editSheet-show': {
+        		event: function(e){
+        			var sheetid = e.target.getData('id');
+        			
+        				this.reqSheetItem(sheetid);
+        		}
+        	},
+        	'cancel-sheet': {
         		event: function(e){
         			var id = +e.target.getData('id');
         			
@@ -636,14 +639,16 @@ Component.entryPoint = function(NS){
         	},
            	'remove-show': {
                 event: function(e){
-                       var sheetid = e.target.getData('id');
-                       this.template.toggleView(true, 'rowSheet.removegroup-' + sheetid, 'rowSheet.remove-' + sheetid);
+                       var id = e.target.getData('id');
+                       
+                       	this.removeShow(true, id);
                    }
             },
             'remove-cancel': {
             	event: function(e){
-                       var sheetid = e.target.getData('id');
-                       this.template.toggleView(false, 'rowSheet.removegroup-' + sheetid, 'rowSheet.remove-' + sheetid);
+                       var id = e.target.getData('id');
+                       
+                       	this.removeShow(false, id);
                    }
             },
         	addSubject: {
@@ -667,17 +672,10 @@ Component.entryPoint = function(NS){
         				this.actSheet(id);
         		}
         	},
-        	removeSheet: {
+        	sheetRemove: {
         		event: function(e){
-        			var sheetid = e.target.getData('id');
-        				this.removeSheet(sheetid);
-        		}
-        	},
-        	editSheet: {
-        		event: function(e){
-        			var sheetid = e.target.getData('id');
-        			
-        				this.reqSheetItem(sheetid);
+        			var id = e.target.getData('id');
+        				this.sheetRemove(id);
         		}
         	},
         	showMark: {
@@ -761,13 +759,14 @@ Component.entryPoint = function(NS){
         	},
         	'choice-teacher': {
         		event: function(){
-        			var currentTeacher = this.departManager.teacherWidget.get('currentTeacher'); 
+        			var currentTeacher = this.departManager.teacherWidget.get('currentTeacher'),
+        				tp = this.template;
         			
         			if(currentTeacher){
         				this.set('currentTeacher', currentTeacher);
-        				this.template.setHTML('rowAddSheet.departModal', "");
-        				
-        				this.parseTeacher();
+
+        				tp.setHTML('rowAddSheet.departModal', "");
+        	        	tp.setHTML('rowAddSheet.teacher', currentTeacher.fio);
         			} else {
         				alert( 'Необходимо выбрать преподавателя' );
         			}

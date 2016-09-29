@@ -118,25 +118,51 @@
 
 <!--{rowAddSheet}-->
 	<td></td>
-    <td width="40%">    
+    <td>    
     	<div class="input-group">
 		      <div class="input-group-btn" id="{i#divSubject}"></div>
-		      <input type="text" class="form-control" id={i#inpSubject} disabled>
+		      <div id="{i#nameSubject}" class="alert"></div>
 	    </div>
 	    <div id="{i#studList}"></div>
 	</td>
-    <td width="10%"><input type="date" class="form-control" id="{i#inpDate}"></td>
-    <td width="20%"><input type="text" class="form-control" id="{i#inpFioteacher}"></td>
+    <td><input type="date" class="form-control" id="{i#inpDate}"></td>
     <td>
-        <button data-click="saveAddSheet" class="btn btn-default btn-xs" data-wait="disable">
+    	<button data-click="depart-modal-show" class="btn btn-default btn-sm" data-wait="disable">
+            Выбрать..
+        </button>
+        <div id="{i#departModal}"></div>
+        <div id="{i#teacher}"></div>
+    </td>
+    <td>
+        <button data-click="saveAddSheet" class="btn btn-default btn-sm" data-wait="disable">
             Добавить
         </button>
     </td>
     <td>
-         <button data-click="cancel-addSheetShow" class="btn btn-default btn-xs" data-wait="disable">
+         <button data-click="cancel-addSheetShow" class="btn btn-default btn-sm" data-wait="disable">
             Отмена
         </button>
     </td>
+    
+<!--{departModal}-->
+<div class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: block;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-click="depart-modal-hide" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Список преподавателей</h4>
+      </div>
+      <div class="modal-body">
+        <div id="{i#departList}"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-click="depart-modal-hide" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        <button type="button" data-click="choice-teacher" class="btn btn-primary">Выбрать</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!--{rowEditSheet}-->
 <tr>

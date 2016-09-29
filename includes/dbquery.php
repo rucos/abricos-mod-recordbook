@@ -447,7 +447,7 @@ class RecordBookQuery {
    		}
    		
     	$sql = "
-			INSERT INTO ".$db->prefix."rb_sheet (subjectid, groupid, firstattproc, secondattproc, thirdattproc, date, type, fioteacher)
+			INSERT INTO ".$db->prefix."rb_sheet (subjectid, groupid, firstattproc, secondattproc, thirdattproc, date, type, teacherid)
 			VALUES (
 					".bkint($d->idSubject).",
 					".bkint($d->groupid).",
@@ -456,7 +456,7 @@ class RecordBookQuery {
 						".$a[2].",		
 					".bkint($d->date).",
 					".bkint($typeSheet).",
-					'".bkstr($d->fioteacher)."'
+					".bkint($d->teacherid)."
 			)
 		";
     	$db->query_write($sql);

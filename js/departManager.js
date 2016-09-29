@@ -13,13 +13,17 @@ Component.entryPoint = function(NS){
     
     NS.DepartManagerWidget = Y.Base.create('departManagerWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
-            var tp = this.template;
+            var tp = this.template,
+            	isActSheet = this.get('isActSheet');
             
 	            this.teacherWidget = new NS.TeacherListWidget({
-	                srcNode: tp.gel('teacherList')
+	                srcNode: tp.gel('teacherList'),
+	                isActSheet: isActSheet
 	            });
 	            
-	            this.reloadList();
+	            if(!isActSheet){
+	            	this.reloadList();
+	            }
         },
         destructor: function(){
             if (this.teacherWidget){
@@ -157,7 +161,8 @@ Component.entryPoint = function(NS){
             templateBlockName: {value: 'widget,departList,departItem,addWidget,removeWidget,buttonRestore,buttonRemove'},
             departList: {value: null},
             departItem: {value: null},
-            curDepartid: {value: 0}
+            curDepartid: {value: 0},
+            isActSheet: {value: false}
         },
         CLICKS: {
         	'add-show': {

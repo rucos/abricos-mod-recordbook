@@ -35,10 +35,12 @@ Component.entryPoint = function(NS){
         		lst = "";
         	
 	        	teacherList.each(function(teacher){
-	        		var replObj = teacher.toJSON();
+	        		var replObj = teacher.toJSON(),
+	        			isActSheet = this.get('isActSheet');
 	        		
 	        		lst += tp.replace('row', {
 	        			id: replObj.id,
+	        			cl: isActSheet ? 'class="row-teacher" data-click="choice-teacher"' : '',
 	        			cells: this.replaceCellsTable(replObj)
 	        		});
 	        	}, this);
@@ -162,7 +164,9 @@ Component.entryPoint = function(NS){
             teacherList: {value: null},
             teacherItem: {value: null},
             addRow: {value: false},
-            departid: {value: 0}
+            departid: {value: 0},
+            isActSheet: {value: false},
+            currentTeacher: {value: ''}
         },
         CLICKS: {
         	'add-show': {
@@ -218,6 +222,31 @@ Component.entryPoint = function(NS){
 	       		event: function(e){
 	       			this.set('addRow', false);
 	       			this.hideRowShow();
+	       		}
+	        },
+	        'choice-teacher':{
+	       		event: function(e){
+	       			var td = e.target.getDOMNode(),
+	       				id = 0,
+	       				tr,
+	       				tBody;
+	       			
+	       			if(td.tagName != "TD"){
+	       				return;
+	       			}
+	       			
+	       			tr = td.parentNode;
+	       			tBody = tr.parentNode;
+	       			
+	       			this.get('appInstance').unSetActive(tBody);
+	       			tr.classList.add('success');
+	       			
+	       			id = tr.id.match(/-(\d+)/)[1];
+	       			
+	       			this.set('currentTeacher', {
+	       				id: id,
+	       				fio: tr.childNodes[0].textContent
+	       			});
 	       		}
 	        }
         }

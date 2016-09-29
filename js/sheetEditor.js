@@ -2,7 +2,7 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js', 'departManager.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -27,13 +27,27 @@ Component.entryPoint = function(NS){
                     	self.reqSheetList();
                     }
         		});
-        	
+        		
 	        	this.get('boundingBox').on('change', this.change, this);
         },
         destructor: function(){
         	if(this.paginator){
         		this.paginator.destroy();
         	}
+        	
+        	if(this.departManager){
+        		this.departManager.destroy();
+        	}
+        },
+        initDepartManager: function(){
+        	if(this.departManager){
+        		this.departManager.destroy();
+        	}
+        	
+    		this.departManager = new NS.DepartManagerWidget({
+    			srcNode: this.template.gel('departModal.departList'),
+    			isActSheet: true
+    		});
         },
         showSheetAddPanel: function(){
         	var tp = this.template;
@@ -169,8 +183,7 @@ Component.entryPoint = function(NS){
         						tp.gel('rowAddSheet.studList').children,
         		arrStudId = [],
         		lib = this.get('appInstance'),
-        		fioteacher = tp.getValue(blockName+'.inpFioteacher'),
-    			nameSubject = tp.getValue(blockName+'.inpSubject');
+    			nameSubject = tp.gel(blockName+'.nameSubject').textContent;
     		
     		var type = this.get('currentType');
     		
@@ -182,14 +195,14 @@ Component.entryPoint = function(NS){
     	        		}
             	}
         	}
-			var objData = {
+			var data = {
 	        			idSubject: this.get('currentSubject'),
 	        			date: lib.getDate(valDate),//получить в мсек
 	        			groupid: this.get('groupid'),
 	        			idSheet: id,
 	        			typeSheet: this.get('currentType'),
 	        			arrStudId: arrStudId,
-	        			fioteacher: fioteacher,
+	        			teacherid: this.get('currentTeacher').id,
 	        			isPractic: nameSubject.indexOf('Практика') !== -1 ? true : false
 	        		};
 			
@@ -199,7 +212,7 @@ Component.entryPoint = function(NS){
 				}
 				
 	        	this.set('waiting', true);
-	        	lib.sheetSave(objData, function(err, result){
+	        	lib.sheetSave(data, function(err, result){
 	        		this.set('waiting', false);
 		        		if(!err){
 		        			this.reqSheetList();
@@ -537,12 +550,19 @@ Component.entryPoint = function(NS){
         		printWin = window.open(url, 'recordbookPrint', 'width=1050,height=800');
             	
         	printWin.focus();
+        },
+        parseTeacher: function(){
+        	var currentTeacher = this.get('currentTeacher');
+        	
+        	this.template.setHTML('rowAddSheet.teacher', currentTeacher.fio);
+        	
+        	
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
             templateBlockName: {
-            	value: 'widget, sheetAddPanel, label, tableSheet, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, rowEditSheet, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
+            	value: 'widget, sheetAddPanel, label, tableSheet, departModal, rowStud, rowSheet, rowAddSheet, liSubject, ulSubject, rowEditSheet, tableMarkStud, tableMarkOch, rowMarkStudOch, tableMarkZaoch, rowMarkStudZaoch, tradMark, tradZachet'
             },
             groupid: {value: 0},
             fieldid: {value: 0},
@@ -554,12 +574,20 @@ Component.entryPoint = function(NS){
             currentAttProc: {value: ''},
             currentType: {value: 0},
             studList: {value: null},
-            currentFormControl: {value: null}
+            currentFormControl: {value: null},
+            currentTeacher: {value: ''}
         },
         CLICKS: {
         	'addSheet-show': {
         		event: function(e){
-        			this.set('currentType', e.target.getData('type')); 
+        			var targ = e.target,
+        				button = targ.getDOMNode();
+        			
+        			if(!button.type){
+        				return;
+        			}
+        			
+        			this.set('currentType', targ.getData('type')); 
         				this.addSheetShow(true);
         				this.set('addFlag', true);	
         		}
@@ -592,7 +620,8 @@ Component.entryPoint = function(NS){
         				return;
         			}
         			tp.removeClass('rowAddSheet.divSubject', 'open');
-        			tp.setValue('rowAddSheet.inpSubject', e.target.getHTML());
+        			
+        			tp.setHTML('rowAddSheet.nameSubject', e.target.getHTML());
         				this.set('currentSubject', subjectid);
         		}
         	},
@@ -678,6 +707,37 @@ Component.entryPoint = function(NS){
         				type = e.target.getData('type');
         			
         				this.printShow(idSheet, type);
+        		}
+        	},
+        	'depart-modal-show': {
+        		event: function(e){
+        			var tp = this.template;
+        			
+        			tp.setHTML('rowAddSheet.departModal', tp.replace('departModal'));
+        			this.initDepartManager();
+        			
+        			this.departManager.reloadList();
+        		}
+        	},
+        	'depart-modal-hide': {
+        		event: function(e){
+        			var tp = this.template;
+        			
+        			tp.setHTML('rowAddSheet.departModal', "");
+        		}
+        	},
+        	'choice-teacher': {
+        		event: function(){
+        			var currentTeacher = this.departManager.teacherWidget.get('currentTeacher'); 
+        			
+        			if(currentTeacher){
+        				this.set('currentTeacher', currentTeacher);
+        				this.template.setHTML('rowAddSheet.departModal', "");
+        				
+        				this.parseTeacher();
+        			} else {
+        				alert( 'Необходимо выбрать преподавателя' );
+        			}
         		}
         	}
         }

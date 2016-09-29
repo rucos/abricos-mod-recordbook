@@ -79,7 +79,7 @@ class RecordBook extends AbricosApplication {
             case "sheetList":
             	return  $this->SheetListToJSON($d->data);
             case "sheetSave":
-            	return  $this->SheetAddToJSON($d->objData);
+            	return  $this->SheetAddToJSON($d->data);
             case "sheetRemove":
             	return  $this->SheetRemoveToJSON($d->sheetid);
             case "markList":
@@ -510,9 +510,7 @@ class RecordBook extends AbricosApplication {
        		$d->idSheet = intval($d->idSheet);
        		$d->typeSheet = intval($d->typeSheet);
        		$d->isPractic = intval($d->isPractic);
-       		
-       		$utmf = Abricos::TextParser(true);
-       		$d->fioteacher = $utmf->Parser($d->fioteacher);
+       		$d->teacherid = intval($d->teacherid);
        		
        		if($d->typeSheet === 2){
        			foreach($d->arrStudId as $val){

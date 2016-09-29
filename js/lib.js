@@ -139,7 +139,7 @@ Component.entryPoint = function(NS){
     			type: 'modelList:SheetList'
     		},
     		sheetSave: {
-    			args: ['objData']
+    			args: ['data']
     		},
     		sheetRemove: {
     			args: ['sheetid']

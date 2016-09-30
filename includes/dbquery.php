@@ -513,18 +513,24 @@ class RecordBookQuery {
     		
     		if($arrCount === 0) return false;
     		
-		    		foreach($arrStud as $key => $val){
-		    			$valIns .= "(".$idSheet.",".$val.")";
-		    			if($key < $arrCount - 1){
-		    				$valIns .= ",";
-		    			}
-		    		}
-		    		$sql = "
-							INSERT INTO ".$db->prefix."rb_marks (sheetid, studid)
-							VALUES ".$valIns."
-						";
-		    		$db->query_write($sql);
+		  		RecordBookQuery::AppendMarks($db, $arrStud, $idSheet);
     		
+    }
+    
+    public static function AppendMarks(Ab_Database $db, $arrStud, $idSheet){
+    	$valIns = "";
+ 		 	foreach($arrStud as $val){
+		 		$valIns .= "(".$idSheet.",".$val."),";
+		 	}
+		 	
+		 	$valIns = substr($valIns, 0, -1);
+		 	
+		 	$sql = "
+					INSERT INTO ".$db->prefix."rb_marks (sheetid, studid)
+					VALUES ".$valIns."
+			";
+			$db->query_write($sql);
+    	 
     }
     
     public static function SheeetRemove(Ab_Database $db, $id){
@@ -547,9 +553,9 @@ class RecordBookQuery {
     public static function SheetUpdate(Ab_Database $db, $d){
     	
     	if(count($d->arrStudId) > 0){
-    		$addlistid = $d->arrStudId;
+    		$addlistid = $d->arrStudId;//массив добавления студентов
     		$rows = RecordBookQuery::StudidListFromMark($db, $d->idSheet);
-    		$remlistid = array();
+    		$remlistid = array();//массив удаления студентов
     		
        		while ($dd = $db->fetch_array($rows)){
        			$isRemove = true;
@@ -577,18 +583,7 @@ class RecordBookQuery {
        		}
        		
        		if(count($addlistid) > 0){
-       			$valIns = "";
-       			foreach($addlistid as $key => $id){
-       				$valIns .= "(".$d->idSheet.",".$id."),";
-       			}
-       			
-       			$valIns = substr($valIns, 0, -1);
-       			
-       			$sql = "
-					INSERT INTO ".$db->prefix."rb_marks (sheetid, studid)
-					VALUES ".$valIns."
-				";
-	       			$db->query_write($sql);
+	       		RecordBookQuery::AppendMarks($db, $addlistid, $d->idSheet);
        		}
     	}
     	

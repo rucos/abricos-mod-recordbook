@@ -57,6 +57,10 @@
     "project": {
       "type": "string",
       "json": "pr"
+    },
+    "arrstudid": {
+      "type": "array",
+      "json": "astud"
     }
   }
 }

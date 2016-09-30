@@ -510,6 +510,18 @@ class RecordBook extends AbricosApplication {
        	
        		$row = RecordBookQuery::SheetItemlist($this->db, $id);
        		
+       		if($row['type'] == 2 || $row['type'] == 4){
+       			$arrStudId = array();
+       			
+       			$studid = RecordBookQuery::StudidListFromMark($this->db, $row['id']);
+       			
+       		    while ($d = $this->db->fetch_array($studid)){
+       				$arrStudId[] = $d['id'];
+       			}
+       			
+       			$row['arrstudid'] = $arrStudId;
+       		}
+       		
        		return $this->models->InstanceClass('SheetItem', $row);
        	}
        	
@@ -527,14 +539,11 @@ class RecordBook extends AbricosApplication {
        		$d->isPractic = intval($d->isPractic);
        		$d->teacherid = intval($d->teacherid);
        		
-       		if($d->typeSheet === 2){
-       			foreach($d->arrStudId as $val){
-       				$val = intval($val);
-       			}
+       		foreach($d->arrStudId as $val){
+       			$val = intval($val);
        		}
-       		
-       		if($d->idSheet > 0){
        			
+       		if($d->idSheet > 0){
        			RecordBookQuery::SheetUpdate(Abricos::$db, $d);
        		} else {
        			RecordBookQuery::SheetAppend(Abricos::$db, $d);

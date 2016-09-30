@@ -157,47 +157,59 @@ Component.entryPoint = function(NS){
         renderStudList: function(){
         	var tp = this.template,
         		studList = this.get('studList'),
+        		sheetItem = this.get('sheetItem').toJSON() || false,
+        		arrstud = '',
         		lst = "";
         	
+	    		if(sheetItem){
+	    			arrstud = sheetItem.arrstudid.toString();
+	    		}
+	    		
 	        	studList.each(function(stud){
-	        		lst += tp.replace('rowStud',[stud.toJSON()]);
+	        		var replObj = {
+	        			ch: ~arrstud.indexOf(stud.get('id')) ? 'checked' : ''
+	        		};
+	       
+	        		lst += tp.replace('rowStud',[replObj, stud.toJSON()]);
 	        	});
 	        	tp.setHTML('rowAddSheet.studList', lst);
         },
         actSheet: function(id){
         	var tp = this.template,
         		valDate = tp.getValue('rowAddSheet.inpDate'),
-        		stud = tp.gel('rowAddSheet.studList').children || false,
-        		arrStudId = [],
     			nameSubject = tp.gel('rowAddSheet.nameSubject').textContent,
-    			type = this.get('currentType');
-    		
-        	if(type == 2 || type == 4){
-            	for(var i = 0; i < stud.length; i++){
-            		var id = stud[i].id;
-    	        		if(id && stud[i].checked){
-    	        			arrStudId.push(id);
-    	        		}
-            	}
-        	}
-        	
-			var data = {
+    			type = this.get('currentType'),
+    			data = {
 	        			idSubject: this.get('currentSubject'),
 	        			date: Date.parse(valDate) / 1000,
 	        			groupid: this.get('groupid'),
 	        			idSheet: id,
-	        			typeSheet: this.get('currentType'),
-	        			arrStudId: arrStudId,
+	        			typeSheet: type,
+	        			arrStudId: !(type % 2) ? this.getStudList() : [], //если дополнительная ведомость => список студентов
 	        			teacherid: this.get('currentTeacher').id,
 	        			isPractic: nameSubject.indexOf('Практика') !== -1 ? true : false
-	        		};
-			
-				if(!nameSubject){
+	        	};
+
+        		if(!nameSubject){
 					alert('Укажите предмет');
 						return false;
 				}
 				
 				this.sheetSave(data);
+        },
+        getStudList: function(){
+        	var tp = this.template,
+        		studList = tp.gel('rowAddSheet.studList').children,
+        		arrStudId = [];
+        
+	            	for(var i = 0, curid, len = studList.length; i < len; i++){
+	            		curid = +studList[i].id;
+	    	        		if(curid && studList[i].checked){
+	    	        			arrStudId.push(curid);
+	    	        		}
+	            	}
+          	
+	          	return arrStudId;
         },
         reqSheetItem: function(sheetid){
         	this.set('waiting', true);
@@ -240,6 +252,10 @@ Component.entryPoint = function(NS){
     	        	sheetItem.date = this.get('appInstance').setDate(Brick.dateExt.convert(sheetItem.date, 2));
     	        	
     	        	tp.setHTML('rowSheet.rowSheet-' + id, tp.replace('rowAddSheet', sheetItem));
+    	        	
+    	        	if(sheetItem.arrstudid){
+    	        		this.reqStudList();
+    	        	}
     	        	
     	        	
     	        	this.set('currentTeacher', {

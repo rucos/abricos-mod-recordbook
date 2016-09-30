@@ -545,6 +545,53 @@ class RecordBookQuery {
     }
     
     public static function SheetUpdate(Ab_Database $db, $d){
+    	
+    	if(count($d->arrStudId) > 0){
+    		$addlistid = $d->arrStudId;
+    		$rows = RecordBookQuery::StudidListFromMark($db, $d->idSheet);
+    		$remlistid = array();
+    		
+       		while ($dd = $db->fetch_array($rows)){
+       			$isRemove = true;
+	       			foreach($addlistid as $key => $id){
+	       				if($id == $dd['id']){
+	       					$isRemove = false;
+	       						unset($addlistid[$key]);
+	       						
+	       						break;
+	       				}
+	       			}
+	       		if($isRemove){
+	       			$remlistid[] = $dd['id'];
+	       		}
+	       			
+       		}
+       		
+       		if(count($remlistid) > 0){
+       			$remstr = implode(',', $remlistid);
+       			$sql = "
+						DELETE FROM ".$db->prefix."rb_marks
+		    			WHERE sheetid=".bkint($d->idSheet)." AND studid IN (".$remstr.")
+				";
+	       			$db->query_write($sql);
+       		}
+       		
+       		if(count($addlistid) > 0){
+       			$valIns = "";
+       			foreach($addlistid as $key => $id){
+       				$valIns .= "(".$d->idSheet.",".$id."),";
+       			}
+       			
+       			$valIns = substr($valIns, 0, -1);
+       			
+       			$sql = "
+					INSERT INTO ".$db->prefix."rb_marks (sheetid, studid)
+					VALUES ".$valIns."
+				";
+	       			$db->query_write($sql);
+       		}
+    	}
+    	
     
     	$sql = "
 				UPDATE ".$db->prefix."rb_sheet
@@ -1113,6 +1160,16 @@ class RecordBookQuery {
 			LIMIT 1
 		";
     	$db->query_write($sql);
+    }
+    
+    public static function StudidListFromMark(Ab_Database $db, $sheetid){
+    	$sql = "
+			SELECT 
+    				studid as id
+    		FROM ".$db->prefix."rb_marks
+    		WHERE sheetid=".bkint($sheetid)."
+		";
+    	return $db->query_read($sql);
     }
 }
 

@@ -157,12 +157,12 @@ Component.entryPoint = function(NS){
         renderStudList: function(){
         	var tp = this.template,
         		studList = this.get('studList'),
-        		sheetItem = this.get('sheetItem').toJSON() || false,
+        		sheetItem = this.get('sheetItem'),
         		arrstud = '',
         		lst = "";
         	
 	    		if(sheetItem){
-	    			arrstud = sheetItem.arrstudid.toString();
+	    			arrstud = sheetItem.toJSON().arrstudid.toString();
 	    		}
 	    		
 	        	studList.each(function(stud){
@@ -263,6 +263,7 @@ Component.entryPoint = function(NS){
     	        	});
         		} else {
         			tp.one('rowSheet.rowSheet-' + id).getDOMNode().outerHTML = this.renderSheetItem(sheetItem);
+        			this.set('sheetItem', null);
         		}
         },
         sheetSave: function(data){
@@ -274,6 +275,7 @@ Component.entryPoint = function(NS){
 	        			this.set('currentSubject', 0);
 	        			this.set('currentType', 0);
 	        			this.set('currentTeacher', '');
+	        			this.set('sheetItem', null);
 	        		}
         	}, this);
         },

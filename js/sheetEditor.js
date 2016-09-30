@@ -189,11 +189,21 @@ Component.entryPoint = function(NS){
 	        			teacherid: this.get('currentTeacher').id,
 	        			isPractic: nameSubject.indexOf('Практика') !== -1 ? true : false
 	        	};
-
-        		if(!nameSubject){
-					alert('Укажите предмет');
-						return false;
-				}
+        	
+        		if(data.idSubject === 0 && id == 0){
+					alert( 'Укажите предмет' );
+						return;
+        		}
+        		if(!data.teacherid){
+					alert( 'Необходимо выбрать преподавателя' );
+						return;
+        		}
+        		if(!(type % 2)){
+        			if(data.arrStudId.length == 0){
+    					alert( 'Необходимо выбрать хотя бы одного студента' );
+							return;
+        			}
+        		}
 				
 				this.sheetSave(data);
         },

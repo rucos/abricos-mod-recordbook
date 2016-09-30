@@ -537,13 +537,24 @@ class RecordBook extends AbricosApplication {
        		$d->idSheet = intval($d->idSheet);
        		$d->typeSheet = intval($d->typeSheet);
        		$d->isPractic = intval($d->isPractic);
+       		
+       		if(!isset($d->teacherid)){
+       			   return false;  			
+       		}
        		$d->teacherid = intval($d->teacherid);
        		
+       		if($d->typeSheet === 2 || $d->typeSheet === 4){
+       			if(count($d->arrStudId) == 0){
+       				return false;
+       			}
+       		}
        		foreach($d->arrStudId as $val){
        			$val = intval($val);
        		}
-       			
-       		if($d->idSheet > 0){
+       		
+       		if($d->idSheet === 0 && $d->idSubject === 0){
+       			return false;
+       		} else if($d->idSheet > 0){
        			RecordBookQuery::SheetUpdate(Abricos::$db, $d);
        		} else {
        			RecordBookQuery::SheetAppend(Abricos::$db, $d);

@@ -160,9 +160,6 @@ Component.entryPoint = function(NS){
     		markUpdate: {
     			args: ['objData']
     		},
-       		markUpdateZaoch: {
-    			args: ['data']
-    		},
     		countPaginator: {
     			args: ['data']
     		},

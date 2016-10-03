@@ -31,8 +31,6 @@ Component.entryPoint = function(NS){
         		this.markList = new NS.MarkListWidget({
         			srcNode: tp.gel('markList')
         		});
-        		
-	        	this.get('boundingBox').on('change', this.change, this);
         },
         destructor: function(){
         	if(this.paginator){
@@ -309,53 +307,6 @@ Component.entryPoint = function(NS){
         			}
         	}, this);
         },
-        change: function(e){
-    		var input = e.target.getDOMNode(),
-	    		tp = this.template,
-				tpTblMark = tp.idMap.tableMarkOch,
-				rowMark = tp.idMap.rowMarkStudOch;
-    		
-			switch(input.id){
-				case tpTblMark.inpAtt1: 
-					if(this.checkAtt(input, 0)){
-							this.udpateSheet();
-								this.reCalcMarkTable();
-					}
-						break;
-				case tpTblMark.inpAtt2: 
-					if(this.checkAtt(input, 1)){
-							this.udpateSheet();
-								this.reCalcMarkTable();
-					}
-						break;
-				case tpTblMark.inpAtt3: 
-					if(this.checkAtt(input, 2)){
-							this.udpateSheet();
-								this.reCalcMarkTable();
-					}
-						break;
-				case rowMark.firstatt:
-				case rowMark.secondatt:
-				case rowMark.thirdatt:
-					if(!this.checkInp(input.value)){
-	        			input.value = 0;
-					} 
-						this.calcMark(input.parentNode.parentNode, true);
-					break;
-				case rowMark.additional:
-					if(!this.checkInp(input.value)){
-	        			input.value = 0;
-					} 
-						this.calcMarkAdd(input.parentNode.parentNode);
-					break;
-				case rowMark.debts:
-					if(!this.checkInp(input.value)){
-	        			input.value = 0;
-					} 
-						this.reqMark(this.parseRowData(input.parentNode.parentNode));
-					break;
-			}
-		},
         checkAtt: function(input, numAtt){
         	var currentAttProc = this.get('currentAttProc').split('-'),
         		tp = this.template,
@@ -477,16 +428,6 @@ Component.entryPoint = function(NS){
         	
         	return objData;
         },
-        markZaochUpdate: function(id, value){
-        	var data = {
-        		id: id,
-        		mark: value
-        	};
-        	this.set('waiting', true);
-	        	this.get('appInstance').markUpdateZaoch(data, function(err, result){
-	        		this.set('waiting', false);
-	        	}, this);
-        },
         reqMark: function(objData){
 	        	this.set('waiting', true);
 	        	this.get('appInstance').markUpdate(objData, function(err, result){
@@ -502,19 +443,6 @@ Component.entryPoint = function(NS){
         		case 105: return 'отлично';
         		default: return '';
         	}
-        },
-        checkInp: function(val){
-        	if(!this.get('appInstance').isNumeric(val)){
-        		alert( 'Введите число' );
-        			return false;
-        	} else if(!this.isIncluded(val)){
-        		alert( 'Значение должно быть от 0 до 100' );
-        			return false;
-        	}
-        		return true;
-        },
-        isIncluded: function(n){
-        	return n >= 0 && n <= 100;
         },
         printShow: function(idSheet, type){
         	var id = idSheet ? idSheet : this.get('currentIdSheet'),
@@ -625,45 +553,9 @@ Component.entryPoint = function(NS){
         		event: function(e){
         			var id = e.target.getData('id');
         			
-        			this.markList.set('sheetid', id);
-        			this.markList.reloadList();
-        			
-//        			var tp = this.template,
-//        				targ = e.target,
-//        				idSheet = targ.getData('id'),
-//        				attProc = targ.getData('att'),
-//        				groupItem = this.get('groupItem'),
-//        				obj = {
-//        					subj: targ.getData('ns'),
-//        					formControl: targ.getData('formControl'),
-//        					frmStudy: groupItem.get('frmstudy'),
-//        					fio: targ.getData('fio')
-//        				};
-//        			
-//        			this.set('currentIdSheet', idSheet);
-//        			this.set('currentAttProc', attProc);
-//        			
-//        			tp.toggleView(true, 'markPanel' ,'sheetPanel');
-//        			
-//        			this.set('currentFormControl', this.parseFormControl(obj.formControl));
-//        			this.reqMarkList(obj);
+	        			this.markList.set('sheetid', id);
+	        			this.markList.reloadList();
         		}
-        	},
-        	changeMarkZaoch: {
-        		event: function(e){
-    				var tp = this.template,
-    					targ = e.target,
-    					idMark = targ.getData('id'),
-    					value = targ.getData('value'),
-    					text = targ.getDOMNode().innerHTML,
-    					inp = 'rowMarkStudZaoch.markZaoch-',
-    					div = 'rowMarkStudZaoch.divMark-';
-    				
-    				tp.setValue(inp+idMark, text);
-    				tp.removeClass(div+idMark, 'open');
-    				
-    					this.markZaochUpdate(idMark, value);
-		        }
         	},
         	close: {
         		event: function(e){

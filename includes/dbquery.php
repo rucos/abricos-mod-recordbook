@@ -654,18 +654,6 @@ class RecordBookQuery {
     	$db->query_write($sql);
     }
     
-    public static function MarkUpdateZaoch(Ab_Database $db, $d){
-    
-    	$sql = "
-				UPDATE ".$db->prefix."rb_marks
-				SET
-					mark=".bkint($d->mark)."
-				WHERE markid=".bkint($d->id)."
-				LIMIT 1
-		";
-    	$db->query_write($sql);
-    }
-    
     public static function CountSubject(Ab_Database $db, $fieldid){
     	 
     	$sql = " 

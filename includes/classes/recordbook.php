@@ -88,8 +88,6 @@ class RecordBook extends AbricosApplication {
             	return  $this->MarkListToJSON($d->idSheet);
             case "markUpdate":
             	return  $this->MarkUpdateToJSON($d->objData);
-	        case "markUpdateZaoch":
-	        	return  $this->MarkUpdateZaochToJSON($d->data);
             case "updateWeight":
             	return  $this->SheetUpdateWeightToJSON($d->objData);
             case "countPaginator":
@@ -641,18 +639,6 @@ class RecordBook extends AbricosApplication {
 	       				}
        			}
        			RecordBookQuery::MarkUpdate($this->db, $d);
-       	}
-       	
-       	public function MarkUpdateZaochToJSON($d){
-       			$res = $this->MarkUpdateZaoch($d);
-       		return $this->ResultToJSON('markUpdate', $res);
-       	}
-       	
-       	public function MarkUpdateZaoch($d){
-       		$d->id = intval($d->id);
-       		$d->mark = intval($d->mark);
-       		
-       		RecordBookQuery::MarkUpdateZaoch($this->db, $d);
        	}
        	
        	public function CountPaginatorToJSON($d){

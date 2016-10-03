@@ -21,7 +21,7 @@ Component.entryPoint = function(NS){
         	var sheetid = this.get('sheetid');
         	
 	        	this.set('waiting', true);
-		        	this.get('appInstance').sheetItem(sheetid, function(err, result){
+		        	this.get('appInstance').sheetItem(sheetid, true, function(err, result){
 		        		this.set('waiting', false);
 			        		if(!err){
 			        			this.set('sheetItem', result.sheetItem);
@@ -33,9 +33,9 @@ Component.entryPoint = function(NS){
         renderList: function(){
         	var sheetItem = this.get('sheetItem').toJSON(),
         		tp = this.template;
-        	
+
         		sheetItem.formcontrol = this.parseFormControl();
-        	
+
         		tp.setHTML('modal', tp.replace('modal', sheetItem));
         },
         parseFormControl: function(){
@@ -68,6 +68,7 @@ Component.entryPoint = function(NS){
         renderMarkList: function(){
         	var markList = this.get('markList'),
         		sheetItem = this.get('sheetItem'),
+        		arrAttest = sheetItem.get('attestation'),
         		tp = this.template,
         		num = 0,
         		lst = "";
@@ -87,9 +88,9 @@ Component.entryPoint = function(NS){
 		    	
 		    	tp.setHTML('modal.mark', tp.replace('table', {
 			    		rows: lst,
-			    		a1: sheetItem.get('firstattproc'),
-			    		a2: sheetItem.get('secondattproc'),
-			    		a3: sheetItem.get('thirdattproc')
+			    		a1: arrAttest[0],
+			    		a2: arrAttest[1],
+			    		a3: arrAttest[2]
 		    		})
 		    	); 
         },

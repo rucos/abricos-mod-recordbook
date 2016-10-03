@@ -140,7 +140,7 @@ Component.entryPoint = function(NS){
     		},
     		sheetItem: {
     			attribute: false,
-    			args: ['sheetid'],
+    			args: ['sheetid', 'mark'],
     			type: 'model:SheetItem'
     		},
     		sheetSave: {

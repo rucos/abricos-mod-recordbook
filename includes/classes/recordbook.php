@@ -79,7 +79,7 @@ class RecordBook extends AbricosApplication {
             case "sheetList":
             	return  $this->SheetListToJSON($d->data);
             case "sheetItem":
-            	return  $this->SheetItemToJSON($d->sheetid);
+            	return  $this->SheetItemToJSON($d->sheetid, $d->mark);
             case "sheetSave":
             	return  $this->SheetAddToJSON($d->data);
             case "sheetRemove":
@@ -502,12 +502,12 @@ class RecordBook extends AbricosApplication {
        		return $list;
        	}
        	
-       	public function SheetItemToJSON($id){
-       		$res = $this->SheetItem($id);
+       	public function SheetItemToJSON($id, $mark){
+       		$res = $this->SheetItem($id, $mark);
        		return $this->ResultToJSON('sheetItem', $res);
        	}
        	
-       	public function SheetItem($id){
+       	public function SheetItem($id, $mark){
        		$id = intval($id);
        	
        		$row = RecordBookQuery::SheetItemlist($this->db, $id);
@@ -522,6 +522,14 @@ class RecordBook extends AbricosApplication {
        			}
        			
        			$row['arrstudid'] = $arrStudId;
+       		}
+       		
+       		if($mark === true){
+       			$row['attestation'] =  array(
+       				$row['firstattproc'],
+       				$row['secondattproc'],
+       				$row['thirdattproc'],
+       			);
        		}
        		
        		return $this->models->InstanceClass('SheetItem', $row);

@@ -18,17 +18,9 @@
       "type": "string",
       "json": "ns"
     },
-    "firstattproc": {
-      "type": "int",
-      "json": "fap"
-    },
-    "secondattproc": {
-      "type": "int",
-      "json": "sap"
-    },
-    "thirdattproc": {
-      "type": "int",
-      "json": "tap"
+    "attestation": {
+      "type": "array",
+      "json": "att"
     },
     "date": {
       "type": "int",

@@ -486,6 +486,10 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function SheetList($d){
+       		$d->groupid = intval($d->groupid);
+       		$d->currentSemestr = intval($d->currentSemestr);
+       		$d->numcrs = intval($d->numcrs);
+       		$d->fieldid = intval($d->fieldid);
        		 
        		$list = $this->models->InstanceClass('SheetList');
        	

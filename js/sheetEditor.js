@@ -2,7 +2,7 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js', 'departManager.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js', 'departManager.js', 'markList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -28,6 +28,10 @@ Component.entryPoint = function(NS){
                     }
         		});
         		
+        		this.markList = new NS.MarkListWidget({
+        			srcNode: tp.gel('markList')
+        		});
+        		
 	        	this.get('boundingBox').on('change', this.change, this);
         },
         destructor: function(){
@@ -37,6 +41,10 @@ Component.entryPoint = function(NS){
         	
         	if(this.departManager){
         		this.departManager.destroy();
+        	}
+        	
+          	if(this.markList){
+        		this.markList.destroy();
         	}
         },
         initDepartManager: function(){
@@ -301,100 +309,6 @@ Component.entryPoint = function(NS){
         			}
         	}, this);
         },
-        reqMarkList: function(obj){
-        	var idSheet = this.get('currentIdSheet');
-        	
-        	this.set('waiting', true);
-        	this.get('appInstance').markList(idSheet, function(err, result){
-        		this.set('waiting', false);
-	        		if(!err){
-	        			this.set('markList', result.markList);
-	        				this.renderMarkList(obj);
-	        		}
-        	}, this);
-        },
-        renderMarkList: function(obj){
-        	var tp = this.template,
-        		form = this.parseFormControl(obj.formControl),
-        		table = obj.frmStudy == 'очная' ? this.renderTableOch() : this.renderTableZaoch(form);
-        		
-        	tp.setHTML('tablMark', tp.replace('tableMarkStud', {
-        		nameSubj: obj.subj,
-        		formcontrol: form,
-        		data: table,
-        		fioteacher: obj.fio
-        	}));
-        },
-        parseFormControl: function(formControl){
-        	var arr = formControl.split('/'),
-        		form = arr[0],
-        		type = arr[1],
-        		project = arr[2];
-        	
-        	if(type > 2){
-        		if(project[0] == 1){
-        			form = 'Курсовая работа';
-        		} else if(project[2] == 1) {
-        			form = 'Курсовой проект';
-        		}
-        	}
-        	this.set('currentType', type);
-        	return form;
-        },
-        renderTableZaoch: function(form){
-        	var markList = this.get('markList'),
-        		tp = this.template,
-        		lst = "",
-        		table = "",
-        		n = 0;
-        	
-        	var blockName = form == 'Зачет' ? 'tradZachet' : 'tradMark';
-        	
-        	markList.each(function(mark){
-        		lst += tp.replace('rowMarkStudZaoch', [{
-        			n: ++n,
-        			mark: this.setTradMark(mark.get('mark')),
-        			li:  tp.replace(blockName, { id: mark.get('id')})
-        		}, mark.toJSON()]);
-        	}, this);
-        	
-        	table = tp.replace('tableMarkZaoch', { rows: lst });
-        	
-        	return table;
-        },
-        renderTableOch: function(){
-        	var markList = this.get('markList'),
-	    		currentAttProc = this.get('currentAttProc').split('-'),
-	    		tp = this.template,
-	    		lst = "",
-	    		table = "",
-	    		num = 0,
-	    		self = this,
-	    		formControl = this.get('currentFormControl');
-        	
-		    	markList.each(function(mark){
-		    		var markValue = mark.get('mark');
-		    		
-		    		if(formControl == 'Зачет'){
-		    			markValue = markValue == 102 ? 'Зачтено' : 'Не зачтено'
-		    		}
-		    		
-		    		lst += tp.replace('rowMarkStudOch', [{
-		    			n: ++num,
-		    			mark: markValue
-		    		}, mark.toJSON()]);
-		    	});
-		    	
-		    	table = tp.replace('tableMarkOch', {
-		    		rows: lst,
-		    		a1: currentAttProc[0],
-		    		a2: currentAttProc[1],
-		    		a3: currentAttProc[2],
-		    		sumProc: 100
-		    	});
-		    	
-		    	return table;
-        },
         change: function(e){
     		var input = e.target.getDOMNode(),
 	    		tp = this.template,
@@ -621,12 +535,8 @@ Component.entryPoint = function(NS){
             sheetList: {value: null},
             subjectList: {value: null},
             currentSubject: {value: 0},
-            markList: {value: null},
-            currentIdSheet: {value: 0},
-            currentAttProc: {value: ''},
             currentType: {value: 0},
             studList: {value: null},
-            currentFormControl: {value: null},
             currentTeacher: {value: ''},
             sheetItem: {value: null}
         },
@@ -713,35 +623,30 @@ Component.entryPoint = function(NS){
         	},
         	showMark: {
         		event: function(e){
-        			var tp = this.template,
-        				targ = e.target,
-        				idSheet = targ.getData('id'),
-        				attProc = targ.getData('att'),
-        				groupItem = this.get('groupItem'),
-        				obj = {
-        					subj: targ.getData('ns'),
-        					formControl: targ.getData('formControl'),
-        					frmStudy: groupItem.get('frmstudy'),
-        					fio: targ.getData('fio')
-        				};
+        			var id = e.target.getData('id');
         			
-        			this.set('currentIdSheet', idSheet);
-        			this.set('currentAttProc', attProc);
+        			this.markList.set('sheetid', id);
+        			this.markList.reloadList();
         			
-        			tp.toggleView(true, 'markPanel' ,'sheetPanel');
-        			
-        			this.set('currentFormControl', this.parseFormControl(obj.formControl));
-        			this.reqMarkList(obj);
-        		}
-        	},
-        	cancelMark: {
-        		event: function(e){
-        			var tp = this.template;
-        			tp.toggleView(false, 'markPanel', 'sheetPanel');
-        			tp.setHTML('tablMark', '');
-        				this.set('currentIdSheet', 0);
-        				this.set('currentAttProc', '');
-        				this.reqSheetList();
+//        			var tp = this.template,
+//        				targ = e.target,
+//        				idSheet = targ.getData('id'),
+//        				attProc = targ.getData('att'),
+//        				groupItem = this.get('groupItem'),
+//        				obj = {
+//        					subj: targ.getData('ns'),
+//        					formControl: targ.getData('formControl'),
+//        					frmStudy: groupItem.get('frmstudy'),
+//        					fio: targ.getData('fio')
+//        				};
+//        			
+//        			this.set('currentIdSheet', idSheet);
+//        			this.set('currentAttProc', attProc);
+//        			
+//        			tp.toggleView(true, 'markPanel' ,'sheetPanel');
+//        			
+//        			this.set('currentFormControl', this.parseFormControl(obj.formControl));
+//        			this.reqMarkList(obj);
         		}
         	},
         	changeMarkZaoch: {

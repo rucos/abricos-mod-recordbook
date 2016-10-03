@@ -228,8 +228,11 @@ Component.entryPoint = function(NS){
 	          	return arrStudId;
         },
         reqSheetItem: function(sheetid){
+        	var data = {
+        		sheetid: sheetid
+        	};
         	this.set('waiting', true);
-	        	this.get('appInstance').sheetItem(sheetid, function(err, result){
+	        	this.get('appInstance').sheetItem(data, function(err, result){
 	        		this.set('waiting', false);
 		        		if(!err){
 		        			this.set('sheetItem', result.sheetItem);

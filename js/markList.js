@@ -18,10 +18,13 @@ Component.entryPoint = function(NS){
         	this.get('boundingBox').on('change', this.change, this);
         },
         reloadList: function(){
-        	var sheetid = this.get('sheetid');
+        	var data = {
+        		sheetid: this.get('sheetid'),
+        		mark: true
+        	};
         	
 	        	this.set('waiting', true);
-		        	this.get('appInstance').sheetItem(sheetid, true, function(err, result){
+		        	this.get('appInstance').sheetItem(data, function(err, result){
 		        		this.set('waiting', false);
 			        		if(!err){
 			        			this.set('sheetItem', result.sheetItem);

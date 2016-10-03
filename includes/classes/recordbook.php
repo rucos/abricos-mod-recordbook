@@ -79,7 +79,7 @@ class RecordBook extends AbricosApplication {
             case "sheetList":
             	return  $this->SheetListToJSON($d->data);
             case "sheetItem":
-            	return  $this->SheetItemToJSON($d->sheetid, $d->mark);
+            	return  $this->SheetItemToJSON($d->data);
             case "sheetSave":
             	return  $this->SheetAddToJSON($d->data);
             case "sheetRemove":
@@ -502,34 +502,36 @@ class RecordBook extends AbricosApplication {
        		return $list;
        	}
        	
-       	public function SheetItemToJSON($id, $mark){
-       		$res = $this->SheetItem($id, $mark);
+       	public function SheetItemToJSON($d){
+       		$res = $this->SheetItem($d);
        		return $this->ResultToJSON('sheetItem', $res);
        	}
        	
-       	public function SheetItem($id, $mark){
-       		$id = intval($id);
-       	
-       		$row = RecordBookQuery::SheetItemlist($this->db, $id);
+       	public function SheetItem($d){
+       		$d->sheetid = intval($d->sheetid);
+       		
+       		$row = RecordBookQuery::SheetItemlist($this->db, $d->sheetid);
        		
        		if($row['type'] == 2 || $row['type'] == 4){
        			$arrStudId = array();
        			
        			$studid = RecordBookQuery::StudidListFromMark($this->db, $row['id']);
        			
-       		    while ($d = $this->db->fetch_array($studid)){
-       				$arrStudId[] = $d['id'];
+       		    while ($dd = $this->db->fetch_array($studid)){
+       				$arrStudId[] = $dd['id'];
        			}
        			
        			$row['arrstudid'] = $arrStudId;
        		}
        		
-       		if($mark === true){
-       			$row['attestation'] =  array(
-       				$row['firstattproc'],
-       				$row['secondattproc'],
-       				$row['thirdattproc'],
-       			);
+       		if(isset($d->mark)){
+       			if($d->mark === true){
+       				$row['attestation'] =  array(
+       						$row['firstattproc'],
+       						$row['secondattproc'],
+       						$row['thirdattproc'],
+       				);
+       			}
        		}
        		
        		return $this->models->InstanceClass('SheetItem', $row);

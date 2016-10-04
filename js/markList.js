@@ -79,10 +79,10 @@ Component.entryPoint = function(NS){
 		    	markList.each(function(mark){
 		    		var markValue = mark.get('mark');
 		    		
-			    		if(sheetItem.get('formcontrol') == 'Зачет'){
-			    			markValue = markValue == 102 ? 'Зачтено' : 'Не зачтено'
-			    		}
-			    		
+						if(sheetItem.get('formcontrol') === 'Зачет'){
+							markValue = markValue === 102 ? 'Зач' : 'Незач'
+						} 
+					
 			    		lst += tp.replace('row', [{
 			    			n: ++num,
 			    			mark: markValue
@@ -95,146 +95,76 @@ Component.entryPoint = function(NS){
 			    		a2: arrAttest[1],
 			    		a3: arrAttest[2]
 		    		})
-		    	); 
+		    	);
+		    	
+		    	this.set('attestation', arrAttest);
         },
         change: function(e){
-    		var idMap = this.template.idMap,
-	    		table = idMap.table,
-				row = idMap.row,
-				input = e.target.getDOMNode();
+    		var targ = e.target,
+    			input = targ.getDOMNode(),
+    			view = targ.getData('view'),
+    			row;
     		
-    		
-			switch(input.id){
-//				case tpTblMark.inpAtt1: 
-//					if(this.checkAtt(input, 0)){
-//							this.udpateSheet();
-//								this.reCalcMarkTable();
-//					}
-//						break;
-//				case tpTblMark.inpAtt2: 
-//					if(this.checkAtt(input, 1)){
-//							this.udpateSheet();
-//								this.reCalcMarkTable();
-//					}
-//						break;
-//				case tpTblMark.inpAtt3: 
-//					if(this.checkAtt(input, 2)){
-//							this.udpateSheet();
-//								this.reCalcMarkTable();
-//					}
-//						break;
-				case row.firstatt:
-				case row.secondatt:
-				case row.thirdatt:
-					if(!this.checkInp(input.value)){
-	        			input.value = 0;
-					} 
-						this.calcMark(input.parentNode.parentNode, true);
-					break;
-				case row.additional:
-					if(!this.checkInp(input.value)){
-	        			input.value = 0;
-					} 
-						this.calcMarkAdd(input.parentNode.parentNode);
-					break;
-				case row.debts:
-					if(!this.checkInp(input.value)){
-	        			input.value = 0;
-					} 
-						this.reqMark(this.parseRowData(input.parentNode.parentNode));
-					break;
-			}
+				if(!this.checkInp(input.value)){
+	    			input.value = 0;
+				}
+				row = input.parentNode.parentNode;
+				
+				switch(view){
+					case 'debts':
+						this.reqMark(this.parseRowPoint(row.id, row.cells));
+							break;
+					default:
+						this.calcMark(row);	
+				}
 		},
-		calcMark: function(row, update){
-	        	var tp = this.template,
-	        		arrRow = row.cells,
-	        		danger = tp.gel('tableMarkOch.sumProc').className,
-	        		formControl = this.get('currentFormControl');
-	        			
-	        	if(danger.indexOf('danger') == -1){
-	        			var a1 = tp.gel('tableMarkOch.inpAtt1').value,
-	            			a2 = tp.gel('tableMarkOch.inpAtt2').value,
-	            			a3 = tp.gel('tableMarkOch.inpAtt3').value,
-	            			b1 = +arrRow[3].firstChild.value,
-	            			b2 = +arrRow[4].firstChild.value,
-	            			b3 = +arrRow[5].firstChild.value,
-	            			b4 = +arrRow[7].firstChild.value,
-	        				result = Math.round((a1 * b1 / 100) + (a2 * b2 / 100) + (a3 * b3 / 100)),
-	        				resultAdd = result + b4;
-	        				
-	        			if(resultAdd > 100){
-	        				resultAdd = result;
-	        					alert( 'Окончательная оценка c учетом доп баллов > 100' );
-	        						arrRow[7].firstChild.value = 0;
-	        			}
-	        			
-	        			arrRow[6].firstChild.innerHTML = result;
-	        			
-	        			if(formControl == 'Зачет'){
-	        				resultAdd = this.calcTradMark(resultAdd);
-	        			}
-	        			
-	        			arrRow[9].firstChild.innerHTML = resultAdd;
-	        				if(update){
-	        					var d = this.parseRowData(row);
-	        					this.reqMark(d);
-	        				} else {
-	        					return this.parseRowData(row);
-	        				}
-	        	} else {
-	        		alert( 'сумма аттестаций < 100' );
-	        	}
+		calcMark: function(row){
+			var sheetItem = this.get('sheetItem'),
+				cells = row.cells,
+				arrAttest = this.get('attestation');
+				objPoint = this.parseRowPoint(row.id, cells),
+				result = Math.round( 
+						(arrAttest[0] * objPoint.firstatt) / 100 + 
+						(arrAttest[1] *  objPoint.secondatt) / 100 + 
+						(arrAttest[2] * objPoint.thirdatt) / 100 
+				),
+				mark = result + objPoint.additional;
+				
+				cells[6].firstChild.textContent = result;
+				
+				if(mark > 100){
+					cells[7].firstChild.value = 0;
+						objPoint.additional = 0;
+							mark = result;
+				}
+				
+				cells[9].firstChild.textContent = this.parseformControl(mark);
+				
+				this.reqMark(objPoint);
 	    },
-	    reCalcMarkTable: function(){
-        	var rows = this.template.gel('tableMarkOch.tableMark').rows,
-        		objData = [],
-        		currentAttProc = this.get('currentAttProc').split('-');
-        		for(var i = 4; i < rows.length; i++){
-        			rows[i].cells[7].firstChild.value = 0;
-        				objData.push(this.calcMark(rows[i], false));
-        		}
-        			this.reqMark(objData);
-        },
-        calcMarkAdd: function(row){
-        	var tp = this.template,
-    			arrRow = row.cells,
-    			a1 = +arrRow[6].firstChild.innerHTML,
-    			a2 = +arrRow[7].firstChild.value,
-    			sum = a1 + a2,
-    			formControl = this.get('currentFormControl');
-        	
-        	if(sum > 100){
-        		alert( 'Окончательная оценка c учетом доп баллов > 100' );
-        			arrRow[7].firstChild.value = 0;
-        				sum = a1;
-        	}
-        		arrRow[9].firstChild.innerHTML = formControl == 'Зачет' ? this.calcTradMark(sum) : sum;
-				this.reqMark(this.parseRowData(row));
-        },
-        parseRowData: function(row){
-        	var arrRow = row.cells,
-        		formControl = this.get('currentFormControl'),
-        		mark = arrRow[9].firstChild.innerHTML;
-        	
-        	if(formControl == 'Зачет'){
-        		mark = arrRow[9].firstChild.innerHTML == 'Зачтено' ? 102 : 101;
-        	} 
-        	var objData = {
-	        		id: row.id,
-	        		firstatt: arrRow[3].firstChild.value,
-	        		secondatt: arrRow[4].firstChild.value,
-	        		thirdatt: arrRow[5].firstChild.value,
-	        		prliminary: arrRow[6].firstChild.innerHTML,
-	        		additional: arrRow[7].firstChild.value,
-	        		debts: arrRow[8].firstChild.value,
-	        		mark: mark
-	        	};
-        	
-        	return objData;
-        },
-        reqMark: function(objData){
-	        	this.set('waiting', true);
-	        	this.get('appInstance').markUpdate(objData, function(err, result){
+	    parseformControl: function(mark){
+	    	var formcontrol = this.get('sheetItem').get('formcontrol');
+	    	
+				if(formcontrol === 'Зачет'){
+					mark = mark >= 51 ? 'Зач' : 'Незач';
+				} 
+				return mark;
+	    },
+	    parseRowPoint: function(id, cells){
+		    	return {
+		    		id: id,
+		    		sheetid: this.get('sheetid'),
+		    		firstatt: +cells[3].firstChild.value,
+	        		secondatt: +cells[4].firstChild.value,
+	        		thirdatt: +cells[5].firstChild.value,
+	        		prliminary: +cells[6].firstChild.textContent,
+	        		additional: +cells[7].firstChild.value,
+	        		debts: +cells[8].firstChild.value
+		    	};
+	    },
+        reqMark: function(data){
+	        this.set('waiting', true);
+	        	this.get('appInstance').markUpdate(data, function(err, result){
 	        		this.set('waiting', false);
 	        	}, this);
         },
@@ -257,7 +187,8 @@ Component.entryPoint = function(NS){
             templateBlockName: {value: 'widget, modal, table, row'},
             sheetid: {value: 0},
             sheetItem: {value: null},
-            markList: {value: null}
+            markList: {value: null},
+            attestation: {value: null}
         },
         CLICKS: {
         	closeModal: {

@@ -43,9 +43,9 @@
 			        <th colspan="3">Веса аттест. <span id="{i#sumProc}" class="label label-success">100</span> (%)</th>
 			   	 </tr>
 			     <tr>
-			        <th><input type="text" class="form-control" id="{i#a1}" value="{v#a1}" maxlength="3"/></th>
-			        <th><input type="text" class="form-control" id="{i#a2}" value="{v#a2}" maxlength="3"/></th>
-			        <th><input type="text" class="form-control" id="{i#a3}" value="{v#a3}" maxlength="3"/></th>
+			        <th><input type="text" class="form-control" value="{v#a1}" maxlength="3"/></th>
+			        <th><input type="text" class="form-control" value="{v#a2}" maxlength="3"/></th>
+			        <th><input type="text" class="form-control" value="{v#a3}" maxlength="3"/></th>
 			     </tr>
 			     <tr>
 			        <th colspan="3">Аттест. оценки</th>
@@ -62,12 +62,11 @@
 	<td>{v#n}</td>
 	<td>{v#fio}</td>
 	<td>{v#numbook}</td>
-	<td><input type="text" class="form-control" id="{i#firstatt}" value="{v#firstatt}" maxlength="3"></td>
-	<td><input type="text" class="form-control" id="{i#secondatt}" value="{v#secondatt}" maxlength="3"></td>
-	<td><input type="text" class="form-control" id="{i#thirdatt}" value="{v#thirdatt}" maxlength="3"></td>
-	<td><span id="{i#prliminary}">{v#prliminary}</span></td>
-	<td><input type="text" class="form-control" id="{i#additional}" value="{v#additional}" maxlength="3"></td>
-	<td><input type="text" class="form-control" id="{i#debts}" value="{v#debts}" maxlength="2"></td>
-	<td><span id="{i#mark}">{v#mark}</span></td>
-	<td class="visible-print"><span id="{i#tradmark}">{v#tradmark}</span></td>
+	<td><input type="text" class="form-control" value="{v#firstatt}" maxlength="3"></td>
+	<td><input type="text" class="form-control" value="{v#secondatt}" maxlength="3"></td>
+	<td><input type="text" class="form-control" value="{v#thirdatt}" maxlength="3"></td>
+	<td><span>{v#prliminary}</span></td>
+	<td><input type="text" class="form-control" value="{v#additional}" maxlength="3"></td>
+	<td><input type="text" class="form-control" value="{v#debts}" maxlength="2" data-view="debts"></td>
+	<td><span>{v#mark}</span></td>
 </tr>

@@ -633,24 +633,35 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function MarkUpdateToJSON($d){
-       		if(is_array($d)){//если изменяем оценки всех студентов
-       			foreach($d as $val){
-       				$res = $this->MarkUpdate($val);
-       			}
+       		$d->id = intval($d->id);
+       		$d->sheetid = intval($d->sheetid);
+       		
+       		$sheetItem = RecordBookQuery::SheetItemlist($this->db, $d->sheetid);
+       		
+       		if($sheetItem['formcontrol'] === 'Зачет'){
+       			$credit = true;
        		} else {
-       			$res = $this->MarkUpdate($d);
+       			$credit = false;
        		}
+
+       		$res = $this->MarkUpdate($d, $credit);
+       		
        		return $this->ResultToJSON('markUpdate', $res);
        	}
        	
-       	public function MarkUpdate($d){
+       	public function MarkUpdate($d, $credit){
        			foreach($d as $key => $val){
-       				$val = intval($val);
-	       				if($key !== 'id' && $key !== 'mark'){
-		       					if($val < 0 || $val > 100){
-		       						return false;
-		       					}
-	       				}
+       				if($key !== 'id' && $key !== 'sheetid'){
+       					$val = intval($val);
+	       					if($val < 0 || $val > 100){
+	       						return false;
+	       					}
+       				}
+       			}
+       			$d->mark = $d->additional + $d->prliminary;  
+       			
+       			if($credit === true){
+       				$d->mark = $d->mark > 51 ? 102 : 101;
        			}
        			RecordBookQuery::MarkUpdate($this->db, $d);
        	}

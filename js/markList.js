@@ -133,16 +133,17 @@ Component.entryPoint = function(NS){
 				cells[6].firstChild.textContent = result;
 				
 				if(mark > 100){
+					alert( 'Сумма баллов больше 100!' );
 					cells[7].firstChild.value = 0;
 						objPoint.additional = 0;
 							mark = result;
 				}
 				
-				cells[9].firstChild.textContent = this.parseformControl(mark);
+				cells[9].firstChild.textContent = this.isCredit(mark);
 				
 				this.reqMark(objPoint);
 	    },
-	    parseformControl: function(mark){
+	    isCredit: function(mark){
 	    	var formcontrol = this.get('sheetItem').get('formcontrol');
 	    	
 				if(formcontrol === 'Зачет'){

@@ -660,6 +660,10 @@ class RecordBook extends AbricosApplication {
        			}
        			$d->mark = $d->additional + $d->prliminary;  
        			
+       			if($d->mark > 100){
+       				return false;
+       			}
+       			
        			if($credit === true){
        				$d->mark = $d->mark > 51 ? 102 : 101;
        			}

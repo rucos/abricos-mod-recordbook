@@ -130,6 +130,7 @@ Component.entryPoint = function(NS){
 				),
 				mark = result + objPoint.additional;
 				
+				objPoint.prliminary = result;
 				cells[6].firstChild.textContent = result;
 				
 				if(mark > 100){

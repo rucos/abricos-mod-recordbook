@@ -158,7 +158,7 @@ Component.entryPoint = function(NS){
     			args: ['objData']
     		},
     		markUpdate: {
-    			args: ['objData']
+    			args: ['data']
     		},
     		countPaginator: {
     			args: ['data']

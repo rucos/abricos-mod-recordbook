@@ -114,8 +114,22 @@ Component.entryPoint = function(NS){
 					case 'debts':
 						this.reqMark(this.parseRowPoint(row.id, row.cells));
 							break;
+					case 'att0':
+						this.setAttestaion(input.value, 0);
+							break;
+					case 'att1':
+						this.setAttestaion(input.value, 1);
+							break;
+					case 'att2':
+						this.setAttestaion(input.value, 2);
+							break;
 					default:
-						this.calcMark(row);	
+						if(this.checkAttestation() !== 100){
+							alert( 'Вес аттестации должен быть равен 100' );
+								input.value = input.getAttribute('value');
+						} else {
+							this.calcMark(row);
+						}
 				}
 		},
 		calcMark: function(row){
@@ -169,6 +183,45 @@ Component.entryPoint = function(NS){
 	        	this.get('appInstance').markUpdate(data, function(err, result){
 	        		this.set('waiting', false);
 	        	}, this);
+        },
+        setAttestaion: function(value, ind){
+        	var attestation = this.get('attestation'),
+        		sumProc = this.template.gel('table.sumProc'),
+        		sum = 0;
+        	
+        		attestation[ind] = value;
+        		
+        		this.set('attestation', attestation);
+        		
+        		sum = this.checkAttestation();
+        		
+        		sumProc.textContent = sum;
+        		
+        		if(sum !== 100){
+        			sumProc.classList.add('label-danger');
+        		} else {
+        			sumProc.classList.remove('label-danger');
+        			this.updateWeightAttestation();
+        		}
+        },
+        checkAttestation: function(){
+        	var attestation = this.get('attestation');
+        		
+        		for(var i = 0, sum = 0; i < 3; i++){
+        			sum += +attestation[i];
+        		}
+        		return sum;
+        },
+        updateWeightAttestation: function(){
+        	var data = {
+        			sheetid: this.get('sheetid'),
+        			attProc: this.get('attestation')
+        		}; 
+        	
+		        this.set('waiting', true);
+		        	this.get('appInstance').updateWeight(data, function(err, result){
+		        		this.set('waiting', false);
+		        	}, this);
         },
         checkInp: function(val){
         	if(!this.get('appInstance').isNumeric(val)){

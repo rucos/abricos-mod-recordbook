@@ -87,9 +87,9 @@ class RecordBook extends AbricosApplication {
             case "markList":
             	return  $this->MarkListToJSON($d->idSheet);
             case "markUpdate":
-            	return  $this->MarkUpdateToJSON($d->objData);
+            	return  $this->MarkUpdateToJSON($d->data);
             case "updateWeight":
-            	return  $this->SheetUpdateWeightToJSON($d->objData);
+            	return  $this->SheetUpdateWeightToJSON($d->data);
             case "countPaginator":
             	return  $this->CountPaginatorToJSON($d->data);
             case "findSubject":
@@ -611,7 +611,7 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function SheetUpdateWeight($d){
-       		$d->idSheet = intval($d->idSheet);
+       		$d->sheetid = intval($d->sheetid);
        		$utmf = Abricos::TextParser(true);
        		$d->attProc = $utmf->Parser($d->attProc);
        		

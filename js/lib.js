@@ -76,6 +76,12 @@ Component.entryPoint = function(NS){
         		for(var i = 0, len = collect.length; i < len; i++){
         			collect[i].classList.remove(cl);
         		}
+        },
+        printSheet: function(sheetid, type){
+        	var url = '/recordbook/print/' + sheetid + "/" + type,
+        		printWin = window.open(url, 'recordbookPrint', 'width=1050,height=800');
+            	
+        		printWin.focus();
         }
     }, [], {
         REQS: {

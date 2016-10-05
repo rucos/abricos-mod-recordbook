@@ -1004,12 +1004,14 @@ class RecordBookQuery {
     				sj.semestr as sem,
     				sj.numhours as nh,
     				sj.project as pj,
-    				f.fieldcode as fc,
+    				p.code as fc,
     				g.numgroup as ng,
     				g.dateline as dad
 			FROM ".$db->prefix."rb_sheet sh
 			INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid = sj.subjectid
 			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = sj.fieldid
+			INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON e.programid = p.programid
 			INNER JOIN ".$db->prefix."rb_groups g ON sh.groupid = g.groupid
 			WHERE sh.sheetid = ".bkint($id)."
 			LIMIT 1

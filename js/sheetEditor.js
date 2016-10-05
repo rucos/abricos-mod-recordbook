@@ -308,14 +308,6 @@ Component.entryPoint = function(NS){
         				this.reqSheetList();
         			}
         	}, this);
-        },
-        printShow: function(idSheet, type){
-        	var id = idSheet ? idSheet : this.get('currentIdSheet'),
-        		type = type ? type : this.get('currentType'),
-        		url = '/recordbook/print/' + id + "/" + type,
-        		printWin = window.open(url, 'recordbookPrint', 'width=1050,height=800');
-            	
-        	printWin.focus();
         }
     }, {
         ATTRS: {
@@ -433,10 +425,11 @@ Component.entryPoint = function(NS){
         	},
         	print: {
         		event: function(e){
-        			var idSheet = e.target.getData('id'),
-        				type = e.target.getData('type');
+        			var targ = e.target,
+	    				id = targ.getData('id'),
+	    				type = targ.getData('type');
         			
-        				this.printShow(idSheet, type);
+        				this.get('appInstance').printSheet(id, type);
         		}
         	},
         	'depart-modal-show': {

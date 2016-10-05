@@ -264,6 +264,15 @@ Component.entryPoint = function(NS){
         		event: function(){
         			this.template.setHTML('modal', '');
         		}
+        	},
+        	print: {
+        		event: function(e){
+        			var targ = e.target,
+        				id = targ.getData('id'),
+        				type = targ.getData('type');
+        			
+        				this.get('appInstance').printSheet(id, type);
+        		}
         	}
         }
     });

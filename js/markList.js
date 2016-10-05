@@ -77,7 +77,8 @@ Component.entryPoint = function(NS){
         		lst = "";
         	
 		    	markList.each(function(mark){
-		    		var markValue = mark.get('mark');
+		    		var markValue = mark.get('mark'),
+		    			success = this.setSuccess(markValue);
 		    		
 						if(sheetItem.get('formcontrol') === 'Зачет'){
 							markValue = markValue === 102 ? 'Зач' : 'Незач'
@@ -85,9 +86,10 @@ Component.entryPoint = function(NS){
 					
 			    		lst += tp.replace('row', [{
 			    			n: ++num,
+			    			cl: success ? "class='success'" : '',
 			    			mark: markValue
 			    		}, mark.toJSON()]);
-		    	});
+		    	}, this);
 		    	
 		    	tp.setHTML('modal.mark', tp.replace('table', {
 			    		rows: lst,
@@ -98,6 +100,9 @@ Component.entryPoint = function(NS){
 		    	);
 		    	
 		    	this.set('attestation', arrAttest);
+        },
+        setSuccess: function(mark){
+        	return mark === 102 || mark >= 51 && mark <= 100;
         },
         change: function(e){
     		var targ = e.target,
@@ -155,6 +160,12 @@ Component.entryPoint = function(NS){
 				}
 				
 				cells[9].firstChild.textContent = this.isCredit(mark);
+				
+				if(this.setSuccess(mark)){
+					row.classList.add('success');
+				} else {
+					row.classList.remove('success');
+				}
 				
 				this.reqMark(objPoint);
 	    },

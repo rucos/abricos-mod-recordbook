@@ -619,18 +619,18 @@ class RecordBookQuery {
     	return $db->query_read($sql);
     }
     
-    public static function SheetUpdateWeight(Ab_Database $db, $id, $a1, $a2, $a3){
+    public static function SheetUpdateWeight(Ab_Database $db, $d){
     
     	$sql = "
 				UPDATE ".$db->prefix."rb_sheet
 				SET
-					firstattproc=".bkint($a1).",
-					secondattproc=".bkint($a2).",
-					thirdattproc=".bkint($a3)."
-				WHERE sheetid=".bkint($id)."
+					firstattproc=".bkint($d->attProc[0]).",
+					secondattproc=".bkint($d->attProc[1]).",
+					thirdattproc=".bkint($d->attProc[2])."
+				WHERE sheetid=".bkint($d->sheetid)."
 				LIMIT 1
 		";
-    	$db->query_write($sql);
+    	return $db->query_write($sql);
     }
     
     public static function MarkUpdate(Ab_Database $db, $d){

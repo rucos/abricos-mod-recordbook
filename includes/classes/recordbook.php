@@ -612,24 +612,20 @@ class RecordBook extends AbricosApplication {
        	
        	public function SheetUpdateWeight($d){
        		$d->sheetid = intval($d->sheetid);
-       		$utmf = Abricos::TextParser(true);
-       		$d->attProc = $utmf->Parser($d->attProc);
        		
-       		if(strlen($d->attProc) <= 9){
-       			$a = explode("-", $d->attProc);
-       				if(count($a) == 3){
-       					$sum = $a[0] + $a[1] + $a[2];
-	       					if($sum === 100){
-	       						RecordBookQuery::SheetUpdateWeight($this->db, $d->idSheet, $a[0], $a[1], $a[2]);
-	       					} else {
-	       						return false;
-	       					}
-       				} else {
-       					return false;
-       				}
+       		if(count($d->attProc) == 3){
+       			$sum = 0;
+	       			foreach($d->attProc as $value){
+	       					$sum += $value;
+	       			}
+	       				if($sum == 100){
+	       					return RecordBookQuery::SheetUpdateWeight($this->db, $d);
+	       				} else {
+	       					return false;
+	       				}
        		} else {
        			return false;
-       		} 
+       		}
        	}
        	
        	public function MarkUpdateToJSON($d){

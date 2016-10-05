@@ -155,7 +155,7 @@ Component.entryPoint = function(NS){
     			type: 'modelList:MarkList'
     		},
     		updateWeight: {
-    			args: ['objData']
+    			args: ['data']
     		},
     		markUpdate: {
     			args: ['data']

@@ -221,6 +221,9 @@ Component.entryPoint = function(NS){
 		        this.set('waiting', true);
 		        	this.get('appInstance').updateWeight(data, function(err, result){
 		        		this.set('waiting', false);
+		        			if(result.updateWeight){
+		        				this.reqMarkList();
+		        			}
 		        	}, this);
         },
         checkInp: function(val){

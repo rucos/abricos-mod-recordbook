@@ -590,10 +590,6 @@ class RecordBook extends AbricosApplication {
        	
        	public function MarkList($id){
        	
-       		if (isset($this->_cache['MarkList'][$id])){
-       			return $this->_cache['MarkList'][$id];
-       		}
-       	
        		$list = $this->models->InstanceClass('MarkList');
        	
        		$rows = RecordBookQuery::MarkList($this->db, $id);
@@ -602,7 +598,7 @@ class RecordBook extends AbricosApplication {
        			$list->Add($this->models->InstanceClass('MarkItem', $d));
        		}
        	
-       		return $this->_cache['MarkList'][$id] = $list;
+       		return $list;
        	}
        	
        	public function SheetUpdateWeightToJSON($d){
@@ -619,7 +615,9 @@ class RecordBook extends AbricosApplication {
 	       					$sum += $value;
 	       			}
 	       				if($sum == 100){
-	       					return RecordBookQuery::SheetUpdateWeight($this->db, $d);
+	       					RecordBookQuery::SheetUpdateWeight($this->db, $d);
+	       					
+	       					return $this->ReCalcMarkList($d->sheetid, $d->attProc);
 	       				} else {
 	       					return false;
 	       				}
@@ -628,18 +626,39 @@ class RecordBook extends AbricosApplication {
        		}
        	}
        	
+       	private function ReCalcMarkList($sheetid, $attProc){
+       		$credit = RecordBookQuery::SheetItemFormControl($this->db, $sheetid);
+       		
+       		$markList = RecordBookQuery::MarkList($this->db, $sheetid);
+       		
+       		while ($d = $this->db->fetch_array($markList)){
+       			$d['prliminary'] = round(($attProc[0] * $d['firstatt']) / 100 + ($attProc[1] * $d['secondatt']) / 100 + ($attProc[2] * $d['thirdatt']) / 100);
+       			
+       			$result = $d['prliminary'] + $d['additional'];
+       			
+       			if($result > 100){
+       				$d['additional'] = 0;
+       				$d['mark'] = $d['prliminary'];
+       			} else {
+       				$d['mark'] = $result;
+       			}
+       				
+       				if($credit === true){
+       					$d['mark'] = $d['mark'] > 51 ? 102 : 101;
+       				} 
+       			
+       			$data = (object) $d;
+       			RecordBookQuery::MarkUpdate($this->db, $data);
+       		}
+       		return true;
+       	}
+       	
        	public function MarkUpdateToJSON($d){
        		$d->id = intval($d->id);
        		$d->sheetid = intval($d->sheetid);
        		
-       		$sheetItem = RecordBookQuery::SheetItemlist($this->db, $d->sheetid);
+       		$credit = RecordBookQuery::SheetItemFormControl($this->db, $d->sheetid);
        		
-       		if($sheetItem['formcontrol'] === 'Зачет'){
-       			$credit = true;
-       		} else {
-       			$credit = false;
-       		}
-
        		$res = $this->MarkUpdate($d, $credit);
        		
        		return $this->ResultToJSON('markUpdate', $res);

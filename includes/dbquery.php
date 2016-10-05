@@ -461,6 +461,20 @@ class RecordBookQuery {
     	return $db->query_first($sql);
     }
     
+    public static function SheetItemFormControl(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+    				sj.formcontrol as fc
+			FROM ".$db->prefix."rb_sheet s
+			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			WHERE s.sheetid = ".bkint($id)."
+			LIMIT 1
+		";
+    	$item = $db->query_first($sql);
+    	
+    	return $item['fc'] === 'Зачет' ? true : false;
+    }
+    
     public static function SheetAppend(Ab_Database $db, $d){
     
     	$a = array(30, 30, 40);

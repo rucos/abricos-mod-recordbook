@@ -94,16 +94,16 @@ Component.entryPoint = function(NS){
         	
 	       		switch(obj.type){
 			   		 case 1:  
-			   			 obj.type = 'label-success';
+			   			 obj.cltype = 'label-success';
 			   			 	break;
 			   		 case 2: 
-			   			 obj.type = 'label-info';
+			   			 obj.cltype = 'label-info';
 			   		 		break;
 			   		 case 3: 
-			   			 obj.type = 'label-warning';
+			   			 obj.cltype = 'label-warning';
 			   		 		break;
 			   		 case 4: 
-			   			 obj.type = 'label-primary';
+			   			 obj.cltype = 'label-primary';
 				 				break;
 				}
         		
@@ -276,7 +276,6 @@ Component.entryPoint = function(NS){
     	        		this.reqStudList();
     	        	}
     	        	
-    	        	
     	        	this.set('currentTeacher', {
     	        		id: sheetItem.teacherid
     	        	});
@@ -351,9 +350,13 @@ Component.entryPoint = function(NS){
         	},
         	'editSheet-show': {
         		event: function(e){
-        			var sheetid = e.target.getData('id'),
+        			var targ = e.target,
+        				sheetid = targ.getData('id'),
+        				type = targ.getData('type'),
         				sheetItem = this.get('sheetItem');
         			
+        				this.set('currentType', type);
+        				
         				if(sheetItem){
         					this.editSheetShow();
         				}

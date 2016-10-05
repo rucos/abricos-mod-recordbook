@@ -56,7 +56,7 @@
 
 <!--{rowSheet}-->
 <tr id="{i#rowSheet}-{v#id}">
-	<td><label class="label {v#type}">#</label></td>
+	<td><label class="label {v#cltype}">#</label></td>
     <td>{v#namesubject} - {v#formcontrol} {v#isRemove}</td>
     <td>{v#date}</td>
     <td>{v#fio}</td>
@@ -71,7 +71,7 @@
     	</button>
     </td>
     <td>
-        <button data-click="editSheet-show" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+        <button data-click="editSheet-show" data-id="{v#id}" data-type="{v#type}" class="btn btn-default btn-xs" data-wait="disable">
             Править
         </button>
     </td>

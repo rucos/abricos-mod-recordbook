@@ -1,7 +1,4 @@
 <!--{widget}-->
-<span data-wait="show" class="pull-right">
-    <img src="/images/loading.gif"/>
-</span>
 <div id="{i#modal}"></div>
 
 <!--{modal}-->
@@ -11,6 +8,9 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-click="closeModal">&times;</button>
         <h4 class="modal-title">Ведомость: <b>{v#namesubject} {v#formcontrol}</b></h4>
+	        <span data-wait="show">
+			    <img src="/images/loading_line.gif"/>
+			</span>
       </div>
       <div class="modal-body">
 			<div id="{i#mark}"></div>

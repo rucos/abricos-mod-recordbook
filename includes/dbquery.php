@@ -739,16 +739,17 @@ class RecordBookQuery {
     
     	$sql = "
 			SELECT
-					fieldid as id,
-					fieldcode,
-					field,
-					frmstudy,
-					qual,
-					depart,
-    				note,
-					remove
-			FROM ".$db->prefix."rb_fieldstudy
-			WHERE frmstudy = '".bkstr($formStudy)."' AND remove = 0
+					f.fieldid as id,
+    				p.code,
+    				p.name,
+					f.frmstudy,
+					f.depart,
+    				f.note,
+					f.remove
+			FROM ".$db->prefix."rb_fieldstudy f
+			INNER JOIN ".$db->prefix."un_edulevel l ON f.edulevelid=l.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
+			WHERE f.frmstudy = ".bkint($formStudy)." AND f.remove = 0
 		";
     	return $db->query_read($sql);
     }
@@ -906,14 +907,16 @@ class RecordBookQuery {
 			    				g.numgroup,
 			    				g.numcrs,
 			    				g.dateline,
-			    				f.field,
 			    				f.fieldid,
-			    				f.fieldcode,
-			    				f.frmstudy,
+			    				p.code,
+			    				p.name,
+	    						f.frmstudy,
 	    						f.note,
 			    				f.remove
 			    		FROM ".$db->prefix."rb_groups g
 			    		INNER JOIN ".$db->prefix."rb_fieldstudy f ON g.fieldid = f.fieldid
+			    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    					INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
 			    		WHERE g.groupid IN (".$rowid.")
 			    					AND g.remove=0
 			    	";
@@ -953,13 +956,15 @@ class RecordBookQuery {
     				g.numcrs,
     				g.dateline,
     				f.fieldid,
-    				f.fieldcode,
-    				f.field,
+    				p.code,
+    				p.name,
     				f.frmstudy,
     				f.note
     		FROM ".$db->prefix."rb_students s
     		INNER JOIN ".$db->prefix."rb_groups g ON g.groupid = s.groupid
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
     		WHERE numbook='".bkstr($value)."' OR fio='".bkstr($value)."'
     		LIMIT 1
     	";

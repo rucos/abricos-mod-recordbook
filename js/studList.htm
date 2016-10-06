@@ -43,13 +43,13 @@
       <h5>Формы обучения:</h5>
 	    <div class="row">
 	  		<div class="col-md-4">
-	  			<button id="{i#och}" type="button" class="btn btn-default btn-sm" data-studid="{v#id}" data-name="och" data-formStudy="очная" data-click="changeFormEdu">Очная форма</button>
+	  			<button id="{i#och}" type="button" class="btn btn-default btn-sm" data-studid="{v#id}" data-name="och" data-formStudy="1" data-click="changeFormEdu">Очная форма</button>
 	  		</div>
-	 		<div class="col-md-4">
-	 			<button id="{i#zaoch}" type="button" class="btn btn-default btn-sm" data-studid="{v#id}" data-name="zaoch" data-formStudy="заочная" data-click="changeFormEdu">Заочная форма</button>
+	  		<div class="col-md-4">
+	 			<button id="{i#ochzaoch}" type="button" class="btn btn-default btn-sm" data-studid="{v#id}" data-name="ochzaoch" data-formStudy="2" data-click="changeFormEdu">Очно-заочная форма</button>
 	 		</div>
 	 		<div class="col-md-4">
-	 			<button id="{i#ochzaoch}" type="button" class="btn btn-default btn-sm" data-studid="{v#id}" data-name="ochzaoch" data-formStudy="очно-заочная" data-click="changeFormEdu">Очно-заочная форма</button>
+	 			<button id="{i#zaoch}" type="button" class="btn btn-default btn-sm" data-studid="{v#id}" data-name="zaoch" data-formStudy="3" data-click="changeFormEdu">Заочная форма</button>
 	 		</div>
 		</div>
 		<hr>
@@ -82,7 +82,7 @@
 </div>
 
 <!--{liModalField}-->
-<li><a href="#" data-id="{v#id}" data-click="showGroupList" data-studid="{v#studid}">{v#fieldcode} {v#field} {v#qual} {v#note}</a></li>
+<li><a href="#" data-id="{v#id}" data-click="showGroupList" data-studid="{v#studid}">{v#code} {v#name} {v#note}</a></li>
 
 <!--{liModalGroup}-->
 <li><a href="#" data-id="{v#id}" data-click="transition" data-studid="{v#studid}">{v#numgroup}({v#numcrs}) - {v#dateline} г.</a></li>

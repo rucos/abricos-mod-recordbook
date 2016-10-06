@@ -767,17 +767,10 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function FillModal($d){
-       	
-       		if (isset($this->_cache['modal'][$d->type])){
-       			return $this->_cache['modal'][$d->type];
-       		}
-       		
-       		$utmf = Abricos::TextParser(true);
-       		$d->type = $utmf->Parser($d->type);
        		
        		switch($d->type){
        			case 'Field':
-       				$d->formStudy = $utmf->Parser($d->formStudy);
+       				$d->formStudy = intval($d->formStudy);
        					$rows = RecordBookQuery::ModalFieldList($this->db, $d->formStudy);
        				break;
        			case 'GroupModal':
@@ -794,7 +787,7 @@ class RecordBook extends AbricosApplication {
        		while (($dd = $this->db->fetch_array($rows))){
        			$list->Add($this->models->InstanceClass($itemClass, $dd));
        		}
-       		return $this->_cache['modal'][$d->type] = $list;
+       		return $list;
        	}
        	
        	public function TransitStudToJSON($d){

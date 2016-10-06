@@ -990,14 +990,14 @@ class RecordBookQuery {
     			return $db->query_read($sql);
     }
     
-    public static function SheetItem(Ab_Database $db, $id){
+    public static function SheetItemPrint(Ab_Database $db, $id){
     	$sql = "
 			SELECT
 					sh.firstattproc as att1,
     				sh.secondattproc as att2,
     				sh.thirdattproc as att3,
     				sh.date,
-    				sh.fioteacher as ft,
+    				sh.teacherid as tid,
     				sj.namesubject as ns,
     				sj.formcontrol as fct,
     				sj.numcrs as nc,
@@ -1008,12 +1008,25 @@ class RecordBookQuery {
     				g.numgroup as ng,
     				g.dateline as dad
 			FROM ".$db->prefix."rb_sheet sh
-			INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid = sj.subjectid
-			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = sj.fieldid
-			INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
-			INNER JOIN ".$db->prefix."un_program p ON e.programid = p.programid
-			INNER JOIN ".$db->prefix."rb_groups g ON sh.groupid = g.groupid
-			WHERE sh.sheetid = ".bkint($id)."
+			INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid=sj.subjectid
+			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid=sj.fieldid
+			INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid=e.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON e.programid=p.programid
+			INNER JOIN ".$db->prefix."rb_groups g ON sh.groupid=g.groupid
+			WHERE sh.sheetid=".bkint($id)."
+			LIMIT 1
+		";
+    	return $db->query_first($sql);
+    }
+    
+    public static function TeacherItemPrint(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+    				t.fio,
+    				d.shortname
+			FROM ".$db->prefix."rb_teacher t
+			INNER JOIN ".$db->prefix."rb_departs d ON t.departid=d.departid					
+			WHERE t.teacherid = ".bkint($id)."
 			LIMIT 1
 		";
     	return $db->query_first($sql);
@@ -1030,8 +1043,8 @@ class RecordBookQuery {
     				f.ochzaoch,
     				f.zaoch
     		FROM ".$db->prefix."un_program p
-    		INNER JOIN ".$db->prefix."un_edulevel l ON p.programid = l.programid
-    		INNER JOIN ".$db->prefix."un_eduform f ON l.edulevelid = f.edulevelid
+    		INNER JOIN ".$db->prefix."un_edulevel l ON p.programid=l.programid
+    		INNER JOIN ".$db->prefix."un_eduform f ON l.edulevelid=f.edulevelid
     		WHERE p.remove=0 AND l.remove=0
 		";
     	return $db->query_read($sql); 

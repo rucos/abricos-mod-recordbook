@@ -200,13 +200,9 @@ Component.entryPoint = function(NS){
         		tp.removeClass('view2', cl);
         },
         printShow: function(numcrs, semestr){
-        	var groupid = this.get('groupid'),
-            	course = this.get('course'),
-            	semestr = this.get('semestr') === 'осенний' ? 1 : 2,
-            	url = '/recordbook/print_progress/' + groupid + "/" + numcrs + "/" + semestr,
-            	printWin = window.open(url, 'recordbookPrint_progress', 'width=1250,height=800');
-                	
-            	printWin.focus();
+        	var url = '/recordbook/print_progress/' + this.get('groupid') + "/" + numcrs + "/" + semestr;
+        	
+        		this.get('appInstance').printSheet(url, 'recordbookPrint_progress');
         }
     }, {
         ATTRS: {

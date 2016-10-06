@@ -77,11 +77,8 @@ Component.entryPoint = function(NS){
         			collect[i].classList.remove(cl);
         		}
         },
-        printSheet: function(sheetid, type){
-        	var url = '/recordbook/print/' + sheetid + "/" + type,
-        		printWin = window.open(url, 'recordbookPrint', 'width=1050,height=800');
-            	
-        		printWin.focus();
+        printSheet: function(url, name){
+        		window.open(url, name, 'width=1050,height=800').focus();
         }
     }, [], {
         REQS: {

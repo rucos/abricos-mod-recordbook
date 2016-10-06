@@ -426,10 +426,9 @@ Component.entryPoint = function(NS){
         	print: {
         		event: function(e){
         			var targ = e.target,
-	    				id = targ.getData('id'),
-	    				type = targ.getData('type');
+	    				url = '/recordbook/print/' + targ.getData('id') + "/" + targ.getData('type');
         			
-        				this.get('appInstance').printSheet(id, type);
+        				this.get('appInstance').printSheet(url, 'recordbookPrint');
         		}
         	},
         	'depart-modal-show': {

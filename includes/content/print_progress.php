@@ -9,81 +9,81 @@
 class PrintProgress {
 	
 	public $groupItem = null;
-	private $v = null;
-	private $brick = null;
-	private $fullname = "";
-	private $shortname = "";
+	private $_v = null;
+	private $_brick = null;
+	private $_fullname = "";
+	private $_shortname = "";
 	
-	private $subjectidArr = null;
+	private $_subjectidArr = null;
 
-	private $tdheadForm = "";
-	private $tdheadSubj = "";
-	private $rows = "";
+	private $_tdheadForm = "";
+	private $_tdheadSubj = "";
+	private $_rows = "";
 	
-	private $data = null;
-	private $db = null;
-	private $recordBook = null;
+	private $_data = null;
+	private $_db = null;
+	private $_recordBook = null;
 	
-	private $mark = null;
-	private $markProj = null;
+	private $_mark = null;
+	private $_markProj = null;
 	
-	private $creditLight = 0;
+	private $_creditLight = 0;
 	
 	public function __construct($dir, $modManager){
-		$this->data = new stdClass();
-		$this->data->groupid = intval($dir[2]);
-		$this->data->numcrs = intval($dir[3]);
-		$this->data->semestr = intval($dir[4]);
+		$this->_data = new stdClass();
+		$this->_data->groupid = intval($dir[2]);
+		$this->_data->numcrs = intval($dir[3]);
+		$this->_data->semestr = intval($dir[4]);
 		
-		$this->db = $modManager->db;
-		$this->recordBook = $modManager->GetRecordBook();
+		$this->_db = $modManager->db;
+		$this->_recordBook = $modManager->GetRecordBook();
 		
-		$this->brick = Brick::$builder->brick;
+		$this->_brick = brick::$builder->brick;
 
-		$this->v = &$this->brick->param->var;
+		$this->_v = &$this->_brick->param->var;
 
 		$phrases = Abricos::GetModule('university')->GetPhrases();
 
-		$this->fullname = $phrases->Get('fullname')->value;
-		$this->shortname = $phrases->Get('shortname')->value;
+		$this->_fullname = $phrases->Get('_fullname')->value;
+		$this->_shortname = $phrases->Get('_shortname')->value;
 		
 		$this->groupItem = $this->GroupItem();
 		
-		$this->data->fieldid = intval($this->groupItem->fieldid);
+		$this->_data->fieldid = intval($this->groupItem->fieldid);
 		
-		$this->subjectidArr = new stdClass();
-			$this->subjectidArr->isNotProject = array();
-			$this->subjectidArr->isProject = array();
+		$this->_subjectidArr = new stdClass();
+			$this->_subjectidArr->isNotProject = array();
+			$this->_subjectidArr->isProject = array();
 	}
 
 	public function GroupItem(){
-		return $this->recordBook->GroupItem($this->data->groupid);
+		return $this->_recordBook->GroupItem($this->_data->groupid);
 	}
 
 	public function StudList(){
-		return $this->recordBook->ProgressPrint($this->data->groupid, 'StudList');
+		return $this->_recordBook->ProgressPrint($this->_data->groupid, 'StudList');
 	}
 	
 	public function MarkList($project){
-		$this->data->view = 1;
-		$res = $this->recordBook->ProgressMarkPrint($this->data, $project);
+		$this->_data->view = 1;
+		$res = $this->_recordBook->ProgressMarkPrint($this->_data, $project);
 
 		if(!$project){
-			$this->mark = $this->MarkRenderArray($res);
+			$this->_mark = $this->MarkRenderArray($res);
 		} else {
-			$this->markProj = $this->MarkRenderArray($res);
+			$this->_markProj = $this->MarkRenderArray($res);
 		}
 	}
 	
 	public function MarkRenderArray($res){
 		$arr = Array();
-			while($dd = $this->db->fetch_array($res)){
+			while($dd = $this->_db->fetch_array($res)){
 				array_push($arr, $dd);
 			}
 			return $arr;
 	}
 	public function SubjectList(){
-		return $this->recordBook->ProgressPrint($this->data, 'SubjectListProgress');
+		return $this->_recordBook->ProgressPrint($this->_data, 'SubjectListProgress');
 	}
 
 	public function ParseSubjectList($subjectList){
@@ -93,7 +93,7 @@ class PrintProgress {
 			$formControl->pract = array();
 			$formControl->proj = array();
 			
-		while($subject = $this->db->fetch_array($subjectList)){
+		while($subject = $this->_db->fetch_array($subjectList)){
 				$temporArr = array($subject['id'], $subject['namesubject']);
 				
 				$project = false;
@@ -137,7 +137,7 @@ class PrintProgress {
 			switch($form){
 				case 'exam':
 					$exam = true;
-					$this->creditLight = $colspan;
+					$this->_creditLight = $colspan;
 					$formEdu = 'Экзамены';
 						break;
 				case 'credit':
@@ -153,11 +153,11 @@ class PrintProgress {
 			}
 			
 			if($colspan > 0){
-				$this->tdheadForm .= $this->ReplaceTdHeadForm($formEdu, $colspan, $exam);
+				$this->_tdheadForm .= $this->ReplaceTdHeadForm($formEdu, $colspan, $exam);
 					
 				foreach ($subject as $keySubj => $name){
-					array_push($this->subjectidArr->$key, $name[0]);
-					$this->tdheadSubj .= $this->ReplaceTdheadSubj($name[1], $exam, $keySubj);
+					array_push($this->_subjectidArr->$key, $name[0]);
+					$this->_tdheadSubj .= $this->ReplaceTdheadSubj($name[1], $exam, $keySubj);
 				}
 			}
 		}
@@ -173,15 +173,15 @@ class PrintProgress {
 			}
 		
 		$n = 0;
-		while($student = $this->db->fetch_array($studList)){
+		while($student = $this->_db->fetch_array($studList)){
 			$td = "";
 			$lstGroup = $student['listgroup'] !== null ? true : false;
 			
-			$td .= $this->RenderMarkList($student, 'mark', 'isNotProject');
+			$td .= $this->RenderMarkList($student, '_mark', 'isNotProject');
 			
-			$td .= $this->RenderMarkList($student, 'markProj', 'isProject');
+			$td .= $this->RenderMarkList($student, '_markProj', 'isProject');
 			
-			$this->rows .= Brick::ReplaceVarByData($this->v['tr'], array(
+			$this->_rows .= brick::ReplaceVarByData($this->_v['tr'], array(
 				"clsName" => $lstGroup ? "class='tdLightTop'" : "",
 				"n" =>  ++$n,
 				"fio" => preg_replace($pattern, '$1 $2. $3.', $student['fio']),
@@ -194,7 +194,7 @@ class PrintProgress {
 	public function RenderMarkList($student, $markList, $isProject){
 		$td = "";
 		
-		foreach($this->subjectidArr->$isProject as $keyid => $subjectid){
+		foreach($this->_subjectidArr->$isProject as $keyid => $subjectid){
 			$empty = true;
 			
 			foreach($this->$markList as $keyMark => $mark){
@@ -203,9 +203,9 @@ class PrintProgress {
 						$empty = false;
 							$td .= $this->ReplaceTdBody($mark['mark'], $keyid);
 								if($markList === 'mark') {
-									unset($this->mark[$keyMark]);
+									unset($this->_mark[$keyMark]);
 								} else {
-									unset($this->markProj[$keyMark]);
+									unset($this->_markProj[$keyMark]);
 								}
 									break;
 					}
@@ -220,14 +220,14 @@ class PrintProgress {
 	}
 	
 	public function ReplaceTdBody($mark, $examCol){
-		return Brick::ReplaceVarByData($this->v['td'], array(
-				"clsName" =>  $examCol === $this->creditLight - 1 ? "class='tdLightRight'" : "",
-				"mark" => $this->recordBook->SetTradMark($mark, true)
+		return brick::ReplaceVarByData($this->_v['td'], array(
+				"clsName" =>  $examCol === $this->_creditLight - 1 ? "class='tdLightRight'" : "",
+				"mark" => $this->_recordBook->SetTradMark($mark, true)
 		));
 	}
 	
 	public function ReplaceTdHeadForm($formEdu, $colspan, $exam){
-		return Brick::ReplaceVarByData($this->v['tdheadForm'], array(
+		return brick::ReplaceVarByData($this->_v['tdheadForm'], array(
 				"clsName" => $exam ? "class='tdLightRight'" : "", 
 				"colspan" => $colspan,
 				"formEdu" => $formEdu
@@ -238,27 +238,27 @@ class PrintProgress {
 		$clsName = "";
 		
 		if($exam){
-			$clsName = $keySubj === $this->creditLight - 1 ? "class='tdLightRight'" : "";
+			$clsName = $keySubj === $this->_creditLight - 1 ? "class='tdLightRight'" : "";
 		}
-		return Brick::ReplaceVarByData($this->v['tdheadSubj'], array(
+		return brick::ReplaceVarByData($this->_v['tdheadSubj'], array(
 				"clsName" => $clsName, 
 				"subject" => $namesubject
 		));
 	}
 
 	public function FillBrickContent(){
-		$year = $this->groupItem->dateline + $this->data->numcrs - 1;
+		$year = $this->groupItem->dateline + $this->_data->numcrs - 1;
 
-		$this->brick->content = Brick::ReplaceVarByData($this->brick->content, array(
-				"fullname" => $this->fullname,
-				"shortname" => $this->shortname,
+		$this->_brick->content = brick::ReplaceVarByData($this->_brick->content, array(
+				"fullname" => $this->_fullname,
+				"shortname" => $this->_shortname,
 				"numgroup" => $this->groupItem->numgroup,
-				"field" => $this->groupItem->fieldcode." "."«".$this->groupItem->field."»",
-				"semestr" => $this->data->semestr === 1 ? 'осенний' : 'весенний',
+				"field" => $this->groupItem->code." "."«".$this->groupItem->name."»",
+				"semestr" => $this->_data->semestr === 1 ? 'осенний' : 'весенний',
 				"year" => $year . "/" . ($year + 1),
-				"tdheadForm" => $this->tdheadForm,
-				"tdheadSubj" => $this->tdheadSubj,
-				"rows" => $this->rows
+				"tdheadForm" => $this->_tdheadForm,
+				"tdheadSubj" => $this->_tdheadSubj,
+				"rows" => $this->_rows
 		));
 	}
 }

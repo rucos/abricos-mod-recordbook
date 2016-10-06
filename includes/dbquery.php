@@ -245,7 +245,6 @@ class RecordBookQuery {
     				g.dateline,
     				f.fieldid,
     				f.frmstudy,
-    				f.frmstudy,
     				f.note,
     				p.code,
     				p.name,

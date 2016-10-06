@@ -107,9 +107,11 @@ Component.entryPoint = function(NS){
         	var callback = this.get('callback'),
         		filterSemestr = this.get('semestr'),
         		filterCourse = this.get('course');
-        		
-        	if(filterSemestr && filterCourse){
-        		callback();        		
+        	
+        	if(callback){
+            	if(filterSemestr && filterCourse){
+            		callback();        		
+            	}
         	}
         }
     }, {

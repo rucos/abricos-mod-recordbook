@@ -167,16 +167,16 @@ Component.entryPoint = function(NS){
 			
 			switch(groupMenu){
 				case 'groupList':
-					 this.groupMenu = new NS.StudListWidget(obj);
-					break;
+					this.groupMenu = new NS.StudListWidget(obj);
+						break;
 				case 'groupSheet':
 					obj.fieldid = this.get('groupItem').get('fieldid');
-					
-					this.groupMenu = new NS.SheetEditorWidget(obj);
-						break;
+						this.groupMenu = new NS.SheetEditorWidget(obj);
+							break;
 				case 'groupProgress':
-					 this.groupMenu = new NS.ProgressViewWidget(obj);
-						break;
+					obj.fieldid = this.get('groupItem').get('fieldid');
+						this.groupMenu = new NS.ProgressViewWidget(obj);
+							break;
 			}
 			
 			tp.addClass('groupMenu.' + groupMenu, 'active');

@@ -13,37 +13,10 @@ Component.entryPoint = function(NS){
 
     NS.ProgressViewWidget = Y.Base.create('progressViewWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
-        	var groupid = this.get('groupid');
-        	
-          	this.set('waiting', true);
-	          	appInstance.groupItem(groupid, function(err, result){
-	    			this.set('waiting', false);
-	    				this.set('groupItem', result.groupItem);
-	    					this.renderGroup();
-	    		}, this);
+
         },
         destructor: function(){
         	
-        },
-        renderGroup: function(){
-        	var groupItem = this.get('groupItem'),
-        		tp = this.template;
-        	
-        	tp.setHTML('groupInfo', tp.replace('groupInfo', [groupItem.toJSON()]));
-        	
-        	this.set('course', groupItem.get('numcrs'));
-        },
-        renderDropdown: function(value, name){
-        	var tp = this.template,
-        		view = this.get('view');
-        	
-				tp.setValue('groupInfo.inp_'+name, value);
-				tp.removeClass('groupInfo.div_'+name, 'open');
-				
-				this.set(name, value);
-					if(view){
-						this.reqSubjectList();
-					}
         },
         reqSubjectList: function(){
         	var group = this.get('groupItem'),
@@ -224,11 +197,8 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,groupInfo,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd'},
+            templateBlockName: {value: 'widget,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd'},
             groupid: {value: 0},
-            groupItem: {value: null},
-            course: {value: 0},
-            semestr: {value: null},
             subjectList: {value: null},
             markList: {value: null},
             studList: {value: null},
@@ -236,33 +206,6 @@ Component.entryPoint = function(NS){
             markListProj: {value: null}
         },
         CLICKS: {
-        	close:{
-        		event: function(){
-        			this.go('managerGroups.view');
-        		}
-        	},
-        	choiceCourse: {
-        		event: function(e){
-        			var a = e.target.getDOMNode();
-        			
-        			if(!a.href){
-        				return;
-        			}
-        			
-        			this.renderDropdown(a.textContent, 'course');
-        		}
-        	},
-        	choiceSemestr: {
-        		event: function(e){
-        			var a = e.target.getDOMNode();
-        			
-        			if(!a.href){
-        				return;
-        			}
-        			
-        			this.renderDropdown(a.textContent, 'semestr');
-        		}
-        	},
         	choiceViewStat: {
         		event: function(e){
         			var view = e.target.getData('view'),
@@ -301,10 +244,4 @@ Component.entryPoint = function(NS){
         	}
         }
     });
-
-    NS.ProgressViewWidget.parseURLParam = function(args){
-        return {
-        	groupid: args[0]
-        };
-    };
 };

@@ -1,74 +1,18 @@
 <!--{widget}-->
-<div class="panel panel-default">
-	<div class="panel-heading hidden-print">
-		<div class="row">
-            <div class="col-md-7">
-                <h3 class="panel-title">Сведения об успеваемости студентов</h3>
-            </div>
-            <div class="col-md-5">
-               	 <div class="btn-toolbar pull-right"> 
-                    <button data-click="close" type="button" class=" btn btn-default" data-wait="disable">
-                        Закрыть
-                    </button>
-           		</div>
-
-                <span data-wait="show" class="pull-right">
-                    <img src="/images/loading.gif"/>
-                </span>
-            </div>
-        </div>
+<span data-wait="show" class="pull-right">
+    <img src="/images/loading.gif"/>
+</span>
+<h3>Сведения об успеваемости студентов</h3>
+   	<div id="{i#pagination}">
+   		<div id="{i#pag}"></div>
+   </div>
+   <hr>
+	<div class="input-group" data-click="choiceViewStat">
+		<button id="{i#view1}" type="button" class="btn btn-default" data-view="1">Сводная ведомость</button>
+		<button id="{i#view2}" type="button" class="btn btn-default" data-view="2">Семестровый рейтинг</button>
+		<button type="button" class="btn btn-default" data-click="print">Печать</button> 
 	</div>
-	<div class="panel-body">
-		<div id="{i#groupInfo}"></div>
-	</div>
-</div>
-
-
-<!--{groupInfo}-->
-<p><label>Номер группы:</label> {v#numgroup}</p>
-<p><label>Направление:</label> {v#fieldcode} {v#field} {v#note}</p>
-<p><label>Форма обучения:</label> {v#frmstudy}</p> 
-<p><label>Год поступления:</label> {v#dateline}</p>
-		<div class="row">
-			<div class="col-md-2">
-			 	<div class="input-group"> 
-					<div class="input-group-btn" id="{i#div_course}">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Курс <span class="caret"></span></button>
-								<ul class="dropdown-menu" data-click="choiceCourse" >
-									<li><a href="" >1</a></li>
-									<li><a href="" >2</a></li>
-									<li><a href="" >3</a></li>
-									<li><a href="" >4</a></li>
-									<li><a href="" >5</a></li>
-								</ul>
-					</div>
-						<input type="text" class="form-control" id="{i#inp_course}" value="{v#numcrs}" disabled>
-				</div>
-			</div>
-			<div class="col-md-3">
-				<div class="input-group"> 
-					<div class="input-group-btn" id="{i#div_semestr}">
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Семестр <span class="caret"></span></button>
-								<ul class="dropdown-menu" data-click="choiceSemestr" >
-									<li><a href="" >осенний</a></li>
-									<li><a href="" >весенний</a></li>
-								</ul>
-					</div>
-						<input type="text" class="form-control" id="{i#inp_semestr}" disabled>
-				</div>
-			</div>
-			<div class="col-md-1">
-				<button type="button" class="btn btn-default" data-click="print">Печать</button>
-			</div>			
-			<div class="col-md-6">
-					<div class="input-group" data-click="choiceViewStat"> 
-						<button id="{i#view1}" type="button" class="btn btn-default" data-view="1">Сводная ведомость</button>
-						<button id="{i#view2}" type="button" class="btn btn-default" data-view="2">Семестровый рейтинг</button>
-					</div>
-			</div>
-		</div>
-		<hr>
-				<div id="{i#markTable}"></div>
+	<div id="{i#markTable}"></div>
 
 <!--{markTable}-->
 <div id="scroll" contentEditable="false">

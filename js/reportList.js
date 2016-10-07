@@ -15,12 +15,12 @@ Component.entryPoint = function(NS){
         onInitAppWidget: function(err, appInstance){
         	var self = this;
 
-        	this.paginationCourse = new NS.PaginationCourseWidget({
-        		srcNode: this.template.gel('pagCourse'),
-        		callback: function(){
-        			self.reloadMarkList();
-        		}
-        	});
+	        	this.paginationCourse = new NS.PaginationCourseWidget({
+	        		srcNode: this.template.gel('pagCourse'),
+	        		callback: function(){
+	        			self.reloadMarkList();
+	        		}
+	        	});
         },
         destructor: function(){
             if (this.paginationCourse){
@@ -94,7 +94,7 @@ Component.entryPoint = function(NS){
         setLstGroup: function(group, active){
         	var tp = this.template,
         		lst = "";
-
+        	
 	        	lst = tp.replace('itemGroups', [{
 	        			active: active ? 'active' : ''
 	        		}, group.toJSON()]);
@@ -107,8 +107,8 @@ Component.entryPoint = function(NS){
         			fieldid: this.get('fieldid'),
         			groupid: this.get('groupid'),
         			studid:  reportItem.get('studid'),
-        			course: this.paginationCourse.get('filterCourse'),
-        			semestr: this.paginationCourse.get('filterSemestr')
+        			course: this.paginationCourse.get('course'),
+        			semestr: this.paginationCourse.get('semestr')
         		};
         	
         	if(data.course && data.semestr){

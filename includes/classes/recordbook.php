@@ -644,13 +644,17 @@ class RecordBook extends AbricosApplication {
        			}
        				
        				if($credit === true){
-       					$d['mark'] = $d['mark'] > 51 ? 102 : 101;
+       					$d['mark'] = $this->CreditSetMark($d['mark']);
        				} 
        			
        			$data = (object) $d;
        			RecordBookQuery::MarkUpdate($this->db, $data);
        		}
        		return true;
+       	}
+       	
+       	private function CreditSetMark($mark){
+       		return $mark >= 51 ? 102 : 101;
        	}
        	
        	public function MarkUpdateToJSON($d){
@@ -680,7 +684,7 @@ class RecordBook extends AbricosApplication {
        			}
        			
        			if($credit === true){
-       				$d->mark = $d->mark > 51 ? 102 : 101;
+       				$d->mark = $this->CreditSetMark($d->mark);
        			}
        			RecordBookQuery::MarkUpdate($this->db, $d);
        	}

@@ -153,4 +153,11 @@ if ($updateManager->isUpdate('0.2.5') && !$updateManager->isInstall()){
 		ADD teacherid int(10) unsigned NOT NULL default 0 COMMENT 'id преподаваетеля'
 	");
 }
+
+if ($updateManager->isUpdate('0.2.6.1') && !$updateManager->isInstall()){
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_sheet
+		DROP fioteacher
+	");
+}
 ?>

@@ -17,7 +17,7 @@ class RecordBookModule extends Ab_Module {
 
     public function RecordBookModule(){
         RecordBookModule::$instance = $this;
-        $this->version = "0.2.5";
+        $this->version = "0.2.6.1";
         $this->name = "recordbook";
         $this->takelink = "recordbook";
         $this->permission = new RecordBookPermission($this);

@@ -943,7 +943,6 @@ class RecordBookQuery {
     }
     
     public static function FindStudReport(Ab_Database $db, $value){
-    	
     	$sql = "
     		SELECT
 					s.groupid as id,
@@ -965,7 +964,7 @@ class RecordBookQuery {
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
     		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
     		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
-    		WHERE numbook='".bkstr($value)."' OR fio='".bkstr($value)."'
+    		WHERE s.numbook='".bkstr($value)."' OR s.fio REGEXP '".bkstr($value)."'
     		LIMIT 1
     	";
     	return $db->query_first($sql);

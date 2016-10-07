@@ -718,11 +718,6 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function Find($d){
-       	
-       		if (isset($this->_cache[$d->type][$d->value])){
-       			return $this->_cache[$d->type][$d->value];
-       		}
-       		
        		$utmf = Abricos::TextParser(true);
        		$d->value = $utmf->Parser($d->value);
        		
@@ -749,10 +744,10 @@ class RecordBook extends AbricosApplication {
        		$itemClass = $d->type."Item";
        		
        		$list = $this->models->InstanceClass($listClass);       		
-       		while (($dd = $this->db->fetch_array($rows))){
+       		while ($dd = $this->db->fetch_array($rows)){
        			$list->Add($this->models->InstanceClass($itemClass, $dd));
        		}
-       		return $this->_cache[$d->type][$d->value] = $list;
+       		return $list;
        	}
        	
        	public function FillModalToJSON($d){

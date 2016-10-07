@@ -49,13 +49,14 @@ Component.entryPoint = function(NS){
             templateBlockName: {value: 'widget, paginator, liPagePagin'},
             currentPage: {value: 1},
             countRow: {value: 0},
-            parent: ''
+            callback: ''
         },
         CLICKS: {
         	changePage: {
         		event: function(e){
                 	var page =  this.get('currentPage'),
-	            		type = e.target.getData('type');
+	            		type = e.target.getData('type'),
+	            		callback = this.get('callback');
             	
 	            	switch(type){
 	            		case 'prev': page--; break;
@@ -66,7 +67,10 @@ Component.entryPoint = function(NS){
 	            	}
                 	this.set('currentPage', page);
                 	
-	            	this.get('parent').reloadList();
+                	if(callback){
+                		callback(page);
+                	}
+                	
         		}
         	}
         }

@@ -20,7 +20,9 @@ Component.entryPoint = function(NS){
         	
             this.pagination = new NS.PaginationWidget({
                 srcNode: tp.gel('pag'),
-                parent: this
+                callback: function() {
+        			self.reloadList();	
+        		}
             });
             
         	this.paginationCourse = new NS.PaginationCourseWidget({

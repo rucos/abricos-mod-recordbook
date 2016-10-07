@@ -72,6 +72,8 @@ Component.entryPoint = function(NS){
         	var markList = this.get('markList'),
         		sheetItem = this.get('sheetItem'),
         		arrAttest = sheetItem.get('attestation'),
+        		formcontrol = sheetItem.get('formcontrol'),
+        		project = sheetItem.get('project'),
         		tp = this.template,
         		num = 0,
         		lst = "";
@@ -80,7 +82,7 @@ Component.entryPoint = function(NS){
 		    		var markValue = mark.get('mark'),
 		    			success = this.setSuccess(markValue);
 		    		
-						if(sheetItem.get('formcontrol') === 'Зачет'){
+						if(formcontrol === 'Зачет' && project.indexOf('1') < 0){
 							markValue = markValue === 102 ? 'Зач' : 'Незач'
 						} 
 					
@@ -170,9 +172,11 @@ Component.entryPoint = function(NS){
 				this.reqMark(objPoint);
 	    },
 	    isCredit: function(mark){
-	    	var formcontrol = this.get('sheetItem').get('formcontrol');
+	    	var sheetItem = this.get('sheetItem'),
+	    		formcontrol = sheetItem.get('formcontrol'),
+	    		project = sheetItem.get('project');
 	    	
-				if(formcontrol === 'Зачет'){
+				if(formcontrol === 'Зачет' && project.indexOf('1') < 0){
 					mark = mark >= 51 ? 'Зач' : 'Незач';
 				} 
 				return mark;

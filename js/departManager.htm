@@ -23,10 +23,11 @@
 <!--{departList}-->
 <a href="" data-click="add-show">+Добавить кафедру</a>
 <div id="{i#addWidget}"></div>
-<div id="{i#departList}" class="list-group">
-	{v#lst}
+<div contentEditable="false" style="width:auto; height:450px; overflow:auto">
+	<div id="{i#departList}" class="list-group">
+		{v#lst}
+	</div>
 </div>
-
 <!--{departItem}-->
 <div id="{i#item}-{v#id}" class="list-group-item {v#danger}" data-id="{v#id}" data-click="choiceDepart">
 	    <h4 class="list-group-item-heading">

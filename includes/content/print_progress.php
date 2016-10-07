@@ -202,7 +202,7 @@ class PrintProgress {
 					if($student['id'] == $mark['studid']){
 						$empty = false;
 							$td .= $this->ReplaceTdBody($mark['mark'], $keyid);
-								if($markList === 'mark') {
+								if($markList === '_mark') {
 									unset($this->_mark[$keyMark]);
 								} else {
 									unset($this->_markProj[$keyMark]);

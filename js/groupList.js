@@ -14,13 +14,18 @@ Component.entryPoint = function(NS){
  
     NS.GroupListWidget = Y.Base.create('groupListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
-        	var lib = this.get('appInstance'),
-        		tp = this.template,
-        		frmstudy = lib.get('frmstudy');
+        	var tp = this.template,
+        		frmstudy = appInstance.get('frmstudy'),
+        		currentPage = appInstance.get('pageGroup'),
+        		self = this;
         	
             this.pagination = new NS.PaginationWidget({
                 srcNode: tp.gel('pag'),
-                parent: this
+                currentPage: currentPage,
+                callback: function(page){
+                	appInstance.set('pageGroup', page);
+                	self.reloadList();
+                }
             });
 
         	if(frmstudy){
@@ -75,6 +80,7 @@ Component.entryPoint = function(NS){
         		if(!err){
         			if(result.groupList.size() === 0 && data.page !== 1){
         				this.pagination.set('currentPage', --data.page);
+        				lib.set('pageGroup', data.page);
         					this.reloadList();
         			} else {
         				this.set('groupList', result.groupList);
@@ -241,13 +247,15 @@ Component.entryPoint = function(NS){
         			var tp = this.template,
         				targ = e.target,
         				val = targ.getData('value'),
-        				button = targ.getDOMNode();
+        				button = targ.getDOMNode(),
+        				lib = this.get('appInstance');
         			
         			if(!val){
         				return;
         			}
         				
-        			this.get('appInstance').set('frmstudy', val);        				
+        			lib.set('frmstudy', val);
+        			lib.set('pageGroup', 1);
         			
         			this.setColorButton();
         			

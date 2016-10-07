@@ -266,7 +266,8 @@ Component.entryPoint = function(NS){
         	DepartList: {value: NS.DepartList},
         	DepartItem: {value: NS.DepartItem},
         	TeacherList: {value: NS.TeacherList},
-        	TeacherItem: {value: NS.TeacherItem}
+        	TeacherItem: {value: NS.TeacherItem},
+        	pageGroup: {value: 1}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",

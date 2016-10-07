@@ -300,13 +300,15 @@ class RecordBookQuery {
     				g.numgroup,
     				g.numcrs,
     				g.dateline,
-    				f.field,
+    				p.name,
     				f.fieldid,
-    				f.fieldcode,
+    				p.code,
     				f.frmstudy,
     				f.note
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
     		WHERE g.numgroup LIKE '".bkstr($d->value)."%' 
     				AND f.frmstudy = '".bkstr($d->frmstudy)."'
     						AND g.remove = 0

@@ -198,6 +198,7 @@ class RecordBookQuery {
     				p.name,
     				e.level,
     				f.note,
+    				f.fieldid,
     				f.remove
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid

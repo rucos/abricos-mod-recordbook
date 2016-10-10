@@ -59,7 +59,7 @@
 <tr class="{v#success} {v#danger}">
     <td>{v#numgroup}({v#numcrs}) </td>
     <td>{v#dateline}</td>
-    <td>{v#code} {v#name} {v#level} {v#note} {v#label}</td>
+    <td>{v#nameprogram}</td>
     <td>
     	 <button data-click="showGroupMenu" data-id="{v#id}" data-groupMenu="groupList" class="btn btn-default btn-xs" data-wait="disable">
             Список группы
@@ -95,3 +95,6 @@
 
 <!--{label}-->
 <span class="label label-danger">Удален</span>
+
+<!--{hrefNameProgram}-->
+<a href="" data-click="showFieldItem" data-id="{v#fieldid}">{v#code} {v#name} {v#level} {v#note} {v#label}</a>

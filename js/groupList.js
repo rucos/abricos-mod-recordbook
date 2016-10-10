@@ -97,12 +97,16 @@ Component.entryPoint = function(NS){
         		find = lib.get('findGroup');
         	
         	groupList.each(function(group){
-        		lst += tp.replace('row', [{
-        			success: find ? 'success' : '',
-        			label: group.get('remove') ? tp.replace('label') : "",
-        			danger: group.get('grRemove') ? 'danger' : '',
-        			remove: group.get('grRemove') ? 'Восстановить' : 'Удалить'
-        		}, group.toJSON()]);
+        		var gr = group.toJSON();
+        		
+	        		lst += tp.replace('row', [{
+	        			success: find ? 'success' : '',
+	        			danger: gr.grRemove ? 'danger' : '',
+	        			remove: gr.grRemove ? 'Восстановить' : 'Удалить',
+	        			nameprogram: tp.replace('hrefNameProgram', [{
+	        				label: gr.remove ? tp.replace('label') : ""
+	        			}, gr])
+	        		}, gr]);
         	});
         		tp.setHTML('list', tp.replace('table', {rows: lst}));
         		
@@ -168,7 +172,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,table,row,label'},
+            templateBlockName: {value: 'widget,table,row,label,hrefNameProgram'},
             groupList: {value: null},
             countGroup: {value: 0}
         },
@@ -263,6 +267,13 @@ Component.entryPoint = function(NS){
         			tp.show('groupList');
         				
         			this.showGroupList();
+        		}
+        	},
+        	showFieldItem: {
+        		event: function(e){
+        			var id = e.target.getData('id');
+        			
+        				this.go('field.editor', id);
         		}
         	}
         }

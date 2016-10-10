@@ -49,7 +49,7 @@ Component.entryPoint = function(NS){
         		this.markList.destroy();
         	}
         },
-        markListStat: function(choice){
+        markListStat: function(isSet){
         	var lib =  this.get('appInstance'),
         		data = {
         			fieldid: this.get('fieldid'),
@@ -60,7 +60,7 @@ Component.entryPoint = function(NS){
         			from: 'progressViewWidget'
         		};
         		
-        	if(choice){
+        	if(isSet){
 	        	lib.set('courseChoice', data.numcrs);
 	        	lib.set('semestrChoice', data.semestr);
         	}
@@ -273,7 +273,9 @@ Component.entryPoint = function(NS){
         			
         			if(id){//sheetShow
 	        			this.markList.set('sheetid', id);
-		        		this.markList.reloadList();
+		        		this.markList.reloadList(function(){
+		        			self.markListStat();
+		        		});
         			} else {//lightTd
         				node = targ.getDOMNode();
         				

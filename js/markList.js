@@ -17,11 +17,15 @@ Component.entryPoint = function(NS){
         onInitAppWidget: function(err, appInstance){
         	this.get('boundingBox').on('change', this.change, this);
         },
-        reloadList: function(){
+        reloadList: function(callback){
         	var data = {
         		sheetid: this.get('sheetid'),
         		mark: true
         	};
+        	
+        	if(callback){
+        		this.set('callback', callback);
+        	}
         	
 	        	this.set('waiting', true);
 		        	this.get('appInstance').sheetItem(data, function(err, result){
@@ -261,12 +265,18 @@ Component.entryPoint = function(NS){
             sheetid: {value: 0},
             sheetItem: {value: null},
             markList: {value: null},
-            attestation: {value: null}
+            attestation: {value: null},
+            callback: {value: ''}
         },
         CLICKS: {
         	closeModal: {
         		event: function(){
-        			this.template.setHTML('modal', '');
+        			var callback = this.get('callback');
+	        			
+	        			if(callback){
+	        				callback();
+	        			}
+	        			this.template.setHTML('modal', '');
         		}
         	},
         	print: {

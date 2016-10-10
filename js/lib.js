@@ -269,7 +269,8 @@ Component.entryPoint = function(NS){
         	TeacherItem: {value: NS.TeacherItem},
         	pageGroup: {value: 1},
         	courseChoice: {value: 0},
-        	semestrChoice: {value: 0}
+        	semestrChoice: {value: 0},
+        	progressView: {value: ''}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
@@ -312,6 +313,7 @@ Component.entryPoint = function(NS){
 	        			
 	        			this.set('courseChoice', 0);
 	        			this.set('semestrChoice', 0);
+	        			this.set('progressView', '');
 	        			
 	        			return url;
                 },

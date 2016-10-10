@@ -15,7 +15,8 @@ Component.entryPoint = function(NS){
         onInitAppWidget: function(err, appInstance){
         	var self = this,
         		course = appInstance.get('courseChoice'),
-        		semestr = appInstance.get('semestrChoice');
+        		semestr = appInstance.get('semestrChoice'),
+        		view = appInstance.get('progressView');
         	
 	    		this.paginator = new NS.PaginationCourseWidget({
 	                srcNode: this.template.gel('pag'),
@@ -29,6 +30,9 @@ Component.entryPoint = function(NS){
         			this.paginator.setCourse(course);
         			this.paginator.setSemestr(semestr);
         			
+        			this.set('view', view);
+        			this.setPrimary(view);
+        			
 	    			this.markListStat();
 	    		}
         },
@@ -38,15 +42,20 @@ Component.entryPoint = function(NS){
         	}
         },
         markListStat: function(choice){
-        	var data = {
+        	var lib =  this.get('appInstance'),
+        		data = {
         			fieldid: this.get('fieldid'),
         			numcrs: this.paginator.get('course'),
         			semestr: this.paginator.get('semestr'),
         			groupid: this.get('groupid'),
         			view: this.get('view'),
         			from: 'progressViewWidget'
-        		},
-        		lib =  this.get('appInstance');
+        		};
+        		
+        	if(choice){
+	        	lib.set('courseChoice', data.numcrs);
+	        	lib.set('semestrChoice', data.semestr);
+        	}
         	
         	if(!data.numcrs){
         		alert( 'Укажите курс' );
@@ -58,10 +67,6 @@ Component.entryPoint = function(NS){
     				return;
         	}
 
-        	if(choice){
-	        	lib.set('courseChoice', data.numcrs);
-	        	lib.set('semestrChoice', data.semestr);
-        	}
         		this.reqMarkListStat(data);
         },
         reqMarkListStat: function(data){
@@ -228,8 +233,8 @@ Component.entryPoint = function(NS){
             subjectList: {value: null},
             markList: {value: null},
             studList: {value: null},
-            view: {value: null},
-            markListProj: {value: null}
+            markListProj: {value: null},
+            view: {value: ''}
         },
         CLICKS: {
         	choiceViewStat: {
@@ -241,6 +246,7 @@ Component.entryPoint = function(NS){
 	        			this.setPrimary(view);
 	
 	        			this.set('view', view);
+	        			this.get('appInstance').set('progressView', view);
 	        				this.markListStat();
         		}
         	},

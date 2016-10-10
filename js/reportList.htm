@@ -19,6 +19,7 @@
 	<div id="{i#pagCourse}"></div>
 	<hr>
 	<div id="{i#tablMark}"></div>
+	<div id="{i#markList}"></div>
 	
 <!--{reportItem}-->
 <p><label>Номер зачетной книжки:</label> {v#numbook}</p>
@@ -47,7 +48,7 @@
 	     <th>Оценка</th>
     </tr>
     </thead>
-    <tbody>{v#rows}</tbody>
+    <tbody data-click="showSheet">{v#rows}</tbody>
 </table>
 
 <!--{row}-->
@@ -61,3 +62,6 @@
 
 <!--{label}-->
 <span class="label label-danger">Отчислен</span>
+
+<!--{subject}-->
+<a href="" data-sheetid="{v#sheetid}">{v#name}</a>

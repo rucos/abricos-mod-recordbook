@@ -991,6 +991,7 @@ class RecordBookQuery {
     						  sj.formcontrol,
     						  sj.project,
     						  sh.type,
+    					  	  sh.sheetid,
     						  MAX(sh.date) as date,
     						  MAX(m.mark) as mark
     					FROM ".$db->prefix."rb_marks m

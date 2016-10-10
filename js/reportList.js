@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js', 'markList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -13,18 +13,26 @@ Component.entryPoint = function(NS){
  
     NS.ReportListWidget = Y.Base.create('reportListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
-        	var self = this;
+        	var self = this,
+        		tp = this.template;
 
 	        	this.paginationCourse = new NS.PaginationCourseWidget({
-	        		srcNode: this.template.gel('pagCourse'),
+	        		srcNode: tp.gel('pagCourse'),
 	        		callback: function(){
 	        			self.reloadMarkList();
 	        		}
+	        	});
+	        	
+	        	this.markList = new NS.MarkListWidget({
+	        		srcNode: tp.gel('markList')
 	        	});
         },
         destructor: function(){
             if (this.paginationCourse){
                 this.paginationCourse.destroy();
+            }
+            if(this.markList){
+            	this.markList.destroy();
             }
         },
         reqFind: function(value){
@@ -136,7 +144,8 @@ Component.entryPoint = function(NS){
         			date: Brick.dateExt.convert(mark.get('date'), 2),
         			mark: tradMark,
         			cl: tradMark === '' ? 'class="danger"' : "",
-        			formcontrol: mark.get('type') >= 3 ? this.determFormControl(mark.get('project')) : mark.get('formcontrol')
+        			formcontrol: mark.get('type') >= 3 ? this.determFormControl(mark.get('project')) : mark.get('formcontrol'),
+        			namesubject: this.determNameSubject(mark.get('namesubject'), mark.get('sheetid'))
         		}, mark.toJSON()]);
         	}, this);
         	
@@ -147,6 +156,12 @@ Component.entryPoint = function(NS){
         	} else {
             	tp.setHTML('tablMark', 'Оценок нет');
         	}
+        },
+        determNameSubject: function(name, sheetid){
+        	return this.template.replace('subject', {
+        		sheetid: sheetid,
+        		name: name
+        	});
         },
         determFormControl: function(project){
         	return project.indexOf('1') > 0 ? 'Курсовой проект' : 'Курсовая работа';
@@ -176,7 +191,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, reportItem, table, row, label, listGroups, itemGroups'},
+            templateBlockName: {value: 'widget, reportItem, table, row, label, listGroups, itemGroups, subject'},
             reportItem: {value: null},
             markList: {value: null},
             oldGroups: {value: null},
@@ -210,6 +225,21 @@ Component.entryPoint = function(NS){
         			a.classList.add('active');
         			
         			this.reloadMarkList();
+        		}
+        	},
+        	showSheet: {
+        		event: function(e){
+        			var id = e.target.getData('sheetid'),
+        				self = this;
+        			
+        				if(!id){
+        					return;
+        				}
+        				
+        				this.markList.set('sheetid', id);
+    	        		this.markList.reloadList(function(){
+		        			self.reloadMarkList();
+		        		});
         		}
         	}
         }

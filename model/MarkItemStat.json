@@ -33,6 +33,14 @@
     "sheetid": {
       "type": "int",
       "json": "shid"
+    },
+    "project": {
+      "type": "string",
+      "json": "pr"
+    },
+    "type": {
+      "type": "int",
+      "json": "tp"
     }
   }
 }

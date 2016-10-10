@@ -135,8 +135,9 @@ Component.entryPoint = function(NS){
         			n: ++n,
         			date: Brick.dateExt.convert(mark.get('date'), 2),
         			mark: tradMark,
-        			cl: tradMark === '' ? 'class="danger"' : ""
-        		},mark.toJSON()]);
+        			cl: tradMark === '' ? 'class="danger"' : "",
+        			formcontrol: mark.get('type') >= 3 ? this.determFormControl(mark.get('project')) : mark.get('formcontrol')
+        		}, mark.toJSON()]);
         	}, this);
         	
         	if(lst.length){
@@ -146,6 +147,9 @@ Component.entryPoint = function(NS){
         	} else {
             	tp.setHTML('tablMark', 'Оценок нет');
         	}
+        },
+        determFormControl: function(project){
+        	return project.indexOf('1') > 0 ? 'Курсовой проект' : 'Курсовая работа';
         },
         unSetActive: function(){
         	var tp = this.template,

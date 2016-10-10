@@ -1019,11 +1019,6 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function MarkStudReport($d){
-       		
-       		if (isset($this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr])){
-       			return $this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr];
-       		}
-       		
        		$d->fieldid = intval($d->fieldid);
        		$d->groupid = intval($d->groupid);
        		$d->studid = intval($d->studid);
@@ -1037,7 +1032,14 @@ class RecordBook extends AbricosApplication {
        		while ($dd = $this->db->fetch_array($rows)){
        			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
        		}
-       		return $this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr] = $list;
+       		
+       		$project = RecordBookQuery::MarkStudReport($this->db, $d, true);
+       		
+       		while ($dd = $this->db->fetch_array($project)){
+       			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
+       		}
+       		
+       		return $list;
        	}
        	
        	public function SheetPrint($id, $quory){

@@ -977,13 +977,20 @@ class RecordBookQuery {
     	return $db->query_first($sql);
     }
     
-    public static function MarkStudReport(Ab_Database $db, $d){
+    public static function MarkStudReport(Ab_Database $db, $d, $project = false){
+    	$type = "sh.type < 3";
+    	
+    	if($project){
+    		$type = "sh.type >= 3";
+    	}
     	 
     			$sql = "
     					SELECT
     						  m.markid as id,
     						  sj.namesubject,
     						  sj.formcontrol,
+    						  sj.project,
+    						  sh.type,
     						  MAX(sh.date) as date,
     						  MAX(m.mark) as mark
     					FROM ".$db->prefix."rb_marks m
@@ -994,7 +1001,7 @@ class RecordBookQuery {
     								AND sj.fieldid = ".bkint($d->fieldid)."
     									AND sj.numcrs = ".bkint($d->course)."
 											AND sj.semestr = ".bkint($d->semestr)."
-												AND sh.type < 3
+												AND ".$type."
 						GROUP BY sj.namesubject
     			";
     			return $db->query_read($sql);

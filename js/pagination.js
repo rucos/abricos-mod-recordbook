@@ -94,6 +94,19 @@ Component.entryPoint = function(NS){
         		}
         	}
         },
+        setCourse: function(value){
+        	this.set('course', value);
+        	
+        	this.setActive(this.getChildren('course'), value);
+        },
+        setSemestr: function(value){
+        	this.set('semestr', value);
+        	
+        	this.setActive(this.getChildren('semestr'), value);
+        },
+        getChildren: function(bname){
+        	return this.template.gel('paginatorCourse.' + bname).children;
+        },
         showPagination: function(){
         	var tp = this.template;
         	
@@ -112,11 +125,11 @@ Component.entryPoint = function(NS){
         		filterSemestr = this.get('semestr'),
         		filterCourse = this.get('course');
         	
-        	if(callback){
-            	if(filterSemestr && filterCourse){
-            		callback();        		
-            	}
-        	}
+	        	if(callback){
+	            	if(filterSemestr && filterCourse){
+	            		callback();        		
+	            	}
+	        	}
         }
     }, {
         ATTRS: {

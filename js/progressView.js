@@ -264,13 +264,22 @@ Component.entryPoint = function(NS){
 	        				this.markListStat();
         		}
         	},
-        	lightRow: {
+        	tdAct: {
         		event: function(e){
         			var targ = e.target,
-        				node = targ.getDOMNode();
+        				id = targ.getData('sheetid'),
+        				node = '',
+        				self = this;
         			
-        			if(targ.hasClass('td-mark')){
-        				this.lightRow(node.parentNode.sectionRowIndex + 1, node.cellIndex);
+        			if(id){//sheetShow
+	        			this.markList.set('sheetid', id);
+		        		this.markList.reloadList();
+        			} else {//lightTd
+        				node = targ.getDOMNode();
+        				
+            			if(targ.hasClass('td-mark')){
+            				this.lightRow(node.parentNode.sectionRowIndex + 1, node.cellIndex);
+            			}
         			}
         		}
         	},
@@ -288,19 +297,6 @@ Component.entryPoint = function(NS){
                 	}
                 	
                 	this.printShow(numcrs, semestr);
-        		}
-        	},
-        	showSheet: {
-        		event: function(e){
-        			var id = e.target.getData('sheetid'),
-        				self = this;
-        			
-        				if(!id){
-        					return;
-        				}
-
-	        			this.markList.set('sheetid', id);
-		        		this.markList.reloadList();
         		}
         	}
         }

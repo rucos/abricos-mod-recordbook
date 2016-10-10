@@ -13,22 +13,31 @@ Component.entryPoint = function(NS){
 
     NS.ProgressViewWidget = Y.Base.create('progressViewWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
-        	var self = this;
+        	var self = this,
+        		course = appInstance.get('courseChoice'),
+        		semestr = appInstance.get('semestrChoice');
         	
 	    		this.paginator = new NS.PaginationCourseWidget({
 	                srcNode: this.template.gel('pag'),
 	                show: true,
 	                callback: function(){
-	                	self.markListStat();
+	                	self.markListStat(true);
 	                }
 	    		});
+	    		
+	    		if(course && semestr){
+        			this.paginator.setCourse(course);
+        			this.paginator.setSemestr(semestr);
+        			
+	    			this.markListStat();
+	    		}
         },
         destructor: function(){
         	if(this.paginator){
         		this.paginator.destroy();
         	}
         },
-        markListStat: function(){
+        markListStat: function(choice){
         	var data = {
         			fieldid: this.get('fieldid'),
         			numcrs: this.paginator.get('course'),
@@ -36,7 +45,8 @@ Component.entryPoint = function(NS){
         			groupid: this.get('groupid'),
         			view: this.get('view'),
         			from: 'progressViewWidget'
-        		};
+        		},
+        		lib =  this.get('appInstance');
         	
         	if(!data.numcrs){
         		alert( 'Укажите курс' );
@@ -46,6 +56,11 @@ Component.entryPoint = function(NS){
         			return;
         	} else if(!data.view){
     				return;
+        	}
+
+        	if(choice){
+	        	lib.set('courseChoice', data.numcrs);
+	        	lib.set('semestrChoice', data.semestr);
         	}
         		this.reqMarkListStat(data);
         },

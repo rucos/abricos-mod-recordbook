@@ -17,20 +17,30 @@ Component.entryPoint = function(NS){
         },
         onInitAppWidget: function(err, appInstance){
         	var tp = this.template,
-        		self = this;
+        		self = this,
+        		course = appInstance.get('courseChoice'),
+        		semestr = appInstance.get('semestrChoice');
         	
         		this.paginator = new NS.PaginationCourseWidget({
                     srcNode: tp.gel('pag'),
                     show: true,
                     callback: function(){
                     	self.showSheetAddPanel();
-                    	self.reqSheetList();
+                    	self.reqSheetList(true);
                     }
         		});
         		
         		this.markList = new NS.MarkListWidget({
         			srcNode: tp.gel('markList')
         		});
+        		
+        		if(course && semestr){
+        			this.paginator.setCourse(course);
+        			this.paginator.setSemestr(semestr);
+        			
+        			this.showSheetAddPanel();
+                	this.reqSheetList();
+        		}
         },
         destructor: function(){
         	if(this.paginator){
@@ -61,22 +71,28 @@ Component.entryPoint = function(NS){
             		tp.setHTML('sheetAddPanel', tp.replace('sheetAddPanel'));
         		}
         },
-        reqSheetList: function(){
-        	var data = {
-    			groupid: this.get('groupid'),
-        		currentSemestr: this.paginator.get('semestr'),
-        		numcrs: this.paginator.get('course'),
-        		fieldid: this.get('fieldid')
-        	};
+        reqSheetList: function(choice){
+        	var lib = this.get('appInstance'),
+        		data = {
+	    			groupid: this.get('groupid'),
+	        		currentSemestr: this.paginator.get('semestr'),
+	        		numcrs: this.paginator.get('course'),
+	        		fieldid: this.get('fieldid')
+	        	};
         	
-        	this.set('waiting', true);
-	        	this.get('appInstance').sheetList(data, function(err, result){
-	        		this.set('waiting', false);
-	        		if(!err){
-	        			this.set('sheetList', result.sheetList);
-	        				this.renderSheetList();
-	        		}
-	        	}, this);
+	        	if(choice){
+		        	lib.set('courseChoice', data.numcrs);
+		        	lib.set('semestrChoice', data.currentSemestr);
+	        	}
+	        	
+	        	this.set('waiting', true);
+		        	lib.sheetList(data, function(err, result){
+			        		this.set('waiting', false);
+			        		if(!err){
+			        			this.set('sheetList', result.sheetList);
+			        				this.renderSheetList();
+			        		}
+			        	}, this);
         },
         renderSheetList: function(){
         	var sheetList = this.get('sheetList'),

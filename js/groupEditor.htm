@@ -67,7 +67,7 @@
 		    <div id="{i#listField}" class="col-md-2 {v#hide}"></div>
 		   	<div class="col-md-6">
 		    	<div id="{i#curentField}" class="alert alert-success" role="alert">
-		    		{v#code} {v#name} {v#level} {v#frmstudy} {v#note}
+		    		{v#nameprogram}
 		    	</div>
 		    </div>
 		    <div class="col-md-1">
@@ -87,3 +87,9 @@
 
 <!--{liField}-->
 <li><a href="" data-id="{v#id}">{v#code} {v#name} {v#level} {v#frmstudy} {v#note}</a></li>
+
+<!--{hrefNameProgram}-->
+<a href="" data-click="showFieldItem" data-id="{v#fieldid}">{v#code} {v#name} {v#level} {v#note} {v#label}</a>
+
+<!--{label}-->
+<span class="label label-danger">Удален</span>

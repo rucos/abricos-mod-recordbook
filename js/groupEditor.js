@@ -42,16 +42,19 @@ Component.entryPoint = function(NS){
         	}
         },
         renderGroupItem: function(){
-        	var groupItem = this.get('groupItem'),
+        	var groupItem = this.get('groupItem').toJSON(),
         		tp = this.template,
-        		frmStudy = groupItem.get('frmstudy');
+        		frmStudy = groupItem.frmstudy;
         		
         		tp.setHTML('groupItem', tp.replace('groupItem', [{
         				frmstudy: this.get('appInstance').determFormEdu(frmStudy),
-        				hide: 'hide'
-        			}, groupItem.toJSON()]));
+        				hide: 'hide',
+        				nameprogram: tp.replace('hrefNameProgram', [{
+        					label: groupItem.remove > 0 ? tp.replace('label') : ''
+        				}, groupItem])
+        			}, groupItem]));
         		
-        		this.set('currentFieldid', groupItem.get('fieldid'));
+        		this.set('currentFieldid', groupItem.fieldid);
         		
         		tp.removeClass('groupItem.btnEdit', 'hide');
         		
@@ -184,7 +187,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, liField, ulField, groupItem, groupMenu'},
+            templateBlockName: {value: 'widget, liField, ulField, groupItem, groupMenu, hrefNameProgram, label'},
             groupid: {value: 0},
             currentFieldid: {value: ''},
             groupItem: {value: null},
@@ -256,6 +259,12 @@ Component.entryPoint = function(NS){
             			this.set('groupMenu', curGroupMenu);
             			this.parseGroupMenu();
         			}
+        		}
+        	},
+        	showFieldItem: {
+        		event: function(e){
+        			var id = e.target.getData('id');
+        				this.go('field.editor', id);
         		}
         	}
         }

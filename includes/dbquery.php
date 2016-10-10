@@ -247,6 +247,7 @@ class RecordBookQuery {
     				f.fieldid,
     				f.frmstudy,
     				f.note,
+    				f.remove,
     				p.code,
     				p.name,
     				e.level

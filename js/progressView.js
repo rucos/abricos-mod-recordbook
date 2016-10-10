@@ -2,7 +2,7 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js', 'markList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -13,18 +13,23 @@ Component.entryPoint = function(NS){
 
     NS.ProgressViewWidget = Y.Base.create('progressViewWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
-        	var self = this,
+        	var tp = this.template,
+        		self = this,
         		course = appInstance.get('courseChoice'),
         		semestr = appInstance.get('semestrChoice'),
         		view = appInstance.get('progressView');
         	
 	    		this.paginator = new NS.PaginationCourseWidget({
-	                srcNode: this.template.gel('pag'),
+	                srcNode: tp.gel('pag'),
 	                show: true,
 	                callback: function(){
 	                	self.markListStat(true);
 	                }
 	    		});
+	    		
+        		this.markList = new NS.MarkListWidget({
+        			srcNode: tp.gel('markList')
+        		});
 	    		
 	    		if(course && semestr){
         			this.paginator.setCourse(course);
@@ -39,6 +44,9 @@ Component.entryPoint = function(NS){
         destructor: function(){
         	if(this.paginator){
         		this.paginator.destroy();
+        	}
+          	if(this.markList){
+        		this.markList.destroy();
         	}
         },
         markListStat: function(choice){
@@ -156,8 +164,8 @@ Component.entryPoint = function(NS){
         },
         renderMarkList: function(attr, proj){
         	var markList = this.get(attr),
-    		tp = this.template,
-    		idRow = 'rowMarkTable.stud-';
+	    		tp = this.template,
+	    		idRow = 'rowMarkTable.stud-';
     		
 	    	markList.each(function(mark){
 	    		var id = idRow + mark.get('studid'),
@@ -165,13 +173,12 @@ Component.entryPoint = function(NS){
 	    		
 	        		if(row){
 	        			var tdRow = row.getDOMNode().cells,
-	        				len = tdRow.length,
-	        				mk = mark.get('mark');
+	        				len = tdRow.length;
 	        			
 		        		for(var i = 3; i < len; i++){
 		        			if(tdRow[i].dataset.proj == proj){
 			        			if(tdRow[i].id == mark.get('subjectid')){
-			        				this.validMark(tdRow[i], mk);
+			        				this.validMark(tdRow[i], mark.get('mark'), mark.get('sheetid'));
 			        					break;
 			        			}
 		        			} 
@@ -179,15 +186,22 @@ Component.entryPoint = function(NS){
 	        		}
 	    	}, this);
         },
-        validMark: function(tdRow, mk){
+        validMark: function(tdRow, mark, sheetid){
         	var view = this.get('view'),
-        		lib = this.get('appInstance');	
+        		lib = this.get('appInstance');
         	
-			if(mk < 51 || mk === 101){
-				tdRow.classList.add('danger');
-			}
-			
-			tdRow.innerHTML = view == 1 ? lib.setTradMark(mk) : mk;
+				if(mark < 51 || mark === 101){
+					tdRow.classList.add('danger');
+				}
+				
+				if(view == 1){
+					mark = lib.setTradMark(mark);
+				} 
+				
+				tdRow.innerHTML = this.template.replace('mark', {
+						sheetid: sheetid,
+						mark: mark
+				});
         },
         lightRow: function(rowIndex, cellIndex){
         	var tp = this.template,
@@ -227,7 +241,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd'},
+            templateBlockName: {value: 'widget,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd,mark'},
             groupid: {value: 0},
             fieldid: {value: 0},
             subjectList: {value: null},
@@ -274,6 +288,19 @@ Component.entryPoint = function(NS){
                 	}
                 	
                 	this.printShow(numcrs, semestr);
+        		}
+        	},
+        	showSheet: {
+        		event: function(e){
+        			var id = e.target.getData('sheetid'),
+        				self = this;
+        			
+        				if(!id){
+        					return;
+        				}
+
+	        			this.markList.set('sheetid', id);
+		        		this.markList.reloadList();
         		}
         	}
         }

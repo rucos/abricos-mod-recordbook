@@ -43,7 +43,7 @@ Component.entryPoint = function(NS){
         setTradMark: function(val){
         	if(val <= 100){
         		if(val < 51){
-        			return '';
+        			return '2';
         		} else if(val >= 51 && val < 71){
         			return '3';
         		} else if(val >= 71 && val < 86){
@@ -53,7 +53,7 @@ Component.entryPoint = function(NS){
         		}
         	} else {
         		switch(val){
-        			case 101: return '';
+        			case 101: return 'Незач';
         			case 102: return 'Зач';
         			case 103: return '3';
         			case 104: return '4';

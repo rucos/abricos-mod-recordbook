@@ -29,6 +29,10 @@
     "formcontrol": {
       "type": "string",
       "json": "fc"
+    },
+    "sheetid": {
+      "type": "int",
+      "json": "shid"
     }
   }
 }

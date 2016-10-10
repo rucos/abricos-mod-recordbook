@@ -881,6 +881,7 @@ class RecordBookQuery {
 			    		SELECT 	m.markid as id,
 		    					sh.subjectid,
 		   						m.studid,
+			   					m.sheetid,
 		   						MAX(".$max.") as mark
 			    		FROM ".$db->prefix."rb_marks m
 			    		INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid

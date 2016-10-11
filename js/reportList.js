@@ -16,7 +16,7 @@ Component.entryPoint = function(NS){
         	var self = this,
         		tp = this.template;
 
-	        	this.paginationCourse = new NS.PaginationCourseWidget({
+	        	this.pagination = new NS.PaginationCourseWidget({
 	        		srcNode: tp.gel('pagCourse'),
 	        		callback: function(){
 	        			self.reloadMarkList();
@@ -28,8 +28,8 @@ Component.entryPoint = function(NS){
 	        	});
         },
         destructor: function(){
-            if (this.paginationCourse){
-                this.paginationCourse.destroy();
+            if (this.pagination){
+                this.pagination.destroy();
             }
             if(this.markList){
             	this.markList.destroy();
@@ -46,7 +46,7 @@ Component.entryPoint = function(NS){
         			tp.gel('inpfind').focus();
         			
         	} else {
-        		this.paginationCourse.hidePagination();
+        		this.pagination.hidePagination();
         		tp.removeClass('btnCancel', 'hide');
         		
         		this.set('waiting', true);
@@ -82,7 +82,7 @@ Component.entryPoint = function(NS){
         		this.set('fieldid', reportItem.get('fieldid'));
         		this.set('groupid', reportItem.get('id'));
         		
-        		this.paginationCourse.showPagination();
+        		this.pagination.showPagination();
         },
         renderListGroup: function(){
         	var tp = this.template,
@@ -115,8 +115,8 @@ Component.entryPoint = function(NS){
         			fieldid: this.get('fieldid'),
         			groupid: this.get('groupid'),
         			studid:  reportItem.get('studid'),
-        			course: this.paginationCourse.get('course'),
-        			semestr: this.paginationCourse.get('semestr')
+        			course: this.pagination.get('course'),
+        			semestr: this.pagination.get('semestr')
         		};
         	
         	if(data.course && data.semestr){
@@ -186,7 +186,8 @@ Component.entryPoint = function(NS){
 			}
 			
 			tp.setHTML('tablMark', '');
-			this.paginationCourse.hidePagination();
+			
+			this.pagination.hidePagination();
         }
     }, {
         ATTRS: {

@@ -982,6 +982,11 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function FindStudReportToJSON($value){
+       		$len = strlen($value);
+       		if($len === 0){
+       			return;
+       		}
+       		
        		$res = $this->FindStudReport($value);
        		$oldGr = isset($res->oldGroup) ? $this->ResultToJSON('groupList', $res->oldGroup) : "";
        		
@@ -994,7 +999,7 @@ class RecordBook extends AbricosApplication {
        	public function FindStudReport($value){
        		$utmf = Abricos::TextParser(true);
        		$value = $utmf->Parser($value);
-       		
+
        		$row = RecordBookQuery::FindStudReport($this->db, $value);
        		
        		$res = new stdClass();

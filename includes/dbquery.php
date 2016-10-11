@@ -468,16 +468,15 @@ class RecordBookQuery {
     	$sql = "
 			SELECT
     				sj.formcontrol as fc,
-    				sj.project as pr
+    				s.type as t
 			FROM ".$db->prefix."rb_sheet s
 			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
 			WHERE s.sheetid = ".bkint($id)."
 			LIMIT 1
 		";
     	$item = $db->query_first($sql);
-    	$pos = strpos($item['pr'], '1');
     	
-    	return $item['fc'] === 'Зачет' &&  $pos === false ? true : false;
+    	return $item['fc'] === 'Зачет' &&  $item['t'] < 3;
     }
     
     public static function SheetAppend(Ab_Database $db, $d){

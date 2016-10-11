@@ -86,7 +86,7 @@ Component.entryPoint = function(NS){
 		    		var markValue = mark.get('mark'),
 		    			success = this.setSuccess(markValue);
 		    		
-						if(formcontrol === 'Зачет' && project.indexOf('1') < 0){
+						if(formcontrol === 'Зачет' && sheetItem.get('type') < 3){
 							markValue = markValue === 102 ? 'Зач' : 'Незач'
 						} 
 					
@@ -180,7 +180,7 @@ Component.entryPoint = function(NS){
 	    		formcontrol = sheetItem.get('formcontrol'),
 	    		project = sheetItem.get('project');
 	    	
-				if(formcontrol === 'Зачет' && project.indexOf('1') < 0){
+				if(formcontrol === 'Зачет' && sheetItem.get('type') < 3){
 					mark = mark >= 51 ? 'Зач' : 'Незач';
 				} 
 				return mark;

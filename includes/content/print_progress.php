@@ -44,8 +44,8 @@ class PrintProgress {
 
 		$phrases = Abricos::GetModule('university')->GetPhrases();
 
-		$this->_fullname = $phrases->Get('_fullname')->value;
-		$this->_shortname = $phrases->Get('_shortname')->value;
+		$this->_fullname = $phrases->Get('fullname')->value;
+		$this->_shortname = $phrases->Get('shortname')->value;
 		
 		$this->groupItem = $this->GroupItem();
 		

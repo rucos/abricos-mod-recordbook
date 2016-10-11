@@ -137,16 +137,16 @@ Component.entryPoint = function(NS){
         		n = 0;
         	
         	markList.each(function(mark){
-        		var tradMark = this.get('appInstance').setTradMark(mark.get('mark'));
+        		var markItem = mark.toJSON();
         		
         		lst += tp.replace('row', [{
         			n: ++n,
-        			date: Brick.dateExt.convert(mark.get('date'), 2),
-        			mark: tradMark,
-        			cl: tradMark === '' ? 'class="danger"' : "",
-        			formcontrol: mark.get('type') >= 3 ? this.determFormControl(mark.get('project')) : mark.get('formcontrol'),
-        			namesubject: this.determNameSubject(mark.get('namesubject'), mark.get('sheetid'))
-        		}, mark.toJSON()]);
+        			date: Brick.dateExt.convert(markItem.date, 2),
+        			mark: this.get('appInstance').setTradMark(markItem.mark),
+        			cl: markItem.mark < 51 || markItem.mark == 101 ? 'class="danger"' : "",
+        			formcontrol: markItem.type >= 3 ? this.determFormControl(markItem.project) : markItem.formcontrol,
+        			namesubject: this.determNameSubject(markItem.namesubject, markItem.sheetid)
+        		}, markItem]);
         	}, this);
         	
         	if(lst.length){

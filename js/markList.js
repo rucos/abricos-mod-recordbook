@@ -86,14 +86,10 @@ Component.entryPoint = function(NS){
 		    		var markValue = mark.get('mark'),
 		    			success = this.setSuccess(markValue);
 		    		
-						if(formcontrol === 'Зачет' && sheetItem.get('type') < 3){
-							markValue = markValue === 102 ? 'Зач' : 'Незач'
-						} 
-					
 			    		lst += tp.replace('row', [{
 			    			n: ++num,
 			    			cl: success ? "class='success'" : '',
-			    			mark: markValue
+			    			mark: this.isCredit(markValue),
 			    		}, mark.toJSON()]);
 		    	}, this);
 		    	
@@ -181,7 +177,7 @@ Component.entryPoint = function(NS){
 	    		project = sheetItem.get('project');
 	    	
 				if(formcontrol === 'Зачет' && sheetItem.get('type') < 3){
-					mark = mark >= 51 ? 'Зач' : 'Незач';
+					mark = mark >= 51 && mark <= 100 || mark === 102 ? 'Зач' : 'Незач';
 				} 
 				return mark;
 	    },

@@ -142,19 +142,20 @@ Component.entryPoint = function(NS){
         		
         			markItem.date = Brick.dateExt.convert(markItem.date, 2);
         			markItem.summark = markItem.mark;
-        			markItem.formcontrol = this.parseFormControl(markItem);
         			
         			if(markItem.sheetid > 0){
-        				markItem.mark = this.get('appInstance').setTradMark(markItem.mark);
+        				markItem.cl = markItem.mark < 51 ? "class='danger'": '';
+        				markItem.mark = this.setTradMark(markItem.mark, markItem.formcontrol);
         				markItem.namesubject = this.determNameSubject(markItem.namesubject, markItem.sheetid);
         			} else {
         				markItem.mark = "-";
+        				markItem.cl = "";
         			}
         			
         		lst += tp.replace('row', markItem);
         	}, this);
         	
-        	if(lst.length){
+        	if(lst){
             	tp.setHTML('tablMark', tp.replace('table', {
             		rows: lst 
             	}));
@@ -162,34 +163,17 @@ Component.entryPoint = function(NS){
             	tp.setHTML('tablMark', 'Оценок нет');
         	}
         },
+        setTradMark: function(mark, fctrl){
+          	if(fctrl == 'Зачет'){
+        		return mark < 51 ? 'Незач' : 'Зач';
+        	}
+          	return this.get('appInstance').setTradMark(mark);
+        },
         determNameSubject: function(name, sheetid){
         	return this.template.replace('subject', {
         		sheetid: sheetid,
         		name: name
         	});
-        },
-        determFormControl: function(project){
-        	return project.indexOf('1') > 0 ? 'Курсовой проект' : 'Курсовая работа';
-        },
-        parseFormControl: function(item){
-        	var curType = item.type,
-        		curFormCtrl = item.formcontrol,
-        		curProj = item.project;
-        		
-	        	switch(curType){
-	        		case 0: 
-	        			if(curFormCtrl == '-'){
-	        				return this.determFormControl(curProj);
-	        			} else {
-	        				return curFormCtrl;
-	        			}
-	        		case 1:
-	        		case 2: 
-	        			return curFormCtrl;
-	        		case 3: 
-	        		case 4:
-	        			return this.determFormControl(curProj);
-	        	}
         },
         unSetActive: function(){
         	var tp = this.template,

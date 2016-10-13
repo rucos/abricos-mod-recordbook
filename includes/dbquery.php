@@ -1020,6 +1020,7 @@ class RecordBookQuery {
     					FROM ".$db->prefix."rb_subject sj
     					LEFT JOIN (".$maxMark.") mm ON mm.subjectid=sj.subjectid
     					WHERE ".$subjCond."
+    					ORDER BY sj.formcontrol DESC
     			";
     			
     			/*

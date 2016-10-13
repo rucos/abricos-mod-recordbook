@@ -1032,25 +1032,47 @@ class RecordBook extends AbricosApplication {
        		
        		$list = $this->models->InstanceClass('MarkListStat');
        		
-       		$markList = RecordBookQuery::MarkStudReport($this->db, $d);//список оценок
-       		$projectMarkList = RecordBookQuery::MarkStudReport($this->db, $d, true);//список оценок для курсовых
+       		$markList = $this->InitMarkListReport($d);//список оценок
+       		$projMarkList = $this->InitMarkListReport($d, true);//список оценок для курсовых
        		
        		$i = 0;
-       		while ($mark = $this->db->fetch_array($markList)){
-       			$mark['id'] = ++$i;
-       			$list->Add($this->models->InstanceClass('MarkItemStat', $mark));
-       			
+       		foreach ($markList as $mark){
+       			$list->Add($this->InstClassMarkItemStat($mark, ++$i));
        			$pos = strpos($mark['project'], '1');
-       			if($pos !== false){
-       				while ($proj = $this->db->fetch_array($projectMarkList)){
-       					if($mark['subjectid'] === $proj['subjectid'] || $proj['formcontrol'] == '-'){
-       						$proj['id'] = ++$i;
-       							$list->Add($this->models->InstanceClass('MarkItemStat', $proj));
-       					}
-       				}
-       			}
+	       			if($pos !== false){
+	       				foreach ($projMarkList as $kp => $proj){
+	       					if($mark['subjectid'] === $proj['subjectid'] || $proj['formcontrol'] === '-'){
+	       						$list->Add($this->InstClassMarkItemStat($proj, ++$i, true));
+	       						unset($projMarkList[$kp]);
+	       					}
+	       				}
+	       			}
        		}
        		return $list;
+       	}
+       	
+       	public function DetermFormControl($proj){
+       		return strpos($proj, '1') === 0 ? 'Курсовая работа' : 'Курсовой проект';
+       	}
+       	
+       	private function InstClassMarkItemStat($mark, $i, $isProject = false){
+       		$mark['id'] = $i;
+       		
+       		if($isProject){
+       			$mark['formcontrol'] = $this->DetermFormControl($mark['project']);
+       		}
+       		
+       		return $this->models->InstanceClass('MarkItemStat', $mark);
+       	}
+       	
+       	public function InitMarkListReport($d, $proj = false){
+       		$arr = array();
+       		$markList = RecordBookQuery::MarkStudReport($this->db, $d, $proj);
+       		
+       		while ($dd = $this->db->fetch_array($markList)){
+       			$arr[] = $dd;
+			}
+       		return $arr;
        	}
        	
        	public function SheetPrint($id, $quory){

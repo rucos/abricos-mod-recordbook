@@ -267,6 +267,24 @@ Component.entryPoint = function(NS){
 		        			self.reloadMarkList();
 		        		});
         		}
+        	},
+        	print: {
+        		event: function(e){
+        			var course = this.pagination.get('course'),
+        				semestr = this.pagination.get('semestr'),
+            			fieldid = this.get('fieldid'),
+            			groupid = this.get('groupid'),
+            			studid = this.get('reportItem').get('studid'),
+        				url = '/recordbook/print_report/' + fieldid + "/" + groupid + "/" + studid + "/" + course + "/" + semestr;
+        			
+        				if(!course){
+        					alert( 'Укажите курс' );
+        				} else if(!semestr){
+        					alert( 'Укажите семестр' );        					
+        				} else {
+        					this.get('appInstance').printSheet(url, 'recordbookPrintReport');
+        				}
+        		}
         	}
         }
     });

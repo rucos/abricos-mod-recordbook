@@ -37,6 +37,7 @@ class RecordBookModule extends Ab_Module {
     		switch ($dir[1]){
     			case 'print':
     			case 'print_progress':
+    			case 'print_report':
     				return $dir[1];
     		}
     	}

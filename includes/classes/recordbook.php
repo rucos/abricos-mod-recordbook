@@ -1061,6 +1061,10 @@ class RecordBook extends AbricosApplication {
        		return RecordBookQuery::$quory($this->db, $d);
        	}
        	
+       	public function ReportPrint($d, $project){
+       		return RecordBookQuery::MarkStudReport($this->db, $d, $project);
+       	}
+       	
        	public function ProgressMarkPrint($d, $project){
        		return RecordBookQuery::MarkListStat($this->db, $d, $project);
        	}

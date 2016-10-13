@@ -16,7 +16,16 @@
 </div>
 <hr>
 	<div id="{i#reportRenderItem}"></div>
-	<div id="{i#pagCourse}"></div>
+		<div class="row">
+			 <div class="col-md-9">
+			 	<div id="{i#pagCourse}"></div>
+			 </div>
+  			<div class="col-md-3">
+  				<button data-click="print" type="button" class="btn btn-default" data-wait="disable">
+		   			Печать
+				</button>
+			</div>
+		</div>
 	<hr>
 	<div id="{i#tablMark}"></div>
 	<div id="{i#markList}"></div>
@@ -52,12 +61,12 @@
 </table>
 
 <!--{row}-->
-<tr {v#cl}>
-	<td>{v#n}</td>
+<tr>
+	<td>{v#id}</td>
     <td>{v#namesubject}</td>
     <td>{v#formcontrol}</td>
     <td>{v#date}</td>
-    <td>{v#mark}</td>
+    <td>{v#summark} ({v#mark})</td>
 </tr>
 
 <!--{label}-->

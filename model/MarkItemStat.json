@@ -10,10 +10,6 @@
       "type": "int",
        "json": "sid"
     },
-    "studid": {
-      "type": "int",
-       "json": "stid"
-    },
     "mark": {
       "type": "int",
       "json": "mk"

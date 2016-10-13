@@ -977,34 +977,83 @@ class RecordBookQuery {
     }
     
     public static function MarkStudReport(Ab_Database $db, $d, $project = false){
-    	$type = "sh.type < 3";
-    	
+    	$subjCond = "sj.fieldid=".bkint($d->fieldid)." AND sj.numcrs=".bkint($d->course)." AND sj.semestr=".bkint($d->semestr)." AND sj.remove=0";
+    	$sheetCond = "sh.groupid=".bkint($d->groupid);
+		
     	if($project){
-    		$type = "sh.type >= 3";
+    		$sheetCond .= " AND sh.type>2";
+    		$subjCond .= " AND (sj.project LIKE '%1%' OR sj.formcontrol='-')";
+    	} else {
+    		$sheetCond .= " AND sh.type<3";
+    		$subjCond .= " AND sj.formcontrol<>'-'";
     	}
-    	 
-    			$sql = "
-    					SELECT
-    						  m.markid as id,
-    						  sj.namesubject,
-    						  sj.formcontrol,
-    						  sj.project,
-    						  sh.type,
-    					  	  sh.sheetid,
-    						  MAX(sh.date) as date,
-    						  MAX(m.mark) as mark
-    					FROM ".$db->prefix."rb_marks m
-    					INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid
-    					INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid = sj.subjectid
-    					WHERE m.studid=".$d->studid."
-    							AND sh.groupid = ".bkint($d->groupid)."
-    								AND sj.fieldid = ".bkint($d->fieldid)."
-    									AND sj.numcrs = ".bkint($d->course)."
-											AND sj.semestr = ".bkint($d->semestr)."
-												AND ".$type."
-						GROUP BY sj.namesubject
+    	
+    	/*
+    	 * Максимальные оценки по текущему семестру
+    	 * */
+    	$maxMark = "
+    			SELECT
+    					m.markid,
+    					sh.subjectid,
+    					m.studid,
+    					MAX(m.prliminary+m.additional) as mark
+    			FROM ".$db->prefix."rb_sheet sh
+    			INNER JOIN ".$db->prefix."rb_marks m ON sh.sheetid=m.sheetid AND m.studid=".bkint($d->studid)."
+    			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid=sh.subjectid AND ".$subjCond."
+    			WHERE ".$sheetCond."
+    			GROUP BY sh.subjectid,m.studid
+    	";
+    			
+    		/*
+    		 * Список предметов c оценкой по текущему семестру
+    		 * 
+    		 * */	
+    			$subjList = "
+						SELECT
+    							sj.subjectid,
+    							sj.namesubject,
+    							sj.numhours,
+    						  	sj.formcontrol,
+    						  	sj.project,
+    							sj.remove,
+    							mm.mark
+    					FROM ".$db->prefix."rb_subject sj
+    					LEFT JOIN (".$maxMark.") mm ON mm.subjectid=sj.subjectid
+    					WHERE ".$subjCond."
     			";
+    			
+    			/*
+    			 * Список ведомостей текущего семестра
+    			 * */
+     				$sheetList = "
+		    			SELECT
+		    					sh.subjectid,
+    							sh.date,
+	    						sh.type,
+    							sh.sheetid,
+		    					m.studid,
+    							m.prliminary+m.additional as mark
+		    			FROM ".$db->prefix."rb_sheet sh
+		    			INNER JOIN ".$db->prefix."rb_marks m ON sh.sheetid=m.sheetid AND m.studid=".bkint($d->studid)."
+		    			WHERE ".$sheetCond."
+    				";
+    				
+    				$sql = "
+    						SELECT
+    							sbj.subjectid,
+    							sbj.namesubject,
+    							sbj.numhours,
+    						  	sbj.formcontrol,
+    						  	sbj.project,
+    							sbj.mark,
+    							sht.sheetid,
+    							sht.type,
+    							sht.date
+    						FROM (".$subjList.") sbj
+    						LEFT JOIN (".$sheetList.") sht ON sht.subjectid=sbj.subjectid AND sht.mark=sbj.mark
+    				";
     			return $db->query_read($sql);
+
     }
     
     public static function SheetItemPrint(Ab_Database $db, $id){

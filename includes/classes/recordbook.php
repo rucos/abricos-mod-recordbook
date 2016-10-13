@@ -1032,18 +1032,24 @@ class RecordBook extends AbricosApplication {
        		
        		$list = $this->models->InstanceClass('MarkListStat');
        		
-       		$rows = RecordBookQuery::MarkStudReport($this->db, $d);
+       		$markList = RecordBookQuery::MarkStudReport($this->db, $d);//список оценок
+       		$projectMarkList = RecordBookQuery::MarkStudReport($this->db, $d, true);//список оценок для курсовых
        		
-       		while ($dd = $this->db->fetch_array($rows)){
-       			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
+       		$i = 0;
+       		while ($mark = $this->db->fetch_array($markList)){
+       			$mark['id'] = ++$i;
+       			$list->Add($this->models->InstanceClass('MarkItemStat', $mark));
+       			
+       			$pos = strpos($mark['project'], '1');
+       			if($pos !== false){
+       				while ($proj = $this->db->fetch_array($projectMarkList)){
+       					if($mark['subjectid'] === $proj['subjectid'] || $proj['formcontrol'] == '-'){
+       						$proj['id'] = ++$i;
+       							$list->Add($this->models->InstanceClass('MarkItemStat', $proj));
+       					}
+       				}
+       			}
        		}
-       		
-       		$project = RecordBookQuery::MarkStudReport($this->db, $d, true);
-       		
-       		while ($dd = $this->db->fetch_array($project)){
-       			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
-       		}
-       		
        		return $list;
        	}
        	

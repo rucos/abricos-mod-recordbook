@@ -26,6 +26,8 @@ Component.entryPoint = function(NS){
 	        	this.markList = new NS.MarkListWidget({
 	        		srcNode: tp.gel('markList')
 	        	});
+	        	
+	        	this.reqFind();
         },
         destructor: function(){
             if (this.pagination){
@@ -37,16 +39,16 @@ Component.entryPoint = function(NS){
         },
         reqFind: function(value){
         	var tp = this.template,
-        		value = tp.getValue('inpfind').trim();
+        		value = 411661; 
+//        			tp.getValue('inpfind').trim();
         	
-        	if(!value){
-        		alert( 'Введите ФИО студента или № зачетной книжки' );
-        		
-        			tp.setValue('inpfind', '');
-        			tp.gel('inpfind').focus();
-        			
-        	} else {
-        		this.pagination.hidePagination();
+//        	if(!value){
+//        		alert( 'Введите ФИО студента или № зачетной книжки' );
+//        		
+//        			tp.setValue('inpfind', '');
+//        			tp.gel('inpfind').focus();
+//        			
+//        	} else {
         		tp.removeClass('btnCancel', 'hide');
         		
         		this.set('waiting', true);
@@ -63,7 +65,7 @@ Component.entryPoint = function(NS){
 	        				tp.setHTML('reportRenderItem', 'Студент не найден');
 	        			}
         		}, this);
-        	}
+//        	}
         },
         renderGroupItem: function(){
         	var tp = this.template,
@@ -133,20 +135,23 @@ Component.entryPoint = function(NS){
         renderMarkList: function(){
         	var markList = this.get('markList'),
         		tp = this.template,
-        		lst = "",
-        		n = 0;
+        		lst = "";
         	
         	markList.each(function(mark){
         		var markItem = mark.toJSON();
         		
-        		lst += tp.replace('row', [{
-        			n: ++n,
-        			date: Brick.dateExt.convert(markItem.date, 2),
-        			mark: this.get('appInstance').setTradMark(markItem.mark),
-        			cl: markItem.mark < 51 || markItem.mark == 101 ? 'class="danger"' : "",
-        			formcontrol: markItem.type >= 3 ? this.determFormControl(markItem.project) : markItem.formcontrol,
-        			namesubject: this.determNameSubject(markItem.namesubject, markItem.sheetid)
-        		}, markItem]);
+        			markItem.date = Brick.dateExt.convert(markItem.date, 2);
+        			markItem.summark = markItem.mark;
+        			markItem.formcontrol = this.parseFormControl(markItem);
+        			
+        			if(markItem.sheetid > 0){
+        				markItem.mark = this.get('appInstance').setTradMark(markItem.mark);
+        				markItem.namesubject = this.determNameSubject(markItem.namesubject, markItem.sheetid);
+        			} else {
+        				markItem.mark = "-";
+        			}
+        			
+        		lst += tp.replace('row', markItem);
         	}, this);
         	
         	if(lst.length){
@@ -165,6 +170,26 @@ Component.entryPoint = function(NS){
         },
         determFormControl: function(project){
         	return project.indexOf('1') > 0 ? 'Курсовой проект' : 'Курсовая работа';
+        },
+        parseFormControl: function(item){
+        	var curType = item.type,
+        		curFormCtrl = item.formcontrol,
+        		curProj = item.project;
+        		
+	        	switch(curType){
+	        		case 0: 
+	        			if(curFormCtrl == '-'){
+	        				return this.determFormControl(curProj);
+	        			} else {
+	        				return curFormCtrl;
+	        			}
+	        		case 1:
+	        		case 2: 
+	        			return curFormCtrl;
+	        		case 3: 
+	        		case 4:
+	        			return this.determFormControl(curProj);
+	        	}
         },
         unSetActive: function(){
         	var tp = this.template,

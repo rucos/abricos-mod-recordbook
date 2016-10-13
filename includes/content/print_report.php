@@ -32,26 +32,40 @@ $v = &$brick->param->var;
 
 $recordBook = $modManager->GetRecordBook();
 
-$subjectList = $recordBook->ReportPrint($d, false);
-$subjectListProj = $recordBook->ReportPrint($d, true);
+$markList = $recordBook->MarkStudReport($d, true);
+
+$vers = phpversion();
+if($vers <= '5.3.13'){
+	$pattern = "/(\w)\w+ (\w)\w+/iu";
+} else {
+	$pattern = "/(\W)\W+ (\W)\W+/iu";
+}
 
 $tr = "";
-
-	while ($dd = $modManager->db->fetch_array($subjectList)){
-// 		$hours = explode('/', $dd['numhours']);
-// 		$tr .= Brick::ReplaceVarByData($v['tr'], array(
-// 				"subject" => $dd['namesubject'],
-// // 				"hours" => $hours[0] + $hours[1],
-// 				"exam" => $dd['mark'],
-// 				"credit" => $dd['mark'],
-// 				"date" => $dd['date'] ? date('d.m.Y', $dd['date']) : ""
-// 		));
-	}
-	//"tradmark" => $recordBook->SetTradMark($d['mark'])
-	while ($dd = $modManager->db->fetch_array($subjectListProj)){
+	foreach($markList as $mark){
+		$fctrl = $mark['formcontrol'];
 		
+		$arr = array(
+				"subject" => $mark['namesubject'],
+				"date" => "",
+				"exam" => "",
+				"credit" => "",
+				"hours" => $mark['numhours'] !== "" ? $mark['numhours'] :  preg_replace($pattern, '$1$2', $fctrl)
+		);
+		
+		if($mark['mark'] >= 51){
+			$arr['date'] = $mark['date'] ? date('d.m.Y', $mark['date']) : "";
+			
+			if($fctrl == 'Зачет'){
+				$arr['credit'] = $mark['mark']."(З)";
+			} else {
+				$arr['exam'] = $mark['mark']."(".$recordBook->SetTradMark($mark['mark'], true).")";
+			}
+		}
+		$tr .= Brick::ReplaceVarByData($v['tr'], $arr);
 	}
-	
+
 	$brick->content = Brick::ReplaceVarByData($brick->content, array(
 			"rows" => $tr
 	));
+	

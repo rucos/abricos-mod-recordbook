@@ -1023,26 +1023,38 @@ class RecordBook extends AbricosApplication {
        		return $this->ResultToJSON('markStudReport', $res);
        	}
        	
-       	public function MarkStudReport($d){
+       	public function MarkStudReport($d, $print = false){
        		$d->fieldid = intval($d->fieldid);
        		$d->groupid = intval($d->groupid);
        		$d->studid = intval($d->studid);
        		$d->course = intval($d->course);
        		$d->semestr = intval($d->semestr);
        		
-       		$list = $this->models->InstanceClass('MarkListStat');
+       		if($print){
+       			$list = array();
+       		} else {
+       			$list = $this->models->InstanceClass('MarkListStat');
+       		}
        		
        		$markList = $this->InitMarkListReport($d);//список оценок
        		$projMarkList = $this->InitMarkListReport($d, true);//список оценок для курсовых
        		
        		$i = 0;
        		foreach ($markList as $mark){
-       			$list->Add($this->InstClassMarkItemStat($mark, ++$i));
+       			if($print){
+       				$list[] = $this->InstClassMarkItemStat($mark, ++$i, false, true);
+       			} else {
+       				$list->Add($this->InstClassMarkItemStat($mark, ++$i));
+       			}
        			$pos = strpos($mark['project'], '1');
 	       			if($pos !== false){
 	       				foreach ($projMarkList as $kp => $proj){
 	       					if($mark['subjectid'] === $proj['subjectid'] || $proj['formcontrol'] === '-'){
-	       						$list->Add($this->InstClassMarkItemStat($proj, ++$i, true));
+	       						if($print){
+	       							$list[] = $this->InstClassMarkItemStat($proj, ++$i, true, true);
+	       						} else {
+	       							$list->Add($this->InstClassMarkItemStat($proj, ++$i, true));
+	       						}
 	       						unset($projMarkList[$kp]);
 	       					}
 	       				}
@@ -1055,14 +1067,21 @@ class RecordBook extends AbricosApplication {
        		return strpos($proj, '1') === 0 ? 'Курсовая работа' : 'Курсовой проект';
        	}
        	
-       	private function InstClassMarkItemStat($mark, $i, $isProject = false){
+       	private function InstClassMarkItemStat($mark, $i, $isProject = false, $isPrint = false){
        		$mark['id'] = $i;
+       		$hours = "";
        		
        		if($isProject){
        			$mark['formcontrol'] = $this->DetermFormControl($mark['project']);
+       		} else {
+       			if($mark['formcontrol'] !== 'Практика'){
+       				$arr = explode('/', $mark['numhours']);
+       				$hours = $arr[0] + $arr[1];
+       			}
        		}
        		
-       		return $this->models->InstanceClass('MarkItemStat', $mark);
+       		$mark['numhours'] = $hours;
+       		return $isPrint ? $mark : $this->models->InstanceClass('MarkItemStat', $mark);
        	}
        	
        	public function InitMarkListReport($d, $proj = false){
@@ -1081,10 +1100,6 @@ class RecordBook extends AbricosApplication {
        	
        	public function ProgressPrint($d, $quory){
        		return RecordBookQuery::$quory($this->db, $d);
-       	}
-       	
-       	public function ReportPrint($d, $project){
-       		return RecordBookQuery::MarkStudReport($this->db, $d, $project);
        	}
        	
        	public function ProgressMarkPrint($d, $project){

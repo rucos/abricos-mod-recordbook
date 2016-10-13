@@ -26,8 +26,6 @@ Component.entryPoint = function(NS){
 	        	this.markList = new NS.MarkListWidget({
 	        		srcNode: tp.gel('markList')
 	        	});
-	        	
-	        	this.reqFind();
         },
         destructor: function(){
             if (this.pagination){
@@ -39,16 +37,15 @@ Component.entryPoint = function(NS){
         },
         reqFind: function(value){
         	var tp = this.template,
-        		value = 411661; 
-//        			tp.getValue('inpfind').trim();
+        		value = tp.getValue('inpfind').trim();
         	
-//        	if(!value){
-//        		alert( 'Введите ФИО студента или № зачетной книжки' );
-//        		
-//        			tp.setValue('inpfind', '');
-//        			tp.gel('inpfind').focus();
-//        			
-//        	} else {
+        	if(!value){
+        		alert( 'Введите ФИО студента или № зачетной книжки' );
+        		
+        			tp.setValue('inpfind', '');
+        			tp.gel('inpfind').focus();
+        			
+        	} else {
         		tp.removeClass('btnCancel', 'hide');
         		
         		this.set('waiting', true);
@@ -65,7 +62,7 @@ Component.entryPoint = function(NS){
 	        				tp.setHTML('reportRenderItem', 'Студент не найден');
 	        			}
         		}, this);
-//        	}
+        	}
         },
         renderGroupItem: function(){
         	var tp = this.template,
@@ -106,7 +103,8 @@ Component.entryPoint = function(NS){
         		lst = "";
         	
 	        	lst = tp.replace('itemGroups', [{
-	        			active: active ? 'active' : ''
+	        			active: active ? 'active' : '',
+	        			frmstudy: this.get('appInstance').determFormEdu(group.get('frmstudy'))
 	        		}, group.toJSON()]);
 	        	
 	        	return lst;

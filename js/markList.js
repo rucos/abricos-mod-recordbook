@@ -41,24 +41,7 @@ Component.entryPoint = function(NS){
         	var sheetItem = this.get('sheetItem').toJSON(),
         		tp = this.template;
 
-        		sheetItem.formcontrol = this.parseFormControl();
-
         		tp.setHTML('modal', tp.replace('modal', sheetItem));
-        },
-        parseFormControl: function(){
-        	var sheetItem = this.get('sheetItem'),
-        		type = sheetItem.get('type'),
-        		formControl = sheetItem.get('formcontrol'),
-        		project = sheetItem.get('project');
-        	
-	        	if(type > 2){
-	        		if(+project[0]){
-	        			formControl = 'Курсовая работа';
-	        		} else if(+project[2]) {
-	        			formControl = 'Курсовой проект';
-	        		}
-	        	}
-	        	return formControl;
         },
         reqMarkList: function(){
         	var sheetid = this.get('sheetid');

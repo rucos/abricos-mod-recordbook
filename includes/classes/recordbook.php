@@ -495,7 +495,10 @@ class RecordBook extends AbricosApplication {
        	
        		$rows = RecordBookQuery::SheetList($this->db, $d);
        	
-       		while (($dd = $this->db->fetch_array($rows))){
+       		while ($dd = $this->db->fetch_array($rows)){
+       			if($dd['type'] >= 3){
+       				$dd['formcontrol'] = $this->DetermFormControl($dd['project']);
+       			}
        			$list->Add($this->models->InstanceClass('SheetItem', $dd));
        		}
        	
@@ -522,6 +525,10 @@ class RecordBook extends AbricosApplication {
        			}
        			
        			$row['arrstudid'] = $arrStudId;
+       		}
+       		
+       		if($row['type'] >= 3){
+       			$row['formcontrol'] = $this->DetermFormControl($row['project']);
        		}
        		
        		if(isset($d->mark)){

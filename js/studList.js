@@ -96,7 +96,7 @@ Component.entryPoint = function(NS){
          	
     		lst += tp.replace('rowEdit', {
     			'fio': parentRow.cells[0].innerHTML,
-        		'numbook': parentRow.cells[1].innerHTML,
+        		'numbook': parentRow.cells[1].textContent,
         		'datebirth': lib.setDate(parentRow.cells[2].innerHTML),
         		'preveducation': parentRow.cells[3].innerHTML
         	});

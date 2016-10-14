@@ -3,7 +3,7 @@ console.log();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'reportList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -25,6 +25,15 @@ Component.entryPoint = function(NS){
         	if(groupid){
         		this.reloadList();
         	}
+        	
+        	this.reportList = new NS.ReportListWidget({
+        		srcNode: tp.gel('reportmodal')
+        	});
+        },
+        destructor: function(){
+            if (this.reportList){
+                this.reportList.destroy();
+            }
         },
         reloadList: function(){
         	var groupid = this.get('groupid'),
@@ -429,6 +438,14 @@ Component.entryPoint = function(NS){
         	closeModal: {
         		event: function(e){
         			this.closeModal(e.target.getData('id'), true);
+        		}
+        	},
+        	showReport: {
+        		event: function(e){
+        			var fval = e.target.getDOMNode().textContent;
+        			
+        				this.reportList.set('findValue', fval);
+        				this.reportList.showReport();
         		}
         	}
         }

@@ -35,46 +35,40 @@ Component.entryPoint = function(NS){
             	this.markList.destroy();
             }
         },
-        reqFind: function(value){
-        	var tp = this.template,
-        		value = tp.getValue('inpfind').trim();
-        	
-        	if(!value){
+        showReport: function(){
+          	var value = this.get('findValue');
+          	
+           	if(!value){
         		alert( 'Введите ФИО студента или № зачетной книжки' );
-        		
-        			tp.setValue('inpfind', '');
-        			tp.gel('inpfind').focus();
-        			
         	} else {
-        		tp.removeClass('btnCancel', 'hide');
-        		
-        		this.set('waiting', true);
+        		this.showModal(true);
+        		this.reqFind(value);
+        	}
+        },
+        reqFind: function(value){
+        	this.set('waiting', true);
         		this.get('appInstance').findStudReport(value, function(err, result){
         			var reportItem = result.findStudReport;
-
-        			this.set('waiting', false);
-	        			if(!err && reportItem.get('id')){
-	        					this.set('oldGroups', result.groupList);
-		        				this.set('reportItem', reportItem);
-		        					this.renderGroupItem();
-	        			} else {
-	        				this.cancel(false);
-	        				tp.setHTML('reportRenderItem', 'Студент не найден');
-	        			}
+        			
+	        			this.set('waiting', false);
+		        			if(!err && reportItem.get('id')){
+		        					this.set('oldGroups', result.groupList);
+			        				this.set('reportItem', reportItem);
+			        					this.renderGroupItem();
+		        			} else {
+		        				this.template.setHTML('reportRenderItem', 'Студент не найден');
+		        			}
         		}, this);
-        	}
         },
         renderGroupItem: function(){
         	var tp = this.template,
-        		reportItem = this.get('reportItem'),
-        		lstGroup = tp.replace('listGroups', {
-        			item: this.renderListGroup()
-        		});
+        		reportItem = this.get('reportItem');
         		
         		tp.setHTML('reportRenderItem', tp.replace('reportItem', [{
-        			remove: reportItem.get('transferal') ? tp.replace('label') : '',
-        			data: lstGroup
+        			remove: reportItem.get('transferal') ? tp.replace('label') : ''
         		}, reportItem.toJSON()]));
+        		
+        		this.renderListGroup();
         		
         		tp.setHTML('tablMark', '');
         		
@@ -96,13 +90,15 @@ Component.entryPoint = function(NS){
 	        			lst += this.setLstGroup(group, false);
 	        		}, this);
 	        	}
-	        	return lst;
+	        	
+	        	tp.setHTML('groupList', tp.replace('listGroups', {
+	        		item: lst
+	        	}));
         },
         setLstGroup: function(group, active){
-        	var tp = this.template,
-        		lst = "";
+        	var lst = "";
         	
-	        	lst = tp.replace('itemGroups', [{
+	        	lst = this.template.replace('itemGroups', [{
 	        			active: active ? 'active' : '',
 	        			frmstudy: this.get('appInstance').determFormEdu(group.get('frmstudy'))
 	        		}, group.toJSON()]);
@@ -183,18 +179,21 @@ Component.entryPoint = function(NS){
 	       			collect[i].classList.remove('active');
 	        	}
         },
-        cancel: function(flag){
-			var tp = this.template;
-			
-			if(flag){
-				tp.addClass('btnCancel', 'hide');
-				tp.setHTML('reportRenderItem', '');
-				tp.setValue('inpfind', '');
-			}
-			
-			tp.setHTML('tablMark', '');
-			
-			this.pagination.hidePagination();
+        showModal: function(show){
+        	var tp = this.template,
+        		modal = tp.gel('modal'),
+        		cl = modal.classList,
+        		st = modal.style;
+        	
+        	if(show){
+        		cl.add('in');
+        		st.display = 'block';
+        	} else {
+        		cl.remove('in');
+        		st.display = 'none';
+        		tp.setHTML('tablMark', '');
+        		tp.setHTML('markList', '');
+        	}
         }
     }, {
         ATTRS: {
@@ -204,19 +203,10 @@ Component.entryPoint = function(NS){
             markList: {value: null},
             oldGroups: {value: null},
             fieldid: {value: 0},
-            groupid: {value: 0}
+            groupid: {value: 0},
+            findValue: {value: null}
         },
         CLICKS: {
-        	find: {
-        		event: function(e){
-        			this.reqFind();
-        		}
-        	},
-        	cancel: {
-        		event: function(e){
-        			this.cancel(true);
-        		}
-        	},
         	changeGroup: {
         		event: function(e){
         			var targ = e.target,
@@ -266,6 +256,11 @@ Component.entryPoint = function(NS){
         				} else {
         					this.get('appInstance').printSheet(url, 'recordbookPrintReport');
         				}
+        		}
+        	},
+        	close: {
+        		event: function(e){
+        			this.showModal(false);
         		}
         	}
         }

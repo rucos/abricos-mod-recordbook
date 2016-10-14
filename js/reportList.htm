@@ -1,45 +1,36 @@
 <!--{widget}-->
-<div class="row">
-		<div class="col-md-6">
-			<input id="{i#inpfind}"  type="text" class="form-control" placeholder="Введите ФИО студента или № зачетной книжки"/>
-		</div>
-		<div class="col-md-1">
-			<button data-click="find" type="button" class="btn btn-default" data-wait="disable">
-		   		Найти
-			</button>
-		</div>
-		<div class="col-md-1">
-			<button id="{i#btnCancel}" data-click="cancel" type="button" class="btn btn-primary hide" data-wait="disable">
-		   		Отмена
-			</button>
-		</div>
+<div id="{i#modal}" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close"  data-click="close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Список оценок </h4>
+      </div>
+      <div class="modal-body">
+      			<div id="{i#reportRenderItem}"></div>
+      			<label>Список групп:</label>
+      			<div id="{i#groupList}"></div>
+				<div id="{i#pagCourse}"></div>
+					<span data-wait="show" class="pull-right">
+					   	<img src="/images/loading.gif"/>
+				   </span>
+				<div id="{i#tablMark}"></div>
+				<div id="{i#markList}"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-click="close">Закрыть</button>
+      </div>
+    </div>
+  </div>
 </div>
-<hr>
-	<div id="{i#reportRenderItem}"></div>
-		<div class="row">
-			 <div class="col-md-9">
-			 	<div id="{i#pagCourse}"></div>
-			 </div>
-  			<div class="col-md-3">
-  			
-			</div>
-		</div>
-	<hr>
-	<span data-wait="show" class="pull-right">
-    	<img src="/images/loading.gif"/>
-    </span>
-	<div id="{i#tablMark}"></div>
-	
 <!--{reportItem}-->
-<p><label>Номер зачетной книжки:</label> {v#numbook}</p>
-<p><label>ФИО:</label> {v#fio} {v#remove}</p>
-<p><label>Список групп:</label></p>
-{v#data}
-<p><label>Фильтр по курсу и семестру:</label></p>
+<label>{v#numbook} {v#fio} {v#remove}</label>
 
 <!--{listGroups}-->
-<div id="{i#list-groups}" class="list-group" data-click="changeGroup">
- {v#item}
+<div contentEditable="false" style="height:100px; overflow:auto">
+	<div id="{i#list-groups}" class="list-group" data-click="changeGroup">
+	 {v#item}
+	</div>
 </div>
 
 <!--{itemGroups}-->
@@ -54,18 +45,20 @@
 			<button data-click="print" type="button" class="btn btn-default" data-wait="disable">Печать</button>
 		</div>
 </div>
-<table class="table table-striped table-hover">
-    <thead>
-    <tr>
-    	<th>#</th>
-	   	 <th>Название предмета</th>
-	   	 <th>Форма контроля</th>
-	   	 <th>Дата проведения</th>
-	     <th>Оценка</th>
-    </tr>
-    </thead>
-    <tbody data-click="showSheet">{v#rows}</tbody>
-</table>
+<div contentEditable="false" style="width:auto; height:350px; overflow:auto">
+	<table class="table table-striped table-hover">
+	    <thead>
+	    <tr>
+	    	<th>#</th>
+		   	 <th>Название предмета</th>
+		   	 <th>Форма контроля</th>
+		   	 <th>Дата проведения</th>
+		     <th>Оценка</th>
+	    </tr>
+	    </thead>
+	    <tbody data-click="showSheet">{v#rows}</tbody>
+	</table>
+</div>
 
 <!--{row}-->
 <tr {v#cl}>

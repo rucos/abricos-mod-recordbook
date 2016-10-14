@@ -28,6 +28,7 @@
 	<hr>
     <div id="{i#list}"></div>
     <div id="{i#modal}"></div>
+    <div id="{i#reportmodal}"></div>
 </div>
 
 <!--{modal}-->
@@ -106,7 +107,7 @@
 <!--{row}-->
 <tr data-id="{v#id}" {v#success}>
  	<td width="25%">{v#fio}</td>
-    <td>{v#numbook}</td>
+    <td><a href="" data-click="showReport">{v#numbook}</a></td>
     <td>{v#datebirth}</td>
     <td width="25%">{v#preveducation}</td>
     <td>

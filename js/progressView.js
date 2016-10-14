@@ -198,10 +198,7 @@ Component.entryPoint = function(NS){
 					mark = lib.setTradMark(mark);
 				} 
 				
-				tdRow.innerHTML = this.template.replace('mark', {
-						sheetid: sheetid,
-						mark: mark
-				});
+				tdRow.innerHTML = mark;
         },
         lightRow: function(rowIndex, cellIndex){
         	var tp = this.template,
@@ -241,7 +238,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd,mark'},
+            templateBlockName: {value: 'widget,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd'},
             groupid: {value: 0},
             fieldid: {value: 0},
             subjectList: {value: null},

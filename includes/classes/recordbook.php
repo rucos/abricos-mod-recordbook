@@ -253,9 +253,6 @@ class RecordBook extends AbricosApplication {
     		$fieldid = intval($fieldid);
     		$pageSub = intval($pageSub);
     		
-    		if (isset($this->_cache[$fieldid][$pageSub]['SubjectList'])){
-    			return $this->_cache[$fieldid][$pageSub]['SubjectList'];
-    		}
     		$list = $this->models->InstanceClass('SubjectList');
     		 
     		$rows = RecordBookQuery::SubjectList($this->db, $fieldid, $pageSub);
@@ -263,7 +260,7 @@ class RecordBook extends AbricosApplication {
     		while (($d = $this->db->fetch_array($rows))){
     			$list->Add($this->models->InstanceClass('SubjectItem', $d));
     		}
-    		return $this->_cache[$fieldid][$pageSub]['SubjectList'] = $list;
+    		return $list;
        	}
        	
        	public function SubjectListSheet($d){
@@ -291,7 +288,12 @@ class RecordBook extends AbricosApplication {
        		
        		$list = $this->models->InstanceClass('SubjectList');
        		$rows = RecordBookQuery::$query($this->db, $d);
-	       		while (($dd = $this->db->fetch_array($rows))){
+	       		while ($dd = $this->db->fetch_array($rows)){
+	       			$type = isset($d->type) ? $d->type : 0;
+	       			
+	       			if($type >= 3){
+	       				$dd['formcontrol'] = $this->DetermFormControl($dd['project']);
+	       			}
 	       			$list->Add($this->models->InstanceClass('SubjectItem', $dd));
 	       		}
        		return $list;

@@ -40,6 +40,8 @@ Component.entryPoint = function(NS){
         renderList: function(){
         	var sheetItem = this.get('sheetItem').toJSON(),
         		tp = this.template;
+        	
+        		sheetItem.date = Brick.dateExt.convert(sheetItem.date, 2)
 
         		tp.setHTML('modal', tp.replace('modal', sheetItem));
         },

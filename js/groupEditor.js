@@ -49,7 +49,7 @@ Component.entryPoint = function(NS){
         		tp.setHTML('groupItem', tp.replace('groupItem', [{
         				frmstudy: this.get('appInstance').determFormEdu(frmStudy),
         				hide: 'hide',
-        				nameprogram: tp.replace('hrefNameProgram', [{
+        				name: tp.replace('hrefNameProgram', [{
         					label: groupItem.remove > 0 ? tp.replace('label') : ''
         				}, groupItem])
         			}, groupItem]));

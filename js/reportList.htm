@@ -21,14 +21,14 @@
 			 	<div id="{i#pagCourse}"></div>
 			 </div>
   			<div class="col-md-3">
-  				<button data-click="print" type="button" class="btn btn-default" data-wait="disable">
-		   			Печать
-				</button>
+  			
 			</div>
 		</div>
 	<hr>
+	<span data-wait="show" class="pull-right">
+    	<img src="/images/loading.gif"/>
+    </span>
 	<div id="{i#tablMark}"></div>
-	<div id="{i#markList}"></div>
 	
 <!--{reportItem}-->
 <p><label>Номер зачетной книжки:</label> {v#numbook}</p>
@@ -46,7 +46,14 @@
 <a href="" class="list-group-item {v#active}" data-fid="{v#fieldid}" data-gid="{v#id}" >{v#numgroup}({v#numcrs}) {v#dateline} г. {v#code} {v#name} {v#note} {v#frmstudy}</a>
 
 <!--{table}-->
-<label>Текущая успеваемость:</label>
+<div class="row">
+	 <div class="col-md-9">
+	 	<label>Текущая успеваемость:</label>
+	 </div>
+		<div class="col-md-3">
+			<button data-click="print" type="button" class="btn btn-default" data-wait="disable">Печать</button>
+		</div>
+</div>
 <table class="table table-striped table-hover">
     <thead>
     <tr>

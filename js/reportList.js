@@ -48,7 +48,8 @@ Component.entryPoint = function(NS){
         reqFind: function(value){
         	this.set('waiting', true);
         		this.get('appInstance').findStudReport(value, function(err, result){
-        			var reportItem = result.findStudReport;
+        			var reportItem = result.findStudReport,
+        				tp = this.template;
         			
 	        			this.set('waiting', false);
 		        			if(!err && reportItem.get('id')){
@@ -56,7 +57,11 @@ Component.entryPoint = function(NS){
 			        				this.set('reportItem', reportItem);
 			        					this.renderGroupItem();
 		        			} else {
-		        				this.template.setHTML('reportRenderItem', 'Студент не найден');
+		        				tp.setHTML('reportRenderItem', 'Студент не найден');
+		        				this.pagination.hidePagination();
+		        				tp.setHTML('groupList', '');
+		                 		tp.setHTML('tablMark', '');
+		                		tp.setHTML('markList', '');
 		        			}
         		}, this);
         },

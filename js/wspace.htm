@@ -1,4 +1,16 @@
 <!--{widget}-->
+<div class="row">
+	<div class="col-md-4 col-md-offset-7">
+		<input id="{i#inpfind}"  type="text" class="form-control" placeholder="Введите ФИО студента или № зачетной книжки"/>
+	</div>
+	<div class="col-md-1">
+		<button data-click="find" type="button" class="btn btn-default" data-wait="disable">
+	   		Найти
+		</button>
+	</div>
+</div>
+ <div id="{i#reportmodal}"></div>
+ <hr>
 <div class="app-workspace">
 	<div class="app-nav">
 		<nav class="navbar navbar-default" role="navigation">
@@ -26,21 +38,5 @@
 		  </div>
 		</nav>
 	</div>
-		<div class="row">
-			<div class="col-md-6">
-				<input id="{i#inpfind}"  type="text" class="form-control" placeholder="Введите ФИО студента или № зачетной книжки"/>
-			</div>
-			<div class="col-md-1">
-				<button data-click="find" type="button" class="btn btn-default" data-wait="disable">
-			   		Найти
-				</button>
-			</div>
-			<div class="col-md-1">
-				<button id="{i#btnCancel}" data-click="cancel" type="button" class="btn btn-primary hide" data-wait="disable">
-			   		Отмена
-				</button>
-			</div>
-		</div>
-		<hr>
 	<div class="app-workspace-page" data-wait="hide"></div>
 </div>

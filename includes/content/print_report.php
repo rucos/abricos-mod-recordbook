@@ -20,11 +20,11 @@ if(!$modManager->IsAdminRole()){
 $dir = Abricos::$adress->dir;
 
 $d = new stdClass();
-$d->fieldid = intval($dir[2]);
-$d->groupid = intval($dir[3]);
-$d->studid = intval($dir[4]);
-$d->course = intval($dir[5]);
-$d->semestr = intval($dir[6]);
+$d->fieldid = $dir[2];
+$d->groupid = $dir[3];
+$d->studid = $dir[4];
+$d->course = $dir[5];
+$d->semestr = $dir[6];
 
 
 $brick = Brick::$builder->brick;
@@ -34,23 +34,23 @@ $recordBook = $modManager->GetRecordBook();
 
 $markList = $recordBook->MarkStudReport($d, true);
 
-$vers = phpversion();
-if($vers <= '5.3.13'){
-	$pattern = "/(\w)\w+ (\w)\w+/iu";
-} else {
-	$pattern = "/(\W)\W+ (\W)\W+/iu";
-}
-
+$exp = "([а-я])[а-я]+";
 $tr = "";
 	foreach($markList as $mark){
 		$fctrl = $mark['formcontrol'];
+		
+		if($fctrl === 'Практика'){
+			$preg = preg_replace("/".$exp."/iu", '$1', $fctrl);
+		} else {
+			$preg = preg_replace("/".$exp." ".$exp."/iu", '$1$2', $fctrl);
+		}
 		
 		$arr = array(
 				"subject" => $mark['namesubject'],
 				"date" => "",
 				"exam" => "",
 				"credit" => "",
-				"hours" => $mark['numhours'] !== "" ? $mark['numhours'] :  preg_replace($pattern, '$1$2', $fctrl)
+				"hours" => $mark['numhours'] !== "" ? $mark['numhours'] : $preg
 		);
 		
 		if($mark['mark'] >= 51){
@@ -68,4 +68,5 @@ $tr = "";
 	$brick->content = Brick::ReplaceVarByData($brick->content, array(
 			"rows" => $tr
 	));
+	
 	

@@ -983,9 +983,11 @@ class RecordBookQuery {
     	if($project){
     		$sheetCond .= " AND sh.type>2";
     		$subjCond .= " AND (sj.project LIKE '%1%' OR sj.formcontrol='-')";
+    		$order = "ORDER BY sj.formcontrol DESC";
     	} else {
     		$sheetCond .= " AND sh.type<3";
     		$subjCond .= " AND sj.formcontrol<>'-'";
+    		$order = "";
     	}
     	
     	/*
@@ -1020,7 +1022,7 @@ class RecordBookQuery {
     					FROM ".$db->prefix."rb_subject sj
     					LEFT JOIN (".$maxMark.") mm ON mm.subjectid=sj.subjectid
     					WHERE ".$subjCond."
-    					ORDER BY sj.formcontrol DESC
+    					".$order."
     			";
     			
     			/*

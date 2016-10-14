@@ -1079,7 +1079,6 @@ class RecordBook extends AbricosApplication {
        				$hours = $arr[0] + $arr[1];
        			}
        		}
-       		
        		$mark['numhours'] = $hours;
        		return $isPrint ? $mark : $this->models->InstanceClass('MarkItemStat', $mark);
        	}

@@ -108,9 +108,19 @@ Component.entryPoint = function(NS){
         	return this.template.gel('paginatorCourse.' + bname).children;
         },
         showPagination: function(){
-        	var tp = this.template;
+        	var tp = this.template,
+        		course = this.get('course'),
+        		semestr = this.get('semestr');
         	
-        	tp.setHTML('pagCourse', tp.replace('paginatorCourse'));
+	        	tp.setHTML('pagCourse', tp.replace('paginatorCourse'));
+	        	
+	        	if(course > 0){
+	        		this.setCourse(course)
+	        	}
+	        	if(semestr > 0){
+	        		this.setSemestr(semestr);
+	        	}
+	        	this.act();
         },
         hidePagination: function(){
         	this.template.setHTML('pagCourse', "");

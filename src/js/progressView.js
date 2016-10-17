@@ -2,7 +2,7 @@ var Component = new Brick.Component();
 Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
-        {name: '{C#MODNAME}', files: ['lib.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'pagination.js', 'markList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -13,60 +13,71 @@ Component.entryPoint = function(NS){
 
     NS.ProgressViewWidget = Y.Base.create('progressViewWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
-        	var groupid = this.get('groupid');
+        	var tp = this.template,
+        		self = this,
+        		course = appInstance.get('courseChoice'),
+        		semestr = appInstance.get('semestrChoice'),
+        		view = appInstance.get('progressView');
         	
-          	this.set('waiting', true);
-	          	appInstance.groupItem(groupid, function(err, result){
-	    			this.set('waiting', false);
-	    				this.set('groupItem', result.groupItem);
-	    					this.renderGroup();
-	    		}, this);
+	    		this.paginator = new NS.PaginationCourseWidget({
+	                srcNode: tp.gel('pag'),
+	                show: true,
+	                callback: function(){
+	                	self.markListStat(true);
+	                }
+	    		});
+	    		
+        		this.markList = new NS.MarkListWidget({
+        			srcNode: tp.gel('markList')
+        		});
+	    		
+	    		if(course && semestr){
+        			this.paginator.setCourse(course);
+        			this.paginator.setSemestr(semestr);
+        			
+        			this.set('view', view);
+        			this.setPrimary(view);
+        			
+	    			this.markListStat();
+	    		}
         },
         destructor: function(){
-        	
+        	if(this.paginator){
+        		this.paginator.destroy();
+        	}
+          	if(this.markList){
+        		this.markList.destroy();
+        	}
         },
-        renderGroup: function(){
-        	var groupItem = this.get('groupItem'),
-        		tp = this.template;
-        	
-        	tp.setHTML('groupInfo', tp.replace('groupInfo', [groupItem.toJSON()]));
-        	
-        	this.set('course', groupItem.get('numcrs'));
-        },
-        renderDropdown: function(value, name){
-        	var tp = this.template,
-        		view = this.get('view');
-        	
-				tp.setValue('groupInfo.inp_'+name, value);
-				tp.removeClass('groupInfo.div_'+name, 'open');
-				
-				this.set(name, value);
-					if(view){
-						this.reqSubjectList();
-					}
-        },
-        reqSubjectList: function(){
-        	var group = this.get('groupItem'),
+        markListStat: function(isSet){
+        	var lib =  this.get('appInstance'),
         		data = {
-        			fieldid: group.get('fieldid'),
-        			numcrs: this.get('course'),
+        			fieldid: this.get('fieldid'),
+        			numcrs: this.paginator.get('course'),
+        			semestr: this.paginator.get('semestr'),
         			groupid: this.get('groupid'),
         			view: this.get('view'),
         			from: 'progressViewWidget'
-        		},
-        		semestr = this.get('semestr');
+        		};
+        		
+        	if(isSet){
+	        	lib.set('courseChoice', data.numcrs);
+	        	lib.set('semestrChoice', data.semestr);
+        	}
         	
-        	if(semestr){
-        		data.semestr = semestr === 'осенний' ? 1 : 2;
-        	} else {
+        	if(!data.numcrs){
+        		alert( 'Укажите курс' );
+        			return;
+        	} else if(!data.semestr){
         		alert( 'Укажите семестр' );
-        		return;
+        			return;
+        	} else if(!data.view){
+    				return;
         	}
-        	
-        	if(!data.view){
-        		return;
-        	}
-        	
+
+        		this.reqMarkListStat(data);
+        },
+        reqMarkListStat: function(data){
           	this.set('waiting', true);
 	          this.get('appInstance').markListStat(data, function(err, result){
 	    			this.set('waiting', false);
@@ -117,7 +128,7 @@ Component.entryPoint = function(NS){
 	        			} 
         		}, this);
         		
-        		tp.setHTML('groupInfo.markTable', tp.replace('markTable', {
+        		tp.setHTML('markTable', tp.replace('markTable', {
         			th: lstTh,
         			rows: this.renderStudList(lstMarkTd)
         		}));
@@ -153,8 +164,8 @@ Component.entryPoint = function(NS){
         },
         renderMarkList: function(attr, proj){
         	var markList = this.get(attr),
-    		tp = this.template,
-    		idRow = 'rowMarkTable.stud-';
+	    		tp = this.template,
+	    		idRow = 'rowMarkTable.stud-';
     		
 	    	markList.each(function(mark){
 	    		var id = idRow + mark.get('studid'),
@@ -162,13 +173,12 @@ Component.entryPoint = function(NS){
 	    		
 	        		if(row){
 	        			var tdRow = row.getDOMNode().cells,
-	        				len = tdRow.length,
-	        				mk = mark.get('mark');
+	        				len = tdRow.length;
 	        			
 		        		for(var i = 3; i < len; i++){
 		        			if(tdRow[i].dataset.proj == proj){
 			        			if(tdRow[i].id == mark.get('subjectid')){
-			        				this.validMark(tdRow[i], mk);
+			        				this.validMark(tdRow[i], mark.get('mark'), mark.get('sheetid'));
 			        					break;
 			        			}
 		        			} 
@@ -176,15 +186,19 @@ Component.entryPoint = function(NS){
 	        		}
 	    	}, this);
         },
-        validMark: function(tdRow, mk){
+        validMark: function(tdRow, mark, sheetid){
         	var view = this.get('view'),
-        		lib = this.get('appInstance');	
+        		lib = this.get('appInstance');
         	
-			if(mk < 51 || mk === 101){
-				tdRow.classList.add('danger');
-			}
-			
-			tdRow.innerHTML = view == 1 ? lib.setTradMark(mk) : mk;
+				if(mark < 51 || mark === 101){
+					tdRow.classList.add('danger');
+				}
+				
+				if(view == 1){
+					mark = lib.setTradMark(mark);
+				} 
+				
+				tdRow.innerHTML = mark;
         },
         lightRow: function(rowIndex, cellIndex){
         	var tp = this.template,
@@ -206,105 +220,84 @@ Component.entryPoint = function(NS){
 	        		}
         	}
         },
-        setPrimary: function(id){
-        	this.template.addClass('groupInfo.'+id, 'btn-primary');
+        setPrimary: function(v){
+        	this.template.addClass('view' + v, 'btn-primary');
         },
-        removePrimary: function(id){
-        	this.template.removeClass('groupInfo.'+id, 'btn-primary');
+        removePrimary: function(){
+        	var tp = this.template,
+        		cl = 'btn-primary';
+        	
+        		tp.removeClass('view1', cl);
+        		tp.removeClass('view2', cl);
         },
-        printShow: function(){
-        	var groupid = this.get('groupid'),
-            	course = this.get('course'),
-            	semestr = this.get('semestr') === 'осенний' ? 1 : 2,
-            	url = '/recordbook/print_progress/' + groupid + "/" + course + "/" + semestr,
-            	printWin = window.open(url, 'recordbookPrint_progress', 'width=1250,height=800');
-                	
-            	printWin.focus();
+        printShow: function(numcrs, semestr){
+        	var url = '/recordbook/print_progress/' + this.get('groupid') + "/" + numcrs + "/" + semestr;
+        	
+        		this.get('appInstance').printSheet(url, 'recordbookPrint_progress');
         }
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,groupInfo,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd'},
+            templateBlockName: {value: 'widget,markTable,markSubj,rowMarkTable,markTd,ratingTh,ratingTd'},
             groupid: {value: 0},
-            groupItem: {value: null},
-            course: {value: 0},
-            semestr: {value: null},
+            fieldid: {value: 0},
             subjectList: {value: null},
             markList: {value: null},
             studList: {value: null},
-            view: {value: null},
-            markListProj: {value: null}
+            markListProj: {value: null},
+            view: {value: ''}
         },
         CLICKS: {
-        	close:{
-        		event: function(){
-        			this.go('managerGroups.view');
-        		}
-        	},
-        	choiceCourse: {
-        		event: function(e){
-        			var a = e.target.getDOMNode();
-        			
-        			if(!a.href){
-        				return;
-        			}
-        			
-        			this.renderDropdown(a.textContent, 'course');
-        		}
-        	},
-        	choiceSemestr: {
-        		event: function(e){
-        			var a = e.target.getDOMNode();
-        			
-        			if(!a.href){
-        				return;
-        			}
-        			
-        			this.renderDropdown(a.textContent, 'semestr');
-        		}
-        	},
         	choiceViewStat: {
         		event: function(e){
         			var view = e.target.getData('view'),
         				tp = this.template;
         			
-        			if(view == 1){
-        				this.setPrimary('view1');
-        				this.removePrimary('view2');
-        			} else {
-        				this.setPrimary('view2');
-        				this.removePrimary('view1');
-        			}
-        			this.set('view', view);
-        			this.reqSubjectList();
+	        			this.removePrimary();
+	        			this.setPrimary(view);
+	
+	        			this.set('view', view);
+	        			this.get('appInstance').set('progressView', view);
+	        				this.markListStat();
         		}
         	},
-        	lightRow: {
+        	tdAct: {
         		event: function(e){
         			var targ = e.target,
-        				node = targ.getDOMNode();
+        				id = targ.getData('sheetid'),
+        				node = '',
+        				self = this;
         			
-        			if(targ.hasClass('td-mark')){
-        				this.lightRow(node.parentNode.sectionRowIndex + 1, node.cellIndex);
+        			if(id){//sheetShow
+	        			this.markList.set('sheetid', id);
+		        		this.markList.reloadList(function(){
+		        			self.markListStat();
+		        		});
+        			} else {//lightTd
+        				node = targ.getDOMNode();
+        				
+            			if(targ.hasClass('td-mark')){
+            				this.lightRow(node.parentNode.sectionRowIndex + 1, node.cellIndex);
+            			}
         			}
         		}
         	},
         	print: {
         		event: function(e){
-        			var semestr = this.get('semestr');
-        			if(semestr){
-        				this.printShow();
-        			} else {
-        				alert('Укажите семместр');
-        			}
+        			var numcrs = this.paginator.get('course'),
+        				semestr = this.paginator.get('semestr');
+        			
+                	if(!numcrs){
+                		alert( 'Укажите курс' );
+                			return;
+                	} else if(!semestr){
+                		alert( 'Укажите семестр' );
+                			return;
+                	}
+                	
+                	this.printShow(numcrs, semestr);
         		}
         	}
         }
     });
-
-    NS.ProgressViewWidget.parseURLParam = function(args){
-        return {
-        	groupid: args[0]
-        };
-    };
 };

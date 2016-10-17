@@ -16,10 +16,10 @@ Component.entryPoint = function(NS){
         
         },
         onInitAppWidget: function(err, appInstance){
+        	var fieldid = this.get('fieldid') | 0;
+        	
         	this.set('waiting', true);
         	
-            	var fieldid = this.get('fieldid') | 0;
-            	
             	if(fieldid > 0){
 	            	appInstance.fieldItem(fieldid, function(err, result){
 	            		this.set('waiting', false);
@@ -29,25 +29,90 @@ Component.entryPoint = function(NS){
             	} else {
             		this.set('waiting', false);
             	}
+            	this.fillProgramList();
         },
         destructor: function(){
-        	
             if (this.listSubject){
             	this.listSubject.destroy();
             }
-            
+        },
+        fillProgramList: function(){
+        	this.get('appInstance').programList(function(err, result){
+        		this.set('waiting', false);
+        			this.set('programList', result.programList);
+        				this.renderProgramList();
+        	}, this);
+        },
+        renderProgramList: function(){
+        	var progList = this.get('programList'),
+        		tp = this.template,
+        		lst = "";
+        	
+        	progList.each(function(prog){
+        		lst += tp.replace('programLi', prog.toJSON());
+        	});
+        	tp.setHTML('programList', tp.replace('programList', {
+        		li: lst
+        	}));
+        	
+        },
+        parseFormEdu: function(formEdu, nameProgram, formNum){
+        	var tp = this.template,
+        		lst = "";
+        	
+	        	for(var i = 1; i <= 3; i++){
+	        		if(formEdu[i - 1] > 0){
+	        			lst += tp.replace('radioProgramFormEdu', {
+	        				formEdu: this.get('appInstance').determFormEdu(i),
+	        				form: i,
+	        				active: formNum === i ? 'active' : ''
+	       				});
+	        		}
+	        	}
+	        	
+	        	tp.setHTML('programCurrent', tp.replace('programFormEdu', {
+	        		nameProgram: nameProgram,
+	        		radio: lst
+	        	}));
         },
         renderFieldItem: function(){
-        	var fieldItem = this.get('fieldItem');
+        	var fieldItem = this.get('fieldItem').toJSON(),
+        		tp = this.template,
+        		formNum = fieldItem.frmstudy,
+        		lvlremove = fieldItem.lvlremove,
+        		prRemove = fieldItem.prremove,
+        		nameProgram = fieldItem.code + " " + fieldItem.name + " " + fieldItem.level;
         	
-        	var tp = this.template;
-        		tp.setValue(fieldItem.toJSON());
+        		if(lvlremove){
+        			tp.setHTML('contextLevelEdu', tp.replace('contextLevelEdu'));
+        		} else {
+        			this.set('currentLevelid', fieldItem.edulevelid);
+        		}
         		
-	        	     this.listSubject = new NS.SubjectListWidget({
-	                     srcNode: tp.gel('list'),
-	                     fieldid: this.get('fieldid')
-	                 });
-        			
+        		if(prRemove){
+        			tp.setHTML('contextProgram', tp.replace('contextProgram'));
+        		} 
+        		
+        		if(formNum == -1){
+        			tp.setHTML('contextFormEdu', tp.replace('contextFormEdu'));
+        		} else {
+        			this.set('currentFormEdu', formNum);	
+        		}
+        		
+        		this.parseFormEdu(fieldItem.formEdu, nameProgram, formNum);
+        		
+	        	tp.setValue({
+	        		depart: fieldItem.depart,
+	        		note: fieldItem.note
+	        	});
+	        	
+	        	this.showListSubject();
+        },
+        showListSubject: function(){
+	   	     this.listSubject = new NS.SubjectListWidget({
+	             srcNode: this.template.gel('list'),
+	             fieldid: this.get('fieldid')
+	         });
         },
         save: function(){
         	var fieldid = this.get('fieldid'),
@@ -55,10 +120,8 @@ Component.entryPoint = function(NS){
         		lib = this.get('appInstance'),
         		data = {
         			id: fieldid,
-        		 	fieldcode:  tp.getValue('fieldcode'),
-        		 	field: tp.getValue('field'),
-        		 	frmstudy: tp.getValue('frmstudy'),
-        		 	qual: tp.getValue('qual'),
+        			levelid: this.get('currentLevelid'),
+        		 	frmstudy: this.get('currentFormEdu'),
         		 	depart: tp.getValue('depart')
         		};
         	
@@ -67,29 +130,46 @@ Component.entryPoint = function(NS){
         	
         	if(empty){
 	        		switch(empty){
-	        			case 'fieldcode': alert( 'Укажите код направления' ); break;
-	        			case 'field': alert( 'Укажите направление' ); break;
+	        			case 'levelid': alert( 'Укажите направление обучения' ); break;
 	        			case 'frmstudy': alert( 'Укажите форму обучения' ); break;
-	        			case 'qual': alert( 'Укажите квалификацию' ); break;
-	        			case 'depart': alert( 'Укажите кафедру' ); break;
+	        			case 'depart': 
+	        				tp.gel(empty).focus(); 
+	        					alert( 'Укажите кафедру' ); break;
+	        			
 	        		}
-        		tp.gel(empty).focus();
         	} else {
 	         	this.set('waiting', true);
 		        	lib.fieldSave(data, function(err, result){
 		        		this.set('waiting', false);
 		        			if(!err){
-		        				this.go('manager.view');
+		        				if(this.listSubject){
+		        					this.go('fieldManager.view');
+		        				} else {
+		        					this.set('fieldid', result.fieldSave);
+		        					this.showListSubject();
+		        				}
 		        			} 
 		        	}, this);
+        	}
+        },
+        unSetRadio: function(){
+        	var radioList = this.template.gel('programFormEdu.radioList'),
+        		children = radioList.children,
+        		len = children.length;
+        	
+        	for(var i = 0; i < len; i++){
+        		children[i].classList.remove('active');
         	}
         }
 }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget'},
+            templateBlockName: {value: 'widget,programList,programLi,programFormEdu,radioProgramFormEdu, contextFormEdu,contextLevelEdu,contextProgram'},
             fieldid: {value: 0},
-            fieldItem: {value: null}
+            fieldItem: {value: null},
+            programList: {value: null},
+            currentLevelid: {value: ""},
+            currentFormEdu: {value: ""}
         },
         CLICKS: {
         	save: {
@@ -99,8 +179,43 @@ Component.entryPoint = function(NS){
         	},
         	cancel: {
     	       event: function(){
-                   this.go('manager.view');
+                   this.go('fieldManager.view');
                }
+        	},
+        	pickProgram: {
+        		event: function(e){
+        			var tp = this.template,
+        				targ = e.target,
+        				a = targ.getDOMNode(),
+        				formEdu = targ.getData('formedu');
+        			
+        			if(!a.href){
+        				return;
+        			}
+
+        			this.set('currentLevelid', targ.getData('levelid'));
+        			this.set('currentFormEdu', '');
+        			
+        			tp.gel('programList.divProgList').classList.remove('open');
+        			tp.setHTML('contextLevelEdu', "");
+        			tp.setHTML('contextProgram', "");
+        			
+        			this.parseFormEdu(formEdu, a.textContent);
+        		}
+        	},
+        	pickForm: {
+        		event: function(e){
+        			var tp = this.template,
+        				targ = e.target,
+        				lbl = e.target.getDOMNode();
+        			
+        			this.set('currentFormEdu', +targ.getData('form'));
+        			
+        			this.unSetRadio();
+        			
+        			lbl.classList.add('active');
+        			tp.setHTML('contextFormEdu', '');
+        		}
         	}
         }
     });

@@ -1,7 +1,7 @@
 var Component = new Brick.Component();
 Component.requires = {
     mod: [
-        {name: '{C#MODNAME}', files: ['lib.js']}
+        {name: '{C#MODNAME}', files: ['lib.js', 'reportList.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -25,7 +25,12 @@ Component.entryPoint = function(NS){
 						tp.removeClass(li, 'active');
 					}
     		}
-    	}
+    	},
+        destructor: function(){
+            if (this.reportList){
+                this.reportList.destroy();
+            }
+        }
     }, {
         ATTRS: {
             component: {value: COMPONENT},
@@ -40,13 +45,19 @@ Component.entryPoint = function(NS){
         CLICKS: {
         	changeActive: {
         		event: function(e){
-        			var idManager = e.target.getData('id'),
-        				tp = this.template;
+        			var targ = e.target,
+        				idManager = targ.getData('id'),
+        				tp = this.template,
+        				a = targ.getDOMNode();
+        			
+        			if(!a.href){
+        				return;
+        			}
         			
 	        		switch(idManager){
 	        			case "fieldsA" : 
 	        				this.setActive('fieldsLi');
-	        					this.go("manager.view");
+	        					this.go("fieldManager.view");
 	        						break;
 	        			case "groupsA": 
 	        				this.setActive('groupsLi');
@@ -60,11 +71,26 @@ Component.entryPoint = function(NS){
 	        				this.setActive('expeledLi');
 	        					this.go("managerExpeled.view");
 	        						break;
-	        			case "reportA":
-	        				this.setActive('reportLi');
-	        					this.go("managerReport.view");
+	        			case "departA":
+	        				this.setActive('departLi');
+	        					this.go("managerDepart.view");
 	        						break;
 	        		}
+        		}
+        	},
+        	find: {
+        		event: function(){
+        	        var tp = this.template,
+        	        	fval = tp.getValue('inpfind');
+                    
+        	        if(!this.reportList){
+                    	this.reportList = new NS.ReportListWidget({
+	                		srcNode: tp.gel('reportmodal')
+	                	});
+        	        }
+        	        
+        	        this.reportList.set('findValue', fval);
+    				this.reportList.showReport();
         		}
         	}
         }

@@ -1,0 +1,77 @@
+<!--{widget}-->
+<div id="{i#modal}"></div>
+
+<!--{modal}-->
+<div class="modal fade in bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: block;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" data-click="closeModal">&times;</button>
+        <h4 class="modal-title"><b>{v#namesubject} - {v#formcontrol} - Дата проведения: {v#date}</b></h4>
+        <b><a href="" class="pull-right" data-click="print" data-id="{v#id}" data-type="{v#type}">Печать</a></b>
+	        <span data-wait="show">
+			    <img src="/images/loading_line.gif"/>
+			</span>
+      </div>
+      <div class="modal-body">
+			<div id="{i#mark}"></div>
+      </div>
+      <div class="modal-footer">
+     	 <div class="row">
+     	    <div class="col-md-3 col-xs-offset-9">
+        		<button type="button" class="btn btn-primary" data-click="print" data-id="{v#id}" data-type="{v#type}">Печать</button>
+        		<button type="button" class="btn btn-default" data-dismiss="modal" data-click="closeModal">Закрыть</button>
+        	</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--{table}-->
+<div contentEditable="false" style="width:auto; height:600px; overflow:auto">
+	<table class="table table-striped table-hover table-bordered">
+		    <thead>
+			      <tr>
+			        <th rowspan="4">№</th>
+			        <th rowspan="4" width="20%">Фамилия, имя, отчество студента</th>
+			        <th rowspan="4">Номер зачетной книжки</th>
+			        <th>1 атт</th>
+			        <th>2 атт</th>
+			        <th>3 атт</th>
+			        <th rowspan="4">Предварительная оценка</th>
+			        <th rowspan="4">Дополнительные баллы</th>
+			        <th rowspan="4">Кол-во долгов</th>
+			        <th rowspan="4">Окончательная оценка</th>
+			   	 </tr>
+			   	 <tr>
+			        <th colspan="3">Веса аттест. <span id="{i#sumProc}" class="label label-success">100</span> (%)</th>
+			   	 </tr>
+			     <tr>
+			        <th><input type="text" class="form-control" value="{v#a1}" maxlength="3" data-view="att0"/></th>
+			        <th><input type="text" class="form-control" value="{v#a2}" maxlength="3" data-view="att1"/></th>
+			        <th><input type="text" class="form-control" value="{v#a3}" maxlength="3" data-view="att2"/></th>
+			     </tr>
+			     <tr>
+			        <th colspan="3">Аттест. оценки</th>
+			     </tr>
+		    </thead>
+		    <tbody>
+		    		{v#rows}
+		    </tbody>
+	</table>
+</div>
+
+<!--{row}-->
+<tr id="{v#id}" {v#cl}>
+	<td>{v#n}</td>
+	<td>{v#fio}</td>
+	<td>{v#numbook}</td>
+	<td><input type="text" class="form-control" value="{v#firstatt}" maxlength="3"></td>
+	<td><input type="text" class="form-control" value="{v#secondatt}" maxlength="3"></td>
+	<td><input type="text" class="form-control" value="{v#thirdatt}" maxlength="3"></td>
+	<td><span>{v#prliminary}</span></td>
+	<td><input type="text" class="form-control" value="{v#additional}" maxlength="3"></td>
+	<td><input type="text" class="form-control" value="{v#debts}" maxlength="2" data-view="debts"></td>
+	<td><span>{v#mark}</span></td>
+</tr>

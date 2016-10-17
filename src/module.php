@@ -17,7 +17,7 @@ class RecordBookModule extends Ab_Module {
 
     public function RecordBookModule(){
         RecordBookModule::$instance = $this;
-        $this->version = "0.2.2";
+        $this->version = "0.2.6.2";
         $this->name = "recordbook";
         $this->takelink = "recordbook";
         $this->permission = new RecordBookPermission($this);
@@ -37,6 +37,7 @@ class RecordBookModule extends Ab_Module {
     		switch ($dir[1]){
     			case 'print':
     			case 'print_progress':
+    			case 'print_report':
     				return $dir[1];
     		}
     	}

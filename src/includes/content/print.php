@@ -32,8 +32,12 @@ $shortname = $phrases->Get('shortname')->value;
 $brick = Brick::$builder->brick;
 $v = &$brick->param->var;
 
-$sheet = $modManager->GetRecordBook()->SheetPrint($id, 'SheetItem');
-$markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
+$recordBook = $modManager->GetRecordBook();
+
+$sheet = $recordBook->SheetPrint($id, 'SheetItemPrint');
+$teacher = $recordBook->SheetPrint($sheet['tid'], 'TeacherItemPrint');
+$markList = $recordBook->SheetPrint($id, 'MarkList');
+
 
 	$vers = phpversion();
 	if($vers <= '5.3.13'){
@@ -57,7 +61,7 @@ $markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
 				"additional" => $d['additional'],
 				"debts" => $d['debts'],
 				"mark" => $d['prliminary'] + $d['additional'],
-				"tradmark" => $modManager->GetRecordBook()->SetTradMark($d['mark'])
+				"tradmark" => $recordBook->SetTradMark($d['mark'])
 		));
 	}
 	
@@ -77,7 +81,6 @@ $markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
 			$yearEnd = $sheet['dad'] + $sheet['nc'];
 			$dtSheet = $sheet['date'] ? date('d.m.Y', $sheet['date']) : "";
 			$formCtrl = $sheet['fct'];
-			$arrFioDep = explode('/', $sheet['ft']);
 			$form = "Форма контроля -";
 			$act = "проведения";
 			
@@ -111,14 +114,14 @@ $markList = $modManager->GetRecordBook()->SheetPrint($id, 'MarkList');
 							"countSemestr" => $countSemestr,
 							"nameSubject" => $sheet['ns'],
 							"field" => $sheet['fc'],
-							"depart" => !isset($arrFioDep[1]) ? '' : $arrFioDep[1],
+							"depart" => $teacher['shortname'],
 							"course" => $sheet['nc'],
 							"volume" => $volume,
 							"form" => $form,
 							"act" => $act,
 							"formControl" => $formCtrl,
 							"semestr" => $sheet['sem'] == 1 ? 'осенний' : 'весенний',
-							"fioTeacher" => !isset($arrFioDep[0]) ? '' : $arrFioDep[0],
+							"fioTeacher" => $teacher['fio'],
 							"year" => $yearEnd - 1,
 							"year1" => $yearEnd,
 							"date" => $dtSheet,

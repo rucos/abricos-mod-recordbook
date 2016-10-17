@@ -23,30 +23,14 @@
         </div>
 	</div>
 	<div class="panel-body">
-		<div class="input-group">
-		  <span class="input-group-addon">Код направления</span>
-		  	<input id="{i#fieldcode}" type="text" class="form-control">
+		<div class="row">
+			<div id="{i#programList}" class="col-md-2"></div>
+			<div id="{i#programCurrent}" class="col-md-10"></div>
 		</div>
-		
-		<div class="input-group">
-		  <span class="input-group-addon">Направление</span>
-		  	<input id="{i#field}" type="text" class="form-control">
-		</div>
-		
-		<div class="input-group">
-		  <span class="input-group-addon">Форма обучения</span>
-		  	
-		  	<select id="{i#frmstudy}" class="form-control">
-		  		<option>очная</option>
-		  		<option>заочная</option>
-		  		<option>очно-заочная</option>
-		  	</select>
-		</div>
-		
-		<div class="input-group">
-		  <span class="input-group-addon">Квалификация</span>
-		  	<input id="{i#qual}" type="text" class="form-control" value="бакалавр">
-		</div>
+		<div id="{i#contextProgram}" ></div>
+		<div id="{i#contextLevelEdu}" ></div>
+		<div id="{i#contextFormEdu}" ></div>
+		<hr>
 		<div class="input-group">
 		  <span class="input-group-addon">Кафедра</span>
 		  	<input id="{i#depart}" type="text" class="form-control">
@@ -60,3 +44,49 @@
 		
 	</div>
 </div>
+
+<!--{programList}-->
+<div id="{i#divProgList}" class="btn-group">
+  <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Направление <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" data-click="pickProgram">
+    	{v#li}
+  </ul>
+</div>
+
+<!--{programLi}-->
+<li><a href="" data-levelid="{v#id}" data-formedu="{v#och}{v#ochzaoch}{v#zaoch}">{v#code} {v#name} {v#level}</a></li>
+
+<!--{programFormEdu}-->
+<label>{v#nameProgram}</label>
+
+<div id="{i#radioList}" class="btn-group input-group" data-toggle="buttons" data-click="pickForm">
+{v#radio}
+</div>
+
+<!--{radioProgramFormEdu}-->
+  <label class="btn btn-primary {v#active}"  data-form="{v#form}">
+    <input type="radio" autocomplete="off">{v#formEdu}
+  </label>
+  
+<!--{contextFormEdu}-->
+<h4>
+	<span class="label label-danger">
+		!!Текущая форма обучения была удалена из направления, пожалуйста укажите другую!!
+	</span>
+</h4>
+
+<!--{contextLevelEdu}-->
+<h4>
+	<span class="label label-danger">
+		!!Текущий уровень образования был удален из направления, пожалуйста укажите другой!!
+	</span>
+</h4>
+
+<!--{contextProgram}-->
+<h4>
+	<span class="label label-danger">
+		!!Текущее направление было удалено, пожалуйста укажите другое!!
+	</span>
+</h4>

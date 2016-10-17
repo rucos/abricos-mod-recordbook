@@ -3,7 +3,7 @@ Component.requires = {
     mod: [
         {name: 'sys', files: ['editor.js']},
         {name: '{C#MODNAME}', files: ['lib.js']},
-        {name: '{C#MODNAME}', files: ['studList.js']}
+        {name: '{C#MODNAME}', files: ['studList.js', 'progressView.js', 'sheetEditor.js']}
     ]
 };
 Component.entryPoint = function(NS){
@@ -21,7 +21,7 @@ Component.entryPoint = function(NS){
         		tp = this.template,
             	lst = "";
 
-        		if(groupid > 0){//редактитрование
+        		if(groupid > 0){
         			this.set('waiting', true);
 	    				appInstance.groupItem(groupid, function(err, result){
 	    					this.set('waiting', false);
@@ -30,116 +30,181 @@ Component.entryPoint = function(NS){
 		    						this.renderGroupItem();
 		    				}
 	    				}, this);
-	    		} 
-        		
-        		if(this.get('groupListShow')){
-        			tp.gel('numgroup').disabled = true;
-        			tp.gel('numcrs').disabled = true;
-        			tp.gel('year').disabled = true;
-	        			 this.listStud = new NS.StudListWidget({
-	  	                     srcNode: tp.gel('listStud'),
-	  	                     groupid: this.get('groupid')
-	  	                 });
-        		}
-        			this.fillDropDownMenu();	
-        		
+	    		} else {
+	    			tp.setHTML('groupItem', tp.replace('groupItem', this.constructItem()));
+	    				this.reqFieldList();
+	    		}
+        		this.get('boundingBox').on('change', this.change, this);
         },
         destructor: function(){
-        	this.set('currentFieldId', 0);
-	        	if(this.listStud){
-	        		this.listStud.destroy();
-	        	}
+        	if(this.groupMenu){
+        		this.groupMenu.destroy();
+        	}
         },
         renderGroupItem: function(){
-        	var groupItem = this.get('groupItem'),
-        		tp = this.template;
-        	
-        		tp.setValue('numgroup', groupItem.get('numgroup'));
+        	var groupItem = this.get('groupItem').toJSON(),
+        		tp = this.template,
+        		frmStudy = groupItem.frmstudy;
         		
-        		tp.setValue('numcrs', groupItem.get('numcrs'));
+        		tp.setHTML('groupItem', tp.replace('groupItem', [{
+        				frmstudy: this.get('appInstance').determFormEdu(frmStudy),
+        				hide: 'hide',
+        				name: tp.replace('hrefNameProgram', [{
+        					label: groupItem.remove > 0 ? tp.replace('label') : ''
+        				}, groupItem])
+        			}, groupItem]));
         		
-         		tp.setValue('inpfield', groupItem.get('fieldcode') + " " 
-						+ groupItem.get('field') + " "
-						+ groupItem.get('frmstudy') + " "
-						+ groupItem.get('note'));
-         		
-         		tp.setValue('year', groupItem.get('dateline'));
+        		this.set('currentFieldid', groupItem.fieldid);
         		
-        		this.set('currentFieldId', groupItem.get('fieldid'));
+        		tp.removeClass('groupItem.btnEdit', 'hide');
+        		
+        		this.parseGroupMenu();
         },
-        fillDropDownMenu: function(){
-        	var tp = this.template,
-        		lst = "";
-        	
-        	if(!this.get('groupListShow')){
-	        	this.set('waiting', true);
+        reqFieldList: function(){
+	        this.set('waiting', true);
 	       		this.get('appInstance').fieldList('groupEditor', function(err, result){
 	    			this.set('waiting', false);
 		    			if(!err){
-			        		result.fieldList.each(function(field){
-			            		lst += tp.replace('liField', [
-			                   		   field.toJSON()
-			                   	]);
-			                });
+		    				this.set('fieldList', result.fieldList);
+		    					this.fillFieldList();
 		        		}
-	    			tp.setHTML('list', tp.replace('ulField', {li: lst}));
+	    		
 	        	}, this);
-        	}
-        	else {
-        		tp.setHTML('list', tp.replace('ulField', {li: lst}));
-        	}
+        },
+        fillFieldList: function(){
+        	var tp = this.template,
+        		fieldList = this.get('fieldList'),
+        		lst = "";
+        	
+	        	fieldList.each(function(field){
+	        		var frmStudy = field.get('frmstudy');
+
+	        		lst += tp.replace('liField', [{
+        					frmstudy: this.get('appInstance').determFormEdu(frmStudy)
+        				}, field.toJSON()]);
+	            }, this);
+	        	
+	        	tp.setHTML('groupItem.listField', tp.replace('ulField', {li: lst}));
         },
         saveGroup: function(){
-        	if(!this.get('groupListShow')){
-	        	var tp = this.template,
-	        		lib = this.get('appInstance'),
-	        		obj = {
-	        			numgroup: tp.getValue('numgroup'),
-	            		currentFieldId: this.get('currentFieldId'),
-	            		groupid: this.get('groupid'),
-	            		numcrs: tp.getValue('numcrs'),
-	            		year: tp.getValue('year')
-	        		};
-	        	
-	        		var empty = lib.isEmptyInput(obj);
-	        		if(empty){
-	        			switch(empty){
-	        				case 'numgroup': alert( 'Укажите номер группы' ); break;
-	        				case 'numcrs': alert( 'Укажите номер курса' ); break;
+        	var tp = this.template,
+        		lib = this.get('appInstance'),
+        		obj = {
+        			numgroup: tp.getValue('groupItem.numgroup'),
+            		currentFieldid: this.get('currentFieldid'),
+            		groupid: this.get('groupid'),
+            		numcrs: tp.getValue('groupItem.numcrs'),
+            		year: tp.getValue('groupItem.year')
+        		},
+        		empty = lib.isEmptyInput(obj);
+        	
+        		if(empty){
+        			switch(empty){
+        				case 'numgroup': alert( 'Укажите номер группы' ); break;
+        				case 'numcrs': alert( 'Укажите номер курса' ); break;
+        				case 'year': alert( 'Укажите год зачисления' ); break;
+        				case 'currentFieldid': alert( 'Укажите рабочий план' ); break;
+        			}
+	        			try{
+	        				tp.gel('groupItem.' + empty).focus();
+	        			} catch(e){
+	        				tp.addClass('groupItem.curentField', 'alert-danger');
 	        			}
-	        			tp.gel(empty).focus();
-	        		} else {
-	        			this.set('waiting', true);
-			        	    lib.groupSave(obj, function(err, result){
-			        	    	this.set('waiting', false);
+        		} else {
+        			this.set('waiting', true);
+		        	    lib.groupSave(obj, function(err, result){
+		        	    	this.set('waiting', false);
 			        	    	if(!err){
-			        	    		if(obj.groupid === 0) {
-			        	    			lib.set('currentPageGroup', 1);	
-			        	    		}
 			        	    		this.cancel();
 			        	    	}
-			        	    }, this)
-	        		}
-        	} else {
-        		this.cancel();
-        	}
+		        	    }, this)
+        		}
         },
         cancel: function(){
 			this.go('managerGroups.view');
-        }
+        },
+        constructItem: function(obj){
+        	return obj || {
+        		numgroup: '',
+        		numcrs: 1,
+        		dateline: new Date().getFullYear(),
+        		code: '',
+        		name: '',
+        		level: '',
+        		frmstudy: '',
+        		note: '',
+        		hide: ''
+        	};
+        },
+        change: function(e){
+        	var input, idList;
+        	
+	        	if(!this.get('edit')){
+	            	input = e.target.getDOMNode();
+		        	idList = this.template.idMap.groupItem; 
+		        	
+			        	for(var i in idList){
+			        		if(idList[i] == input.id){
+			        			this.setEditFlag();
+			        				return;
+			        		}
+			        	}
+		        }
+		},
+		setEditFlag: function(){
+			if(!this.get('edit')){
+				this.set('edit', true);
+				this.template.removeClass('btnSave', 'hide');
+			}
+		},
+		parseGroupMenu: function(){
+			var groupMenu = this.get('groupMenu'),
+				tp = this.template,
+				obj = {
+	             	groupid: this.get('groupid')
+				};
+			
+			tp.setHTML('groupMenu', tp.replace('groupMenu'));
+			
+			obj.srcNode = tp.gel('groupMenu.groupMenuItem');
+			
+			switch(groupMenu){
+				case 'groupList':
+					this.groupMenu = new NS.StudListWidget(obj);
+						break;
+				case 'groupSheet':
+					obj.fieldid = this.get('groupItem').get('fieldid');
+						this.groupMenu = new NS.SheetEditorWidget(obj);
+							break;
+				case 'groupProgress':
+					obj.fieldid = this.get('groupItem').get('fieldid');
+						this.groupMenu = new NS.ProgressViewWidget(obj);
+							break;
+			}
+			
+			tp.addClass('groupMenu.' + groupMenu, 'active');
+		}
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget, liField, ulField'},
+            templateBlockName: {value: 'widget, liField, ulField, groupItem, groupMenu, hrefNameProgram, label'},
             groupid: {value: 0},
-            currentFieldId: {value: 0},
+            currentFieldid: {value: ''},
             groupItem: {value: null},
-            groupListShow: {value: null}
+            fieldList: {value: null},
+            edit: {value: false},
+            groupMenu: {value: ''}
         },
         CLICKS: {
         	saveGroup: {
         		event: function(){
-        			this.saveGroup();
+        			var edit = this.get('edit');
+        			
+	        			if(edit){
+	        				this.saveGroup();        				
+	        			} else {
+	        				this.cancel();
+	        			}
         		}
         	},
         	cancel: {
@@ -147,7 +212,7 @@ Component.entryPoint = function(NS){
         			this.cancel();
         		}
         	},
-        	add: {
+        	addCurrentField: {
         		event: function(e){
         	  		var tp = this.template,
         	  			targ = e.target,
@@ -157,11 +222,49 @@ Component.entryPoint = function(NS){
         	  			return;
         	  		}
         	  		
-        			tp.setValue('inpfield', a.textContent);
+        			tp.removeClass('groupItem.listField', 'open');
+        			tp.removeClass('groupItem.curentField', 'alert-danger');
         			
-        			tp.removeClass('widget.list', 'open');
+        			tp.setHTML('groupItem.curentField', a.textContent);
         			
-        			this.set('currentFieldId', targ.getData('id'));
+        			this.set('currentFieldid', targ.getData('id'));
+        			
+        			this.setEditFlag();
+        		}
+        	},
+        	edit: {
+        		event: function(e){
+        			var tp = this.template;
+        			
+        			e.target.hide();
+        			
+        			this.reqFieldList();
+        			
+        			tp.removeClass('groupItem.listField', 'hide');
+            	}
+        	},
+        	choiceGroupMenu: {
+        		event: function(e){
+        			var tp = this.template,
+        				targ = e.target,
+        				curGroupMenu = targ.getData('groupMenu'),
+        				grMenu = this.get('groupMenu'),
+        				a = targ.getDOMNode();
+        				
+        			if(!a.href){
+        				return;
+        			}
+        			
+        			if(grMenu != curGroupMenu){
+            			this.set('groupMenu', curGroupMenu);
+            			this.parseGroupMenu();
+        			}
+        		}
+        	},
+        	showFieldItem: {
+        		event: function(e){
+        			var id = e.target.getData('id');
+        				this.go('field.editor', id);
         		}
         	}
         }
@@ -170,7 +273,7 @@ Component.entryPoint = function(NS){
     NS.GroupEditorWidget.parseURLParam = function(args){
         return {
         	groupid: args[0] | 0,
-        	groupListShow: args[1]
+        	groupMenu: args[1] || ''
         };
     };
 };

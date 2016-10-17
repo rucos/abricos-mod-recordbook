@@ -11,21 +11,30 @@ class RecordBookQuery {
 
     public static function FieldList(Ab_Database $db, $widget){
 
-    	$where = $widget === 'groupEditor' ? "WHERE remove=0" : "";
+    	$where = $widget === 'groupEditor' ? "WHERE f.remove=0" : "";
     	
     	$sql = "
 			SELECT 
-					fieldid as id,
-					fieldcode,
-					field,
-					frmstudy,
-					qual,
-    				note,
-					depart,
-					remove
-			FROM ".$db->prefix."rb_fieldstudy
+					f.fieldid as id,
+    				l.edulevelid,
+					f.frmstudy,
+    				p.code,
+    				p.name,
+    				l.level,
+    				f.note,
+					f.depart,
+					f.remove,
+    				ef.och,
+    				ef.ochzaoch,
+    				ef.zaoch,
+    				p.remove as prremove,
+    				l.remove as lvlremove
+			FROM ".$db->prefix."rb_fieldstudy f
+			INNER JOIN ".$db->prefix."un_edulevel l ON f.edulevelid=l.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
+			INNER JOIN ".$db->prefix."un_eduform ef ON l.edulevelid = ef.edulevelid
 			".$where."
-			ORDER BY remove ASC
+			ORDER BY f.remove ASC
 		";
 		return $db->query_read($sql);
     }
@@ -33,33 +42,40 @@ class RecordBookQuery {
     public static function FieldItem(Ab_Database $db, $id){
     	$sql = "
 			SELECT
-					fieldid as id,
-					fieldcode,
-					field,
-					frmstudy,
-					qual,
-    				note,
-					depart,
-    				remove
-			FROM ".$db->prefix."rb_fieldstudy
-			WHERE fieldid = ".bkint($id)."
+					f.fieldid as id,
+    				l.edulevelid,
+					f.frmstudy,
+    				p.code,
+    				p.name,
+    				l.level,
+    				f.note,
+					f.depart,
+					f.remove,
+    				ef.och,
+    				ef.ochzaoch,
+    				ef.zaoch,
+    				p.remove as prremove,
+    				l.remove as lvlremove
+			FROM ".$db->prefix."rb_fieldstudy f
+			INNER JOIN ".$db->prefix."un_edulevel l ON f.edulevelid=l.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
+			INNER JOIN ".$db->prefix."un_eduform ef ON l.edulevelid = ef.edulevelid
+			WHERE f.fieldid = ".bkint($id)."
 			LIMIT 1
 		";
     	return $db->query_first($sql);
     }
     
-    public static function FieldUpdate(Ab_Database $db, $id, $d){
+    public static function FieldUpdate(Ab_Database $db, $d){
     	
     	$sql = "
 			UPDATE ".$db->prefix."rb_fieldstudy
 			SET
-				fieldcode='".bkstr($d->fieldcode)."',
-				field='".bkstr($d->field)."',
-				frmstudy='".bkstr($d->frmstudy)."',
-				qual='".bkstr($d->qual)."',
+				frmstudy=".bkint($d->frmstudy).",
 				depart='".bkstr($d->depart)."',
-				note='".bkstr($d->note)."'
-			WHERE fieldid=".bkint($id)."
+				note='".bkstr($d->note)."',
+				edulevelid='".bkstr($d->levelid)."'
+			WHERE fieldid=".bkint($d->id)."
 			LIMIT 1
 		";
     	$db->query_write($sql);
@@ -69,17 +85,16 @@ class RecordBookQuery {
     	 
          $sql = "
 			INSERT INTO ".$db->prefix."rb_fieldstudy (
-				fieldcode,field,frmstudy,qual,depart,note
+				frmstudy,depart,note,edulevelid
 			) VALUES (
-				'".bkstr($d->fieldcode)."',
-				'".bkstr($d->field)."',
-				'".bkstr($d->frmstudy)."',
-				'".bkstr($d->qual)."',
+				".bkint($d->frmstudy).",
 				'".bkstr($d->depart)."',
-				'".bkstr($d->note)."'
+				'".bkstr($d->note)."',
+				".bkint($d->levelid)."
 			)
 		";
       	$db->query_write($sql);
+      	return $db->insert_id();
     }
     
     public static function FieldRemove(Ab_Database $db, $id, $restore){
@@ -179,15 +194,17 @@ class RecordBookQuery {
     				g.numcrs,
     				g.dateline,
     				g.remove as grRemove,
-    				f.field,
-    				f.fieldid,
-    				f.fieldcode,
-    				f.frmstudy,
+    				p.code,
+    				p.name,
+    				e.level,
     				f.note,
+    				f.fieldid,
     				f.remove
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
-    		WHERE f.frmstudy = '".bkstr($d->frmstudy)."'
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
+    		WHERE f.frmstudy = ".bkint($d->frmstudy)."
     		ORDER BY id DESC
     		LIMIT ".$from.",".$limit."
 		";
@@ -200,18 +217,17 @@ class RecordBookQuery {
 			SELECT COUNT( g.groupid ) as cnt
 			FROM ".$db->prefix."rb_groups g
 			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
-			WHERE f.frmstudy = '".bkstr($frmstudy)."'
+			WHERE f.frmstudy = ".bkint($frmstudy)."
 		";
     	$row = $db->query_first($sql);
     	return $row['cnt'];
     }
     
     public static function GroupAppend(Ab_Database $db, $group){
-    	 
     	$sql = "
 			INSERT INTO ".$db->prefix."rb_groups (fieldid, numgroup, numcrs, dateline)
 					VALUES (
-						".bkint($group->currentFieldId).",
+						".bkint($group->currentFieldid).",
 						'".bkstr($group->numgroup)."',
 							".bkint($group->numcrs).",
 							".bkint($group->year)."
@@ -228,13 +244,17 @@ class RecordBookQuery {
     				g.numgroup,
     				g.numcrs,
     				g.dateline,
-    				f.field,
     				f.fieldid,
-    				f.fieldcode,
     				f.frmstudy,
-    				f.note
+    				f.note,
+    				f.remove,
+    				p.code,
+    				p.name,
+    				e.level
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
     		WHERE g.groupid = ".bkint($groupid)."
     		LIMIT 1
 		";
@@ -246,7 +266,7 @@ class RecordBookQuery {
     	$sql = "
 			UPDATE ".$db->prefix."rb_groups
 			SET 
-				fieldid=".bkint($group->currentFieldId).",
+				fieldid=".bkint($group->currentFieldid).",
 				numgroup='".bkstr($group->numgroup)."',
 				numcrs=".bkint($group->numcrs).",
 				dateline=".bkint($group->year)."
@@ -282,13 +302,15 @@ class RecordBookQuery {
     				g.numgroup,
     				g.numcrs,
     				g.dateline,
-    				f.field,
+    				p.name,
     				f.fieldid,
-    				f.fieldcode,
+    				p.code,
     				f.frmstudy,
     				f.note
     		FROM ".$db->prefix."rb_groups g
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
     		WHERE g.numgroup LIKE '".bkstr($d->value)."%' 
     				AND f.frmstudy = '".bkstr($d->frmstudy)."'
     						AND g.remove = 0
@@ -398,15 +420,14 @@ class RecordBookQuery {
 					s.subjectid,
     				sj.namesubject,
     				sj.formcontrol,
-					s.firstattproc,
-					s.secondattproc,
-					s.thirdattproc,
 					s.date,
     				s.type,
-    				s.fioteacher,
+    				t.fio,
     				sj.remove,
     				sj.project
-			FROM ".$db->prefix."rb_sheet s INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			FROM ".$db->prefix."rb_sheet s 
+			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			INNER JOIN ".$db->prefix."rb_teacher t ON t.teacherid = s.teacherid
 			WHERE s.groupid = ".bkint($d->groupid)."
 						AND sj.semestr = ".bkint($d->currentSemestr)." 
 								AND sj.numcrs = ".bkint($d->numcrs)."
@@ -414,6 +435,48 @@ class RecordBookQuery {
 			ORDER BY id DESC
 		";
     	return $db->query_read($sql);
+    }
+    
+    public static function SheetItemlist(Ab_Database $db, $id){//workaround: name function edit 
+    
+    	$sql = "
+			SELECT
+					s.sheetid as id,
+					s.subjectid,
+    				sj.namesubject,
+    				sj.formcontrol,
+					s.firstattproc,
+					s.secondattproc,
+					s.thirdattproc,
+					s.date,
+    				s.type,
+    				t.departid,
+    				t.teacherid,
+    				t.fio,
+    				sj.remove,
+    				sj.project
+			FROM ".$db->prefix."rb_sheet s
+			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			INNER JOIN ".$db->prefix."rb_teacher t ON t.teacherid = s.teacherid
+			WHERE s.sheetid = ".bkint($id)."
+			LIMIT 1
+		";
+    	return $db->query_first($sql);
+    }
+    
+    public static function SheetItemFormControl(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+    				sj.formcontrol as fc,
+    				s.type as t
+			FROM ".$db->prefix."rb_sheet s
+			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid = s.subjectid
+			WHERE s.sheetid = ".bkint($id)."
+			LIMIT 1
+		";
+    	$item = $db->query_first($sql);
+    	
+    	return $item['fc'] === 'Зачет' &&  $item['t'] < 3;
     }
     
     public static function SheetAppend(Ab_Database $db, $d){
@@ -427,7 +490,7 @@ class RecordBookQuery {
    		}
    		
     	$sql = "
-			INSERT INTO ".$db->prefix."rb_sheet (subjectid, groupid, firstattproc, secondattproc, thirdattproc, date, type, fioteacher)
+			INSERT INTO ".$db->prefix."rb_sheet (subjectid, groupid, firstattproc, secondattproc, thirdattproc, date, type, teacherid)
 			VALUES (
 					".bkint($d->idSubject).",
 					".bkint($d->groupid).",
@@ -436,7 +499,7 @@ class RecordBookQuery {
 						".$a[2].",		
 					".bkint($d->date).",
 					".bkint($typeSheet).",
-					'".bkstr($d->fioteacher)."'
+					".bkint($d->teacherid)."
 			)
 		";
     	$db->query_write($sql);
@@ -465,18 +528,24 @@ class RecordBookQuery {
     		
     		if($arrCount === 0) return false;
     		
-		    		foreach($arrStud as $key => $val){
-		    			$valIns .= "(".$idSheet.",".$val.")";
-		    			if($key < $arrCount - 1){
-		    				$valIns .= ",";
-		    			}
-		    		}
-		    		$sql = "
-							INSERT INTO ".$db->prefix."rb_marks (sheetid, studid)
-							VALUES ".$valIns."
-						";
-		    		$db->query_write($sql);
+		  		RecordBookQuery::AppendMarks($db, $arrStud, $idSheet);
     		
+    }
+    
+    public static function AppendMarks(Ab_Database $db, $arrStud, $idSheet){
+    	$valIns = "";
+ 		 	foreach($arrStud as $val){
+		 		$valIns .= "(".$idSheet.",".$val."),";
+		 	}
+		 	
+		 	$valIns = substr($valIns, 0, -1);
+		 	
+		 	$sql = "
+					INSERT INTO ".$db->prefix."rb_marks (sheetid, studid)
+					VALUES ".$valIns."
+			";
+			$db->query_write($sql);
+    	 
     }
     
     public static function SheeetRemove(Ab_Database $db, $id){
@@ -497,12 +566,48 @@ class RecordBookQuery {
     }
     
     public static function SheetUpdate(Ab_Database $db, $d){
+    	
+    	if(count($d->arrStudId) > 0){
+    		$addlistid = $d->arrStudId;//массив добавления студентов
+    		$rows = RecordBookQuery::StudidListFromMark($db, $d->idSheet);
+    		$remlistid = array();//массив удаления студентов
+    		
+       		while ($dd = $db->fetch_array($rows)){
+       			$isRemove = true;
+	       			foreach($addlistid as $key => $id){
+	       				if($id == $dd['id']){
+	       					$isRemove = false;
+	       						unset($addlistid[$key]);
+	       						
+	       						break;
+	       				}
+	       			}
+	       		if($isRemove){
+	       			$remlistid[] = $dd['id'];
+	       		}
+	       			
+       		}
+       		
+       		if(count($remlistid) > 0){
+       			$remstr = implode(',', $remlistid);
+       			$sql = "
+						DELETE FROM ".$db->prefix."rb_marks
+		    			WHERE sheetid=".bkint($d->idSheet)." AND studid IN (".$remstr.")
+				";
+	       			$db->query_write($sql);
+       		}
+       		
+       		if(count($addlistid) > 0){
+	       		RecordBookQuery::AppendMarks($db, $addlistid, $d->idSheet);
+       		}
+    	}
+    	
     
     	$sql = "
 				UPDATE ".$db->prefix."rb_sheet
 				SET
 					date=".bkint($d->date).",
-					fioteacher='".bkstr($d->fioteacher)."'
+					teacherid=".bkint($d->teacherid)."
 				WHERE sheetid=".bkint($d->idSheet)."
 				LIMIT 1
 		";
@@ -532,18 +637,18 @@ class RecordBookQuery {
     	return $db->query_read($sql);
     }
     
-    public static function SheetUpdateWeight(Ab_Database $db, $id, $a1, $a2, $a3){
+    public static function SheetUpdateWeight(Ab_Database $db, $d){
     
     	$sql = "
 				UPDATE ".$db->prefix."rb_sheet
 				SET
-					firstattproc=".bkint($a1).",
-					secondattproc=".bkint($a2).",
-					thirdattproc=".bkint($a3)."
-				WHERE sheetid=".bkint($id)."
+					firstattproc=".bkint($d->attProc[0]).",
+					secondattproc=".bkint($d->attProc[1]).",
+					thirdattproc=".bkint($d->attProc[2])."
+				WHERE sheetid=".bkint($d->sheetid)."
 				LIMIT 1
 		";
-    	$db->query_write($sql);
+    	return $db->query_write($sql);
     }
     
     public static function MarkUpdate(Ab_Database $db, $d){
@@ -557,18 +662,6 @@ class RecordBookQuery {
 					prliminary=".bkint($d->prliminary).",
 					additional=".bkint($d->additional).",
 					debts=".bkint($d->debts).",
-					mark=".bkint($d->mark)."
-				WHERE markid=".bkint($d->id)."
-				LIMIT 1
-		";
-    	$db->query_write($sql);
-    }
-    
-    public static function MarkUpdateZaoch(Ab_Database $db, $d){
-    
-    	$sql = "
-				UPDATE ".$db->prefix."rb_marks
-				SET
 					mark=".bkint($d->mark)."
 				WHERE markid=".bkint($d->id)."
 				LIMIT 1
@@ -651,16 +744,17 @@ class RecordBookQuery {
     
     	$sql = "
 			SELECT
-					fieldid as id,
-					fieldcode,
-					field,
-					frmstudy,
-					qual,
-					depart,
-    				note,
-					remove
-			FROM ".$db->prefix."rb_fieldstudy
-			WHERE frmstudy = '".bkstr($formStudy)."' AND remove = 0
+					f.fieldid as id,
+    				p.code,
+    				p.name,
+					f.frmstudy,
+					f.depart,
+    				f.note,
+					f.remove
+			FROM ".$db->prefix."rb_fieldstudy f
+			INNER JOIN ".$db->prefix."un_edulevel l ON f.edulevelid=l.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON p.programid=l.programid
+			WHERE f.frmstudy = ".bkint($formStudy)." AND f.remove = 0
 		";
     	return $db->query_read($sql);
     }
@@ -786,6 +880,7 @@ class RecordBookQuery {
 			    		SELECT 	m.markid as id,
 		    					sh.subjectid,
 		   						m.studid,
+			   					m.sheetid,
 		   						MAX(".$max.") as mark
 			    		FROM ".$db->prefix."rb_marks m
 			    		INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid
@@ -818,14 +913,16 @@ class RecordBookQuery {
 			    				g.numgroup,
 			    				g.numcrs,
 			    				g.dateline,
-			    				f.field,
 			    				f.fieldid,
-			    				f.fieldcode,
-			    				f.frmstudy,
+			    				p.code,
+			    				p.name,
+	    						f.frmstudy,
 	    						f.note,
 			    				f.remove
 			    		FROM ".$db->prefix."rb_groups g
 			    		INNER JOIN ".$db->prefix."rb_fieldstudy f ON g.fieldid = f.fieldid
+			    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    					INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
 			    		WHERE g.groupid IN (".$rowid.")
 			    					AND g.remove=0
 			    	";
@@ -852,7 +949,6 @@ class RecordBookQuery {
     }
     
     public static function FindStudReport(Ab_Database $db, $value){
-    	
     	$sql = "
     		SELECT
 					s.groupid as id,
@@ -865,67 +961,293 @@ class RecordBookQuery {
     				g.numcrs,
     				g.dateline,
     				f.fieldid,
-    				f.fieldcode,
-    				f.field,
+    				p.code,
+    				p.name,
     				f.frmstudy,
     				f.note
     		FROM ".$db->prefix."rb_students s
     		INNER JOIN ".$db->prefix."rb_groups g ON g.groupid = s.groupid
     		INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = g.fieldid
-    		WHERE numbook='".bkstr($value)."' OR fio='".bkstr($value)."'
+    		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
+    		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
+    		WHERE s.numbook='".bkstr($value)."' OR s.fio REGEXP '".bkstr($value)."'
     		LIMIT 1
     	";
     	return $db->query_first($sql);
     }
     
-    public static function MarkStudReport(Ab_Database $db, $d){
-    	 
-    			$sql = "
-    					SELECT
-    						  m.markid as id,
-    						  sj.namesubject,
-    						  sj.formcontrol,
-    						  MAX(sh.date) as date,
-    						  MAX(m.mark) as mark
-    					FROM ".$db->prefix."rb_marks m
-    					INNER JOIN ".$db->prefix."rb_sheet sh ON sh.sheetid = m.sheetid
-    					INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid = sj.subjectid
-    					WHERE m.studid=".$d->studid."
-    							AND sh.groupid = ".bkint($d->groupid)."
-    								AND sj.fieldid = ".bkint($d->fieldid)."
-    									AND sj.numcrs = ".bkint($d->course)."
-											AND sj.semestr = ".bkint($d->semestr)."
-												AND sh.type < 3
-						GROUP BY sj.namesubject
+    public static function MarkStudReport(Ab_Database $db, $d, $project = false){
+    	$subjCond = "sj.fieldid=".bkint($d->fieldid)." AND sj.numcrs=".bkint($d->course)." AND sj.semestr=".bkint($d->semestr)." AND sj.remove=0";
+    	$sheetCond = "sh.groupid=".bkint($d->groupid);
+		
+    	if($project){
+    		$sheetCond .= " AND sh.type>2";
+    		$subjCond .= " AND (sj.project LIKE '%1%' OR sj.formcontrol='-')";
+    		$order = "ORDER BY sj.formcontrol DESC";
+    	} else {
+    		$sheetCond .= " AND sh.type<3";
+    		$subjCond .= " AND sj.formcontrol<>'-'";
+    		$order = "";
+    	}
+    	
+    	/*
+    	 * Максимальные оценки по текущему семестру
+    	 * */
+    	$maxMark = "
+    			SELECT
+    					m.markid,
+    					sh.subjectid,
+    					m.studid,
+    					MAX(m.prliminary+m.additional) as mark
+    			FROM ".$db->prefix."rb_sheet sh
+    			INNER JOIN ".$db->prefix."rb_marks m ON sh.sheetid=m.sheetid AND m.studid=".bkint($d->studid)."
+    			INNER JOIN ".$db->prefix."rb_subject sj ON sj.subjectid=sh.subjectid AND ".$subjCond."
+    			WHERE ".$sheetCond."
+    			GROUP BY sh.subjectid,m.studid
+    	";
+    			
+    		/*
+    		 * Список предметов c оценкой по текущему семестру
+    		 * 
+    		 * */	
+    			$subjList = "
+						SELECT
+    							sj.subjectid,
+    							sj.namesubject,
+    							sj.numhours,
+    						  	sj.formcontrol,
+    						  	sj.project,
+    							sj.remove,
+    							mm.mark
+    					FROM ".$db->prefix."rb_subject sj
+    					LEFT JOIN (".$maxMark.") mm ON mm.subjectid=sj.subjectid
+    					WHERE ".$subjCond."
+    					".$order."
     			";
+    			
+    			/*
+    			 * Список ведомостей текущего семестра
+    			 * */
+     				$sheetList = "
+		    			SELECT
+		    					sh.subjectid,
+    							sh.date,
+	    						sh.type,
+    							sh.sheetid,
+		    					m.studid,
+    							m.prliminary+m.additional as mark
+		    			FROM ".$db->prefix."rb_sheet sh
+		    			INNER JOIN ".$db->prefix."rb_marks m ON sh.sheetid=m.sheetid AND m.studid=".bkint($d->studid)."
+		    			WHERE ".$sheetCond."
+    				";
+    				
+    				$sql = "
+    						SELECT
+    							sbj.subjectid,
+    							sbj.namesubject,
+    							sbj.numhours,
+    						  	sbj.formcontrol,
+    						  	sbj.project,
+    							sbj.mark,
+    							sht.sheetid,
+    							sht.type,
+    							sht.date
+    						FROM (".$subjList.") sbj
+    						LEFT JOIN (".$sheetList.") sht ON sht.subjectid=sbj.subjectid AND sht.mark=sbj.mark
+    				";
     			return $db->query_read($sql);
+
     }
     
-    public static function SheetItem(Ab_Database $db, $id){
+    public static function SheetItemPrint(Ab_Database $db, $id){
     	$sql = "
 			SELECT
 					sh.firstattproc as att1,
     				sh.secondattproc as att2,
     				sh.thirdattproc as att3,
     				sh.date,
-    				sh.fioteacher as ft,
+    				sh.teacherid as tid,
     				sj.namesubject as ns,
     				sj.formcontrol as fct,
     				sj.numcrs as nc,
     				sj.semestr as sem,
     				sj.numhours as nh,
     				sj.project as pj,
-    				f.fieldcode as fc,
+    				p.code as fc,
     				g.numgroup as ng,
     				g.dateline as dad
 			FROM ".$db->prefix."rb_sheet sh
-			INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid = sj.subjectid
-			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid = sj.fieldid
-			INNER JOIN ".$db->prefix."rb_groups g ON sh.groupid = g.groupid
-			WHERE sh.sheetid = ".bkint($id)."
+			INNER JOIN ".$db->prefix."rb_subject sj ON sh.subjectid=sj.subjectid
+			INNER JOIN ".$db->prefix."rb_fieldstudy f ON f.fieldid=sj.fieldid
+			INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid=e.edulevelid
+			INNER JOIN ".$db->prefix."un_program p ON e.programid=p.programid
+			INNER JOIN ".$db->prefix."rb_groups g ON sh.groupid=g.groupid
+			WHERE sh.sheetid=".bkint($id)."
 			LIMIT 1
 		";
     	return $db->query_first($sql);
+    }
+    
+    public static function TeacherItemPrint(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+    				t.fio,
+    				d.shortname
+			FROM ".$db->prefix."rb_teacher t
+			INNER JOIN ".$db->prefix."rb_departs d ON t.departid=d.departid					
+			WHERE t.teacherid = ".bkint($id)."
+			LIMIT 1
+		";
+    	return $db->query_first($sql);
+    }
+    
+    public static function ProgramList(Ab_Database $db){
+    	$sql = "
+			SELECT
+    				l.edulevelid as id,
+    				p.code,
+    				p.name,
+    				l.level,
+    				f.och,
+    				f.ochzaoch,
+    				f.zaoch
+    		FROM ".$db->prefix."un_program p
+    		INNER JOIN ".$db->prefix."un_edulevel l ON p.programid=l.programid
+    		INNER JOIN ".$db->prefix."un_eduform f ON l.edulevelid=f.edulevelid
+    		WHERE p.remove=0 AND l.remove=0
+		";
+    	return $db->query_read($sql); 
+    }
+    
+    public static function DepartList(Ab_Database $db){
+    	$sql = "
+			SELECT
+    				departid as id,
+    				namedepart,
+    				shortname,
+    				remove
+    		FROM ".$db->prefix."rb_departs
+		";
+    	return $db->query_read($sql);
+    }
+
+    public static function DepartItem(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+    				departid as id,
+    				namedepart,
+    				shortname,
+    				remove
+    		FROM ".$db->prefix."rb_departs
+    		WHERE departid=".bkint($id)."
+    		LIMIT 1
+		";
+    	return $db->query_first($sql);
+    }
+    
+    public static function DepartAppend(Ab_Database $db, $d){
+         $sql = "
+			INSERT INTO ".$db->prefix."rb_departs (
+				namedepart,shortname
+			) VALUES (
+				'".bkstr($d->namedepart)."',
+				'".bkstr($d->shortname)."'
+			)
+		";
+      	$db->query_write($sql);
+    }
+    
+    public static function DepartUpdate(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_departs
+			SET
+				namedepart='".bkstr($d->namedepart)."',
+				shortname='".bkstr($d->shortname)."'
+			WHERE departid=".bkint($d->id)."
+			LIMIT 1
+		";
+    	$db->query_write($sql);
+    }
+    
+    public static function DepartRemove(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_departs
+			SET
+				remove=".bkint($d->remove)."
+			WHERE departid=".bkint($d->id)."
+			LIMIT 1
+		";
+    	$db->query_write($sql);
+    }
+    
+    public static function TeacherList(Ab_Database $db, $departid){
+    	$sql = "
+			SELECT
+    				teacherid as id,
+    				fio,
+    				remove
+    		FROM ".$db->prefix."rb_teacher
+    		WHERE departid=".bkint($departid)."
+		";
+    	return $db->query_read($sql);
+    }
+    
+    public static function TeacherAppend(Ab_Database $db, $d){
+    	$sql = "
+			INSERT INTO ".$db->prefix."rb_teacher (
+				departid,fio
+			) VALUES (
+				".bkint($d->departid).",
+				'".bkstr($d->fio)."'
+			)
+		";
+    	$db->query_write($sql);
+    }
+    
+    public static function TeacherItem(Ab_Database $db, $id){
+    	$sql = "
+			SELECT
+	    			teacherid as id,
+	    			fio,
+	    			remove
+    		FROM ".$db->prefix."rb_teacher
+    		WHERE  teacherid=".bkint($id)."
+    		LIMIT 1
+		";
+    	return $db->query_first($sql);
+    }
+    
+    public static function TeacherUpdate(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_teacher
+			SET
+				departid=".bkint($d->departid).",
+				fio='".bkstr($d->fio)."'
+			WHERE teacherid=".bkint($d->id)."
+			LIMIT 1
+		";
+    	$db->query_write($sql);
+    }
+    
+    public static function TeacherRemove(Ab_Database $db, $d){
+    	$sql = "
+			UPDATE ".$db->prefix."rb_teacher
+			SET
+				remove=".bkint($d->remove)."
+			WHERE teacherid=".bkint($d->id)."
+			LIMIT 1
+		";
+    	$db->query_write($sql);
+    }
+    
+    public static function StudidListFromMark(Ab_Database $db, $sheetid){
+    	$sql = "
+			SELECT 
+    				studid as id
+    		FROM ".$db->prefix."rb_marks
+    		WHERE sheetid=".bkint($sheetid)."
+		";
+    	return $db->query_read($sql);
     }
 }
 

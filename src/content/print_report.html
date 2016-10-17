@@ -1,0 +1,62 @@
+<!--[*]
+[tt=window]_sys[/tt]
+[script]content/print_report.php[/script]
+
+[bkvar=tr]
+	<tr>
+		<td class="subject">
+			{v#subject}
+		</td>
+		<td>
+			{v#hours}
+		</td>
+		<td>
+			{v#exam}
+		</td>
+		<td>
+			{v#credit}
+		</td>
+		<td>
+			{v#date}
+		</td>
+	</tr>
+[/bkvar]
+
+[*]-->
+<style type="text/css">
+	#print {
+		font-size: 70%;
+	}
+	table, th, td  {
+		border: 1px solid black;
+		border-collapse: collapse;
+		margin-bottom: 40px;
+	}
+	p {
+		margin: 5px;
+	}
+	.subject {
+		width: 300px;
+	}
+	
+	@media print {
+		.print-button {
+			display: none;
+		}
+	}
+</style>
+<p class="print-button">
+	Размер шрифта:
+	<input type="range" min="70" max="130" step="10" value="70" onInput="CheckFontSize(this.value)">
+	<button onClick="window.print()">Печать</button>
+</p>
+<div id="print">
+	<table>
+		<tbody>{v#rows}</tbody>
+	</table>
+</div>
+<script>
+	function CheckFontSize(size){
+		document.getElementById('print').style.fontSize = size + '%';
+	}
+</script>

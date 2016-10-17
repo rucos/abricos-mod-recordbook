@@ -103,4 +103,61 @@ if ($updateManager->isInstall('0.2.2')){
 			)".$charset
 		);
 }
+
+if ($updateManager->isUpdate('0.2.3') && !$updateManager->isInstall()){
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_fieldstudy 
+		DROP fieldcode,
+		DROP field,
+		DROP qual
+	");
+	
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_fieldstudy
+		ADD edulevelid int(10) unsigned NOT NULL default 0 COMMENT 'id направления'
+	");
+	
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_fieldstudy
+		MODIFY frmstudy tinyint(1) unsigned NOT NULL default 0 COMMENT 'Форма обучения'
+	");
+
+}
+
+if ($updateManager->isUpdate('0.2.4') && !$updateManager->isInstall()){
+	$db->query_write("
+			CREATE TABLE IF NOT EXISTS ".$pfx."rb_departs(
+				departid int(10) unsigned NOT NULL auto_increment,
+				namedepart varchar(255) default NULL COMMENT 'Название кафедры',
+				shortname varchar(20) default NULL COMMENT 'Краткое название кафедры',
+				remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален?',
+				PRIMARY KEY (departid)
+		)".$charset
+	);
+	
+	$db->query_write("
+			CREATE TABLE IF NOT EXISTS ".$pfx."rb_teacher(
+				teacherid int(10) unsigned NOT NULL auto_increment,
+				departid int(10) unsigned NOT NULL default 0 COMMENT 'id кафедры',
+				fio varchar(255) default NULL COMMENT 'ФИО преподавателя',
+				remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален?',
+				PRIMARY KEY (teacherid)
+		)".$charset
+	);
+
+}
+
+if ($updateManager->isUpdate('0.2.5') && !$updateManager->isInstall()){
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_sheet
+		ADD teacherid int(10) unsigned NOT NULL default 0 COMMENT 'id преподаваетеля'
+	");
+}
+
+if ($updateManager->isUpdate('0.2.6.1') && !$updateManager->isInstall()){
+	$db->query_write("
+		ALTER TABLE ".$pfx."rb_sheet
+		DROP fioteacher
+	");
+}
 ?>

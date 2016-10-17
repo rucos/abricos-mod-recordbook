@@ -1,0 +1,11 @@
+.list-group-item .btn-group {
+  display: none;
+}
+
+.list-group-item:HOVER {
+  cursor: pointer;
+}
+.list-group-item:HOVER .btn-group {
+  display: inline-block;
+  cursor: pointer;
+}

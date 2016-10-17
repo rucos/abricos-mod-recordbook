@@ -6,21 +6,25 @@
     "id": {
       "type": "int"
     },
-    "fieldcode": {
-      "type": "string",
-      "json": "fc"
-    },
-    "field": {
-      "type": "string",
-      "json": "fd"
-    },
+    "edulevelid": {
+      "type": "int",
+      "json": "eid"
+   },
     "frmstudy": {
-      "type": "string",
-      "json": "bd"
+      "type": "int",
+      "json": "fs"
     },
-    "qual": {
+    "code": {
       "type": "string",
-      "json": "qual"
+      "json": "cd"
+    },
+    "name": {
+      "type": "string",
+      "json": "nm"
+    },
+    "level": {
+      "type": "string",
+      "json": "lvl"
     },
     "note": {
       "type": "string",
@@ -33,6 +37,18 @@
     "remove": {
       "type": "int",
       "json": "rem"
+    },
+	"formEdu":{
+	  "type": "array",
+      "json": "fdu"
+	},
+    "lvlremove":{
+      "type": "int",
+      "json": "lvlr"
+    },
+    "prremove":{
+      "type": "int",
+      "json": "prr"
     }
   }
 }

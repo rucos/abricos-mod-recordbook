@@ -43,7 +43,7 @@ Component.entryPoint = function(NS){
         setTradMark: function(val){
         	if(val <= 100){
         		if(val < 51){
-        			return '';
+        			return '2';
         		} else if(val >= 51 && val < 71){
         			return '3';
         		} else if(val >= 71 && val < 86){
@@ -53,13 +53,32 @@ Component.entryPoint = function(NS){
         		}
         	} else {
         		switch(val){
-        			case 101: return '';
+        			case 101: return 'Незач';
         			case 102: return 'Зач';
         			case 103: return '3';
         			case 104: return '4';
         			case 105: return '5';
         		}
         	}
+        },
+        determFormEdu: function(key){
+        	var obj = {
+        		'1': 'очная форма',
+        		'2': 'очно-заочная форма',
+        		'3': 'заочная форма'
+        	};
+        	return obj[key] || '';
+        },
+        unSetActive: function(element){
+        	var collect = element.childNodes,
+        		cl = element.tagName == 'TBODY' ? 'success' : 'active';
+        	
+        		for(var i = 0, len = collect.length; i < len; i++){
+        			collect[i].classList.remove(cl);
+        		}
+        },
+        printSheet: function(url, name){
+        		window.open(url, name, 'width=1050,height=800').focus();
         }
     }, [], {
         REQS: {
@@ -96,7 +115,7 @@ Component.entryPoint = function(NS){
                 type: 'modelList:GroupList'
     		},
     		groupSave: {
-    			args: ['group']
+    			args: ['data']
     		},
     		groupItem: {
     			args: ['groupid'],
@@ -119,11 +138,16 @@ Component.entryPoint = function(NS){
     		},
     		sheetList: {
     			attribute: false,
-    			args: ['objData'],
+    			args: ['data'],
     			type: 'modelList:SheetList'
     		},
+    		sheetItem: {
+    			attribute: false,
+    			args: ['data'],
+    			type: 'model:SheetItem'
+    		},
     		sheetSave: {
-    			args: ['objData']
+    			args: ['data']
     		},
     		sheetRemove: {
     			args: ['sheetid']
@@ -134,12 +158,9 @@ Component.entryPoint = function(NS){
     			type: 'modelList:MarkList'
     		},
     		updateWeight: {
-    			args: ['objData']
+    			args: ['data']
     		},
     		markUpdate: {
-    			args: ['objData']
-    		},
-       		markUpdateZaoch: {
     			args: ['data']
     		},
     		countPaginator: {
@@ -191,6 +212,35 @@ Component.entryPoint = function(NS){
     			args: ['data'],
     			attribute: false,
     			type: 'modelList:MarkListStat'
+    		},
+    		programList: {
+    			attribute: false,
+    			type: 'modelList:ProgramList'
+    		},
+    		departList: {
+    			attribute: false,
+    			type: 'modelList:DepartList'
+    		},
+    		departSave: {
+    			args: ['data']
+    		},
+    		departItem: {
+    			args: ['departid'],
+    			attribute: false,
+    			type: 'model:DepartItem'
+    		},
+    		teacherList: {
+    			args: ['departid'],
+    			attribute: false,
+    			type: 'modelList:TeacherList'
+    		},
+    		teacherSave: {
+    			args: ['data']
+    		},
+    		teacherItem: {
+    			args: ['teacherid'],
+    			attribute: false,
+    			type: 'model:TeacherItem'
     		}
         },
         ATTRS: {
@@ -210,14 +260,24 @@ Component.entryPoint = function(NS){
         	ReportItem: {value: NS.ReportItem},
         	findGroup: {value: false},
         	findGroupVal: {value: ''},
-        	frmstudy: {value: 0}
+        	frmstudy: {value: 0},
+        	ProgramList: {value: NS.ProgramList},
+        	ProgramItem: {value: NS.ProgramItem},
+        	DepartList: {value: NS.DepartList},
+        	DepartItem: {value: NS.DepartItem},
+        	TeacherList: {value: NS.TeacherList},
+        	TeacherItem: {value: NS.TeacherItem},
+        	pageGroup: {value: 1},
+        	courseChoice: {value: 0},
+        	semestrChoice: {value: 0},
+        	progressView: {value: ''}
         },
         URLS: {
         	ws: "#app={C#MODNAMEURI}/wspace/ws/",
-        	manager: {
+        	groupEditor: "groupEditor/GroupEditorWidget/",
+        	fieldManager: {
         		view: function(){
-        			
-        			 return this.getURL('ws') + 'manager/ManagerWidget';
+        			 return this.getURL('ws') + 'fieldManager/FieldManagerWidget';
         		}
         	},
         	managerGroups: {
@@ -230,11 +290,6 @@ Component.entryPoint = function(NS){
         			return this.getURL('ws') + 'managerExpeled/ManagerWidgetExpeled';
         		}
         	},
-        	managerReport: {
-        		view: function(){
-        			return this.getURL('ws') + 'managerReport/ManagerWidgetReport';
-        		}
-        	},
         	field: {
         	    editor: function(fieldid){
         	    	return this.getURL('ws') + 'fieldEditor/FieldEditorWidget/' + (fieldid | 0) + '/';
@@ -244,22 +299,26 @@ Component.entryPoint = function(NS){
                 }
         	},
         	group: {
-        		editor: function(groupid, groupList){
-        			var url = this.getURL('ws') + 'groupEditor/GroupEditorWidget/' + (groupid | 0) + '/'; 
-        			if(groupList){
-        				return url + groupList;//показать список группы
-        			} else {
-        				return url;//добавление or изменение группы
-        			}
+        		editor: function(groupid, groupMenu){
+        			var url = this.getURL('ws') + this.getURL('groupEditor') + (groupid | 0) + '/';
+        			
+	        			if(groupMenu){
+	        				url += groupMenu;
+	        			}
+	        			
+	        			this.set('courseChoice', 0);
+	        			this.set('semestrChoice', 0);
+	        			this.set('progressView', '');
+	        			
+	        			return url;
                 },
         		create: function(){
         			return this.getURL('group.editor');
-        		},
-        		sheetEditor: function(groupid){
-        			return this.getURL('ws') + 'sheetEditor/SheetEditorWidget/' + groupid + '/';
-        		},
-        		progressView: function(groupid){
-        			return this.getURL('ws') + 'progressView/ProgressViewWidget/' + groupid + '/';
+        		}
+        	},
+        	managerDepart: {
+        		view: function(){
+        			return this.getURL('ws') + 'departManager/DepartManagerWidget';
         		}
         	}
         }

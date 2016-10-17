@@ -10,6 +10,7 @@
 class FieldItem extends AbricosModel {
     protected $_structModule = 'recordbook';
     protected $_structName = 'FieldItem';
+    
 }
 
 class FieldList extends AbricosModelList {
@@ -82,5 +83,32 @@ class GroupModalList extends AbricosModelList {
 class ReportItem extends AbricosModel {
 	protected $_structModule = 'recordbook';
 	protected $_structName = 'ReportItem';
+}
+
+class ProgramItem extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'ProgramItem';
+}
+
+class ProgramList extends AbricosModelList {
+
+}
+
+class DepartItem extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'DepartItem';
+}
+
+class DepartList extends AbricosModelList {
+
+}
+
+class TeacherItem extends AbricosModel {
+	protected $_structModule = 'recordbook';
+	protected $_structName = 'TeacherItem';
+}
+
+class TeacherList extends AbricosModelList {
+
 }
 ?>

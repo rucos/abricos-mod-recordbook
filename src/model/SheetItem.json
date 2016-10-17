@@ -18,17 +18,9 @@
       "type": "string",
       "json": "ns"
     },
-    "firstattproc": {
-      "type": "int",
-      "json": "fap"
-    },
-    "secondattproc": {
-      "type": "int",
-      "json": "sap"
-    },
-    "thirdattproc": {
-      "type": "int",
-      "json": "tap"
+    "attestation": {
+      "type": "array",
+      "json": "att"
     },
     "date": {
       "type": "int",
@@ -38,7 +30,15 @@
       "type": "int",
       "json": "ts"
     },
-    "fioteacher": {
+    "departid": {
+      "type": "int",
+      "json": "did"
+    },
+    "teacherid": {
+      "type": "int",
+      "json": "tid"
+    },
+    "fio": {
       "type": "string",
       "json": "ft"
     },
@@ -49,6 +49,10 @@
     "project": {
       "type": "string",
       "json": "pr"
+    },
+    "arrstudid": {
+      "type": "array",
+      "json": "astud"
     }
   }
 }

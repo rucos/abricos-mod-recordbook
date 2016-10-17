@@ -15,17 +15,22 @@ Component.entryPoint = function(NS){
  
     NS.SubjectListWidget = Y.Base.create('subjectListWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance){
-        	var tp = this.template;
+        	var tp = this.template,
+        		self = this;
         	
             this.pagination = new NS.PaginationWidget({
                 srcNode: tp.gel('pag'),
-                parent: this
+                callback: function() {
+        			self.reloadList();	
+        		}
             });
             
         	this.paginationCourse = new NS.PaginationCourseWidget({
         		srcNode: tp.gel('pagCourse'),
         		show: true,
-        		parent: this
+        		callback: function() {
+        			self.find();	
+        		}
         	});
         	
         	this.reloadList();
@@ -64,7 +69,7 @@ Component.entryPoint = function(NS){
 	        				}
 	        		}, this);
         	} else {
-        		if(this.getFilter('filterSemestr') || this.getFilter('filterCourse')){
+        		if(this.getFilter('semestr') || this.getFilter('course')){
         			this.find();
         		} else {
         			this.find(tp.gel('findSubject').value);
@@ -224,8 +229,8 @@ Component.entryPoint = function(NS){
         		data = {
 	        		fieldid: this.get('fieldid'),
 	        		value: val || 0,
-	        		filterCourse: +this.getFilter('filterCourse'),
-	        		filterSemestr: +this.getFilter('filterSemestr'),
+	        		filterCourse: +this.getFilter('course'),
+	        		filterSemestr: +this.getFilter('semestr'),
 	        		type: 'Subject'
 	        	};
         	

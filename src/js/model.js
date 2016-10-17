@@ -77,4 +77,28 @@ Component.entryPoint = function(NS){
         structureName: 'ReportItem'
     });
     
+    NS.ProgramItem = Y.Base.create('programItem', SYS.AppModel, [], {
+        structureName: 'ProgramItem'
+    });
+
+    NS.ProgramList = Y.Base.create('programList', SYS.AppModelList, [], {
+        appItem: NS.ProgramItem
+    });
+    
+    NS.DepartItem = Y.Base.create('departItem', SYS.AppModel, [], {
+        structureName: 'DepartItem'
+    });
+
+    NS.DepartList = Y.Base.create('departList', SYS.AppModelList, [], {
+        appItem: NS.DepartItem
+    });
+    
+    NS.TeacherItem = Y.Base.create('teacherItem', SYS.AppModel, [], {
+        structureName: 'TeacherItem'
+    });
+
+    NS.TeacherList = Y.Base.create('teacherList', SYS.AppModelList, [], {
+        appItem: NS.TeacherItem
+    });
+    
 };

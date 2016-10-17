@@ -1,11 +1,14 @@
 <!--{widget}-->
 <div>
-    <ul class="nav nav-pills">
+    <ul class="nav nav-pills" data-click="showGroupList">
 		  <li>
-		  	<button id="{i#ochForm}" data-value="ochForm" data-click="showGroupList" class="btn btn-default" data-wait="disable">Очная форма</button>
+		  	<button id="{i#o}" data-value="1"  class="btn btn-default" data-wait="disable">Очная форма</button>
 		  </li>
 		  <li>
-		  	<button id="{i#zaochForm}" data-value="zaochForm"  data-click="showGroupList" class="btn btn-default" data-wait="disable">Заочная форма</button>
+		  	<button id="{i#ozo}" data-value="2" class="btn btn-default" data-wait="disable">Очно-заочная форма</button>
+		  </li>
+		  <li>
+		  	<button id="{i#z}" data-value="3" class="btn btn-default" data-wait="disable">Заочная форма</button>
 		  </li>
 	</ul>
         <span data-wait="show" class="pull-right">
@@ -42,11 +45,10 @@
     <tr>
 	   	 <th>№группы</th>
 	   	 <th>Год поступления</th>
-	   	 <th>Направление</th>
+	   	 <th>Рабочий план</th>
 	     <th>Список группы</th>
 	     <th>Ведомости</th>
 	     <th>Успеваемость</th>
-	     <th></th>
 	     <th></th>
     </tr>
     </thead>
@@ -57,26 +59,21 @@
 <tr class="{v#success} {v#danger}">
     <td>{v#numgroup}({v#numcrs}) </td>
     <td>{v#dateline}</td>
-    <td>{v#fieldcode} {v#field} {v#frmstudy} {v#note} {v#label}</td>
+    <td>{v#nameprogram}</td>
     <td>
-    	 <button data-click="showListGroup" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    	 <button data-click="showGroupMenu" data-id="{v#id}" data-groupMenu="groupList" class="btn btn-default btn-xs" data-wait="disable">
             Список группы
         </button>
     </td>
     <td>
-    	<button data-click="showSheet" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    	<button data-click="showGroupMenu" data-id="{v#id}" data-groupMenu="groupSheet" class="btn btn-default btn-xs" data-wait="disable">
     		Ведомости
     	</button>
     </td>
     <td>
-    	<button data-click="showProgress" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+    	<button data-click="showGroupMenu" data-id="{v#id}" data-groupMenu="groupProgress" class="btn btn-default btn-xs" data-wait="disable">
     		Успеваемость
     	</button>
-    </td>
-    <td>
-        <button data-click="edit" data-id="{v#id}"  class="btn btn-default btn-xs" data-wait="disable">
-            Править
-        </button>
     </td>
     <td>
          <button id="{i#remove}-{v#id}" data-click="remove-show" type="button" class="btn btn-default btn-xs"
@@ -98,3 +95,6 @@
 
 <!--{label}-->
 <span class="label label-danger">Удален</span>
+
+<!--{hrefNameProgram}-->
+<a href="" data-click="showFieldItem" data-id="{v#fieldid}">{v#code} {v#name} {v#level} {v#note} {v#label}</a>

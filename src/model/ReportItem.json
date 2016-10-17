@@ -22,7 +22,7 @@
       "type": "int",
       "json": "tf"
     },
-    "field": {
+    "name": {
       "type": "string",
       "json": "fi"
     },
@@ -30,7 +30,7 @@
       "type": "int",
       "json": "fid"
     },
-    "fieldcode": {
+    "code": {
       "type": "string",
       "json": "fc"
     },

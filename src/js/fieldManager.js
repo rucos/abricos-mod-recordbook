@@ -11,7 +11,7 @@ Component.entryPoint = function(NS){
         SYS = Brick.mod.sys;
    
     
-    NS.ManagerWidget = Y.Base.create('managerWidget', SYS.AppWidget, [], {
+    NS.FieldManagerWidget = Y.Base.create('fieldManagerWidget', SYS.AppWidget, [], {
         onInitAppWidget: function(err, appInstance, options){
             var tp = this.template;
             

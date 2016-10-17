@@ -27,13 +27,19 @@ class RecordBook extends AbricosApplication {
 				'GroupModalList' => 'GroupModalList',
 				'MarkItemStat' => 'MarkItemStat',
 				'MarkListStat' => 'MarkListStat',
-				'ReportItem' => 'ReportItem'
+				'ReportItem' => 'ReportItem',
+				'ProgramItem' => 'ProgramItem',
+				'ProgramList' => 'ProgramList',
+				'DepartList' => 'DepartList',
+				'DepartItem' => 'DepartItem',
+				'TeacherList' => 'TeacherList',
+				'TeacherItem' => 'TeacherItem'
 		);
 	}
 	
 	
 	protected function GetStructures(){
-		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem';
+		return 'FieldItem, SubjectItem, GroupItem, StudItem, SheetItem, MarkItem, GroupModalItem, MarkItemStat, Config, ReportItem, ProgramItem, DepartItem, TeacherItem';
 	}
 
 	public function ResponseToJSON($d){
@@ -59,7 +65,7 @@ class RecordBook extends AbricosApplication {
             case "groupList":
             	return $this->GroupListToJSON($d->data);
             case "groupSave":
-            	return $this->GroupSaveToJSON($d->group);
+            	return $this->GroupSaveToJSON($d->data);
             case "groupItem":
             	return $this->GroupItemToJSON($d->groupid);
             case "groupRemove":
@@ -71,19 +77,19 @@ class RecordBook extends AbricosApplication {
             case "studRemove":
             	return  $this->StudRemoveToJSON($d->data);
             case "sheetList":
-            	return  $this->SheetListToJSON($d->objData);
+            	return  $this->SheetListToJSON($d->data);
+            case "sheetItem":
+            	return  $this->SheetItemToJSON($d->data);
             case "sheetSave":
-            	return  $this->SheetAddToJSON($d->objData);
+            	return  $this->SheetAddToJSON($d->data);
             case "sheetRemove":
             	return  $this->SheetRemoveToJSON($d->sheetid);
             case "markList":
             	return  $this->MarkListToJSON($d->idSheet);
             case "markUpdate":
-            	return  $this->MarkUpdateToJSON($d->objData);
-	        case "markUpdateZaoch":
-	        	return  $this->MarkUpdateZaochToJSON($d->data);
+            	return  $this->MarkUpdateToJSON($d->data);
             case "updateWeight":
-            	return  $this->SheetUpdateWeightToJSON($d->objData);
+            	return  $this->SheetUpdateWeightToJSON($d->data);
             case "countPaginator":
             	return  $this->CountPaginatorToJSON($d->data);
             case "findSubject":
@@ -105,7 +111,20 @@ class RecordBook extends AbricosApplication {
             	return $this->FindStudReportToJSON($d->value);
             case "markStudReport":
             	return $this->MarkStudReportToJSON($d->data);
-            
+            case "programList":
+            	return $this->ProgramListToJSON();
+            case "departList":
+            	return $this->DepartListToJSON();
+            case "departItem":
+           		return $this->DepartItemToJSON($d->departid);
+            case "departSave":
+            	return $this->DepartSaveToJSON($d->data);
+           	case "teacherList":
+           		return $this->TeacherListToJSON($d->departid);
+           	case "teacherSave":
+           		return $this->TeacherSaveToJSON($d->data);
+           	case "teacherItem":
+           		return $this->TeacherItemToJSON($d->teacherid);
         }
         return null;
     }
@@ -127,38 +146,39 @@ class RecordBook extends AbricosApplication {
 				return false;
 			}
 			
-	    	if (isset($this->_cache['FieldList'])){
-	    		return $this->_cache['FieldList'];
-	    	}
 	    	$list = $this->models->InstanceClass('FieldList');
 	    
 		    	$rows = RecordBookQuery::FieldList($this->db, $widget);
 		    	
 		    		while (($d = $this->db->fetch_array($rows))){
+		    			$d['formEdu'] = array($d['och'], $d['ochzaoch'], $d['zaoch']);
+		    			
+		    			$d['frmstudy'] = $this->DetermineFormStudy($d['formEdu'], $d['frmstudy']);
+		    			
 		    			$list->Add($this->models->InstanceClass('FieldItem', $d));
 		    		}
-		    		return $this->_cache['FieldList'] = $list;
+		    		return $list;
 	    }
 	    
 	    public function FieldItemToJSON($fieldid){
 	    	$res = $this->FieldItem($fieldid);
-	    		return $this->ResultToJSON('fieldItem', $res);
+	    	
+    		return 	$this->ResultToJSON('fieldItem', $res);
+	    }
+	    
+	    private function DetermineFormStudy($arr, $ind){
+	    	return $arr[$ind - 1] == 0 ? -1 : $ind;
 	    }
 	    
     	public function FieldItem($fieldid){
-    		if(!isset($this->_cache['FieldItem'])){
-    			$this->_cache['FieldItem'] = array();
-    		}
-    		if (isset($this->_cache['FieldItem'][$fieldid])){
-    			return $this->_cache['FieldItem'][$fieldid];
-    		}
-    		
     		$d = RecordBookQuery::FieldItem($this->db, $fieldid);
     		
-    		$field = $this->models->InstanceClass('FieldItem', $d);
+    		$d['formEdu'] = array($d['och'], $d['ochzaoch'], $d['zaoch']);
     		
-    			return $this->_cache['FieldItem'][$fieldid] = $field;
-    			
+   			$d['frmstudy'] = $this->DetermineFormStudy($d['formEdu'], $d['frmstudy']);
+   			
+    		$field = $this->models->InstanceClass('FieldItem', $d);
+    			return $field;
     	}
     	
     	public function FieldSaveToJSON($d){
@@ -167,22 +187,18 @@ class RecordBook extends AbricosApplication {
     	}
     	
     	public function FieldSave($d){
-    		$d->id = intval($d->id);
-    		
     		$utmf = Abricos::TextParser(true);
-    		$utm = Abricos::TextParser();
     		
-    		$d->fieldcode = $utmf->Parser($d->fieldcode);
-    		$d->field = $utmf->Parser($d->field);
-    		$d->frmstudy = $utmf->Parser($d->frmstudy);
-    		$d->qual = $utmf->Parser($d->qual);
+    		$d->id = intval($d->id);
     		$d->depart = $utmf->Parser($d->depart);
+    		$d->frmstudy = intval($d->frmstudy);
+    		$d->levelid = intval($d->levelid);
     		$d->note = $utmf->Parser($d->note);
     		
     		if($d->id !== 0){
-    			RecordBookQuery::FieldUpdate(Abricos::$db, $d->id, $d);
+    			RecordBookQuery::FieldUpdate(Abricos::$db, $d);
     		} else {
-    			RecordBookQuery::FieldAppend(Abricos::$db, $d);
+    			return RecordBookQuery::FieldAppend(Abricos::$db, $d).'';
     		}
     		
     	}
@@ -237,9 +253,6 @@ class RecordBook extends AbricosApplication {
     		$fieldid = intval($fieldid);
     		$pageSub = intval($pageSub);
     		
-    		if (isset($this->_cache[$fieldid][$pageSub]['SubjectList'])){
-    			return $this->_cache[$fieldid][$pageSub]['SubjectList'];
-    		}
     		$list = $this->models->InstanceClass('SubjectList');
     		 
     		$rows = RecordBookQuery::SubjectList($this->db, $fieldid, $pageSub);
@@ -247,7 +260,7 @@ class RecordBook extends AbricosApplication {
     		while (($d = $this->db->fetch_array($rows))){
     			$list->Add($this->models->InstanceClass('SubjectItem', $d));
     		}
-    		return $this->_cache[$fieldid][$pageSub]['SubjectList'] = $list;
+    		return $list;
        	}
        	
        	public function SubjectListSheet($d){
@@ -275,7 +288,12 @@ class RecordBook extends AbricosApplication {
        		
        		$list = $this->models->InstanceClass('SubjectList');
        		$rows = RecordBookQuery::$query($this->db, $d);
-	       		while (($dd = $this->db->fetch_array($rows))){
+	       		while ($dd = $this->db->fetch_array($rows)){
+	       			$type = isset($d->type) ? $d->type : 0;
+	       			
+	       			if($type >= 3){
+	       				$dd['formcontrol'] = $this->DetermFormControl($dd['project']);
+	       			}
 	       			$list->Add($this->models->InstanceClass('SubjectItem', $dd));
 	       		}
        		return $list;
@@ -347,12 +365,7 @@ class RecordBook extends AbricosApplication {
        	
        	public function GroupList($d){
        		$d->page = intval($d->page);
-       		$utmf = Abricos::TextParser(true);
-       		$d->frmstudy = $utmf->Parser($d->frmstudy);
-       		
-       		if (isset($this->_cache[$d->frmstudy]['GroupList'])){
-       			return $this->_cache[$d->frmstudy]['GroupList'];
-       		}
+       		$d->frmstudy = intval($d->frmstudy);
        		
        		$list = $this->models->InstanceClass('GroupList');
        		 
@@ -362,30 +375,30 @@ class RecordBook extends AbricosApplication {
        			$list->Add($this->models->InstanceClass('GroupItem', $dd));
        		}
        	
-       		return $this->_cache[$d->frmstudy]['GroupList'] = $list;
+       		return $list;
        	}
        	
-       	public function GroupSaveToJSON($group){
+       	public function GroupSaveToJSON($d){
        		 
-       		$res = $this->GroupSave($group);
+       		$res = $this->GroupSave($d);
        		return $this->ResultToJSON('groupSave', $res);
        	}
        	
-       	public function GroupSave($group){
-       		$group->groupid = intval($group->groupid);
-       		$group->numcrs = intval($group->numcrs);
-       		$utmf = Abricos::TextParser(true);
-       		$utm = Abricos::TextParser();
-       		$group->numgroup = $utmf->Parser($group->numgroup);
-       		$group->currentFieldId = intval($group->currentFieldId);
-       		$group->year = intval($group->year);
+       	public function GroupSave($d){
+       		$d->groupid = intval($d->groupid);
+       		$d->numcrs = intval($d->numcrs);
        		
-       		if($group->groupid > 0){
-        		RecordBookQuery::GroupEdit($this->db, $group);
+       		$utmf = Abricos::TextParser(true);
+       		
+       		$d->numgroup = $utmf->Parser($d->numgroup);
+       		$d->currentFieldid = intval($d->currentFieldid);
+       		$d->year = intval($d->year);
+       		
+       		if($d->groupid > 0){
+        		RecordBookQuery::GroupEdit($this->db, $d);
        		}else {
-       			RecordBookQuery::GroupAppend($this->db, $group);       			
+       			RecordBookQuery::GroupAppend($this->db, $d);			
        		}
-       	
        	}
        	
        	public function GroupItemToJSON($groupid){
@@ -394,6 +407,7 @@ class RecordBook extends AbricosApplication {
        	}
        	 
        	public function GroupItem($groupid){
+       		$groupid = intval($groupid);
        		
        		$d = RecordBookQuery::GroupItem($this->db, $groupid);
        	
@@ -473,21 +487,63 @@ class RecordBook extends AbricosApplication {
        		return $this->ResultToJSON('sheetList', $res);
        	}
        	
-       	public function SheetList($objData){
-       	
-       		if (isset($this->_cache['SheetList'][$objData->groupid][$objData->currentSemestr])){
-       			return $this->_cache['SheetList'][$objData->groupid][$objData->currentSemestr];
-       		}
+       	public function SheetList($d){
+       		$d->groupid = intval($d->groupid);
+       		$d->currentSemestr = intval($d->currentSemestr);
+       		$d->numcrs = intval($d->numcrs);
+       		$d->fieldid = intval($d->fieldid);
        		 
        		$list = $this->models->InstanceClass('SheetList');
        	
-       		$rows = RecordBookQuery::SheetList($this->db, $objData);
+       		$rows = RecordBookQuery::SheetList($this->db, $d);
        	
-       		while (($d = $this->db->fetch_array($rows))){
-       			$list->Add($this->models->InstanceClass('SheetItem', $d));
+       		while ($dd = $this->db->fetch_array($rows)){
+       			if($dd['type'] >= 3){
+       				$dd['formcontrol'] = $this->DetermFormControl($dd['project']);
+       			}
+       			$list->Add($this->models->InstanceClass('SheetItem', $dd));
        		}
        	
-       		return $this->_cache['SheetList'][$objData->groupid][$objData->currentSemestr] = $list;
+       		return $list;
+       	}
+       	
+       	public function SheetItemToJSON($d){
+       		$res = $this->SheetItem($d);
+       		return $this->ResultToJSON('sheetItem', $res);
+       	}
+       	
+       	public function SheetItem($d){
+       		$d->sheetid = intval($d->sheetid);
+       		
+       		$row = RecordBookQuery::SheetItemlist($this->db, $d->sheetid);
+       		
+       		if($row['type'] == 2 || $row['type'] == 4){
+       			$arrStudId = array();
+       			
+       			$studid = RecordBookQuery::StudidListFromMark($this->db, $row['id']);
+       			
+       		    while ($dd = $this->db->fetch_array($studid)){
+       				$arrStudId[] = $dd['id'];
+       			}
+       			
+       			$row['arrstudid'] = $arrStudId;
+       		}
+       		
+       		if($row['type'] >= 3){
+       			$row['formcontrol'] = $this->DetermFormControl($row['project']);
+       		}
+       		
+       		if(isset($d->mark)){
+       			if($d->mark === true){
+       				$row['attestation'] =  array(
+       						$row['firstattproc'],
+       						$row['secondattproc'],
+       						$row['thirdattproc'],
+       				);
+       			}
+       		}
+       		
+       		return $this->models->InstanceClass('SheetItem', $row);
        	}
        	
        	public function SheetAddToJSON($d){
@@ -503,16 +559,23 @@ class RecordBook extends AbricosApplication {
        		$d->typeSheet = intval($d->typeSheet);
        		$d->isPractic = intval($d->isPractic);
        		
-       		$utmf = Abricos::TextParser(true);
-       		$d->fioteacher = $utmf->Parser($d->fioteacher);
+       		if(!isset($d->teacherid)){
+       			   return false;  			
+       		}
+       		$d->teacherid = intval($d->teacherid);
        		
-       		if($d->typeSheet === 2){
-       			foreach($d->arrStudId as $val){
-       				$val = intval($val);
+       		if($d->typeSheet === 2 || $d->typeSheet === 4){
+       			if(count($d->arrStudId) == 0){
+       				return false;
        			}
        		}
+       		foreach($d->arrStudId as $val){
+       			$val = intval($val);
+       		}
        		
-       		if($d->idSheet > 0){
+       		if($d->idSheet === 0 && $d->idSubject === 0){
+       			return false;
+       		} else if($d->idSheet > 0){
        			RecordBookQuery::SheetUpdate(Abricos::$db, $d);
        		} else {
        			RecordBookQuery::SheetAppend(Abricos::$db, $d);
@@ -536,10 +599,6 @@ class RecordBook extends AbricosApplication {
        	
        	public function MarkList($id){
        	
-       		if (isset($this->_cache['MarkList'][$id])){
-       			return $this->_cache['MarkList'][$id];
-       		}
-       	
        		$list = $this->models->InstanceClass('MarkList');
        	
        		$rows = RecordBookQuery::MarkList($this->db, $id);
@@ -548,7 +607,7 @@ class RecordBook extends AbricosApplication {
        			$list->Add($this->models->InstanceClass('MarkItem', $d));
        		}
        	
-       		return $this->_cache['MarkList'][$id] = $list;
+       		return $list;
        	}
        	
        	public function SheetUpdateWeightToJSON($d){
@@ -557,60 +616,86 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function SheetUpdateWeight($d){
-       		$d->idSheet = intval($d->idSheet);
-       		$utmf = Abricos::TextParser(true);
-       		$d->attProc = $utmf->Parser($d->attProc);
+       		$d->sheetid = intval($d->sheetid);
        		
-       		if(strlen($d->attProc) <= 9){
-       			$a = explode("-", $d->attProc);
-       				if(count($a) == 3){
-       					$sum = $a[0] + $a[1] + $a[2];
-	       					if($sum === 100){
-	       						RecordBookQuery::SheetUpdateWeight($this->db, $d->idSheet, $a[0], $a[1], $a[2]);
-	       					} else {
-	       						return false;
-	       					}
-       				} else {
-       					return false;
-       				}
+       		if(count($d->attProc) == 3){
+       			$sum = 0;
+	       			foreach($d->attProc as $value){
+	       					$sum += $value;
+	       			}
+	       				if($sum == 100){
+	       					RecordBookQuery::SheetUpdateWeight($this->db, $d);
+	       					
+	       					return $this->ReCalcMarkList($d->sheetid, $d->attProc);
+	       				} else {
+	       					return false;
+	       				}
        		} else {
        			return false;
-       		} 
+       		}
+       	}
+       	
+       	private function ReCalcMarkList($sheetid, $attProc){
+       		$credit = RecordBookQuery::SheetItemFormControl($this->db, $sheetid);
+       		
+       		$markList = RecordBookQuery::MarkList($this->db, $sheetid);
+       		
+       		while ($d = $this->db->fetch_array($markList)){
+       			$d['prliminary'] = round(($attProc[0] * $d['firstatt']) / 100 + ($attProc[1] * $d['secondatt']) / 100 + ($attProc[2] * $d['thirdatt']) / 100);
+       			
+       			$result = $d['prliminary'] + $d['additional'];
+       			
+       			if($result > 100){
+       				$d['additional'] = 0;
+       				$d['mark'] = $d['prliminary'];
+       			} else {
+       				$d['mark'] = $result;
+       			}
+       				
+       				if($credit === true){
+       					$d['mark'] = $this->CreditSetMark($d['mark']);
+       				} 
+       			
+       			$data = (object) $d;
+       			RecordBookQuery::MarkUpdate($this->db, $data);
+       		}
+       		return true;
+       	}
+       	
+       	private function CreditSetMark($mark){
+       		return $mark >= 51 ? 102 : 101;
        	}
        	
        	public function MarkUpdateToJSON($d){
-       		if(is_array($d)){//если изменяем оценки всех студентов
-       			foreach($d as $val){
-       				$res = $this->MarkUpdate($val);
-       			}
-       		} else {
-       			$res = $this->MarkUpdate($d);
-       		}
+       		$d->id = intval($d->id);
+       		$d->sheetid = intval($d->sheetid);
+       		
+       		$credit = RecordBookQuery::SheetItemFormControl($this->db, $d->sheetid);
+       		
+       		$res = $this->MarkUpdate($d, $credit);
+       		
        		return $this->ResultToJSON('markUpdate', $res);
        	}
        	
-       	public function MarkUpdate($d){
+       	public function MarkUpdate($d, $credit){
        			foreach($d as $key => $val){
-       				$val = intval($val);
-	       				if($key !== 'id' && $key !== 'mark'){
-		       					if($val < 0 || $val > 100){
-		       						return false;
-		       					}
-	       				}
+       				if($key !== 'id' && $key !== 'sheetid'){
+       					$val = intval($val);
+	       					if($val < 0 || $val > 100){
+	       						return false;
+	       					}
+       				}
+       			}
+       			$d->mark = $d->additional + $d->prliminary;  
+       			
+       			if($d->mark > 100){
+       				return false;
+       			}
+       			
+       			if($credit === true){
+       				$d->mark = $this->CreditSetMark($d->mark);
        			}
        			RecordBookQuery::MarkUpdate($this->db, $d);
-       	}
-       	
-       	public function MarkUpdateZaochToJSON($d){
-       			$res = $this->MarkUpdateZaoch($d);
-       		return $this->ResultToJSON('markUpdate', $res);
-       	}
-       	
-       	public function MarkUpdateZaoch($d){
-       		$d->id = intval($d->id);
-       		$d->mark = intval($d->mark);
-       		
-       		RecordBookQuery::MarkUpdateZaoch($this->db, $d);
        	}
        	
        	public function CountPaginatorToJSON($d){
@@ -620,18 +705,15 @@ class RecordBook extends AbricosApplication {
        	
        	public function CountPaginator($d){
        		
-       		$utmf = Abricos::TextParser(true);
-       		$d->type = $utmf->Parser($d->type);
-      		
        		switch($d->type){
        			case 'subjectList': 
        				$d->fieldid = intval($d->fieldid);
        					$row = RecordBookQuery::CountSubject($this->db, $d->fieldid); 
        						break;
        			case 'groupList': 
-       				$d->frmstudy = $utmf->Parser($d->frmstudy);
-       				$row = RecordBookQuery::CountGroup($this->db, $d->frmstudy); 
-       					break;
+       				$d->frmstudy = intval($d->frmstudy);
+       					$row = RecordBookQuery::CountGroup($this->db, $d->frmstudy); 
+       						break;
        		}
        			return $row;
        	}
@@ -649,11 +731,6 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function Find($d){
-       	
-       		if (isset($this->_cache[$d->type][$d->value])){
-       			return $this->_cache[$d->type][$d->value];
-       		}
-       		
        		$utmf = Abricos::TextParser(true);
        		$d->value = $utmf->Parser($d->value);
        		
@@ -680,10 +757,10 @@ class RecordBook extends AbricosApplication {
        		$itemClass = $d->type."Item";
        		
        		$list = $this->models->InstanceClass($listClass);       		
-       		while (($dd = $this->db->fetch_array($rows))){
+       		while ($dd = $this->db->fetch_array($rows)){
        			$list->Add($this->models->InstanceClass($itemClass, $dd));
        		}
-       		return $this->_cache[$d->type][$d->value] = $list;
+       		return $list;
        	}
        	
        	public function FillModalToJSON($d){
@@ -698,17 +775,10 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function FillModal($d){
-       	
-       		if (isset($this->_cache['modal'][$d->type])){
-       			return $this->_cache['modal'][$d->type];
-       		}
-       		
-       		$utmf = Abricos::TextParser(true);
-       		$d->type = $utmf->Parser($d->type);
        		
        		switch($d->type){
        			case 'Field':
-       				$d->formStudy = $utmf->Parser($d->formStudy);
+       				$d->formStudy = intval($d->formStudy);
        					$rows = RecordBookQuery::ModalFieldList($this->db, $d->formStudy);
        				break;
        			case 'GroupModal':
@@ -725,7 +795,7 @@ class RecordBook extends AbricosApplication {
        		while (($dd = $this->db->fetch_array($rows))){
        			$list->Add($this->models->InstanceClass($itemClass, $dd));
        		}
-       		return $this->_cache['modal'][$d->type] = $list;
+       		return $list;
        	}
        	
        	public function TransitStudToJSON($d){
@@ -921,6 +991,11 @@ class RecordBook extends AbricosApplication {
        	}
        	
        	public function FindStudReportToJSON($value){
+       		$len = strlen($value);
+       		if($len === 0){
+       			return;
+       		}
+       		
        		$res = $this->FindStudReport($value);
        		$oldGr = isset($res->oldGroup) ? $this->ResultToJSON('groupList', $res->oldGroup) : "";
        		
@@ -933,7 +1008,7 @@ class RecordBook extends AbricosApplication {
        	public function FindStudReport($value){
        		$utmf = Abricos::TextParser(true);
        		$value = $utmf->Parser($value);
-       		
+
        		$row = RecordBookQuery::FindStudReport($this->db, $value);
        		
        		$res = new stdClass();
@@ -957,26 +1032,74 @@ class RecordBook extends AbricosApplication {
        		return $this->ResultToJSON('markStudReport', $res);
        	}
        	
-       	public function MarkStudReport($d){
-       		
-       		if (isset($this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr])){
-       			return $this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr];
-       		}
-       		
+       	public function MarkStudReport($d, $print = false){
        		$d->fieldid = intval($d->fieldid);
        		$d->groupid = intval($d->groupid);
        		$d->studid = intval($d->studid);
        		$d->course = intval($d->course);
        		$d->semestr = intval($d->semestr);
        		
-       		$list = $this->models->InstanceClass('MarkListStat');
-       		
-       		$rows = RecordBookQuery::MarkStudReport($this->db, $d);
-       		
-       		while ($dd = $this->db->fetch_array($rows)){
-       			$list->Add($this->models->InstanceClass('MarkItemStat', $dd));
+       		if($print){
+       			$list = array();
+       		} else {
+       			$list = $this->models->InstanceClass('MarkListStat');
        		}
-       		return $this->_cache['MarkStudReport'][$d->studid.$d->course.$d->semestr] = $list;
+       		
+       		$markList = $this->InitMarkListReport($d);//список оценок
+       		$projMarkList = $this->InitMarkListReport($d, true);//список оценок для курсовых
+       		
+       		$i = 0;
+       		foreach ($markList as $mark){
+       			if($print){
+       				$list[] = $this->InstClassMarkItemStat($mark, ++$i, false, true);
+       			} else {
+       				$list->Add($this->InstClassMarkItemStat($mark, ++$i));
+       			}
+       			$pos = strpos($mark['project'], '1');
+	       			if($pos !== false){
+	       				foreach ($projMarkList as $kp => $proj){
+	       					if($mark['subjectid'] === $proj['subjectid'] || $proj['formcontrol'] === '-'){
+	       						if($print){
+	       							$list[] = $this->InstClassMarkItemStat($proj, ++$i, true, true);
+	       						} else {
+	       							$list->Add($this->InstClassMarkItemStat($proj, ++$i, true));
+	       						}
+	       						unset($projMarkList[$kp]);
+	       					}
+	       				}
+	       			}
+       		}
+       		return $list;
+       	}
+       	
+       	public function DetermFormControl($proj){
+       		return strpos($proj, '1') === 0 ? 'Курсовая работа' : 'Курсовой проект';
+       	}
+       	
+       	private function InstClassMarkItemStat($mark, $i, $isProject = false, $isPrint = false){
+       		$mark['id'] = $i;
+       		$hours = "";
+       		
+       		if($isProject){
+       			$mark['formcontrol'] = $this->DetermFormControl($mark['project']);
+       		} else {
+       			if($mark['formcontrol'] !== 'Практика'){
+       				$arr = explode('/', $mark['numhours']);
+       				$hours = $arr[0] + $arr[1];
+       			}
+       		}
+       		$mark['numhours'] = $hours;
+       		return $isPrint ? $mark : $this->models->InstanceClass('MarkItemStat', $mark);
+       	}
+       	
+       	public function InitMarkListReport($d, $proj = false){
+       		$arr = array();
+       		$markList = RecordBookQuery::MarkStudReport($this->db, $d, $proj);
+       		
+       		while ($dd = $this->db->fetch_array($markList)){
+       			$arr[] = $dd;
+			}
+       		return $arr;
        	}
        	
        	public function SheetPrint($id, $quory){
@@ -1014,6 +1137,134 @@ class RecordBook extends AbricosApplication {
         	return "";
        	}
        	
+       	public function ProgramListToJSON(){
+       		$res = $this->ProgramList();
+       		return $this->ResultToJSON('programList', $res);
+       	}
+       	
+       	public function ProgramList(){
+       		$list = $this->models->InstanceClass('ProgramList');
+       		 
+       		$rows = RecordBookQuery::ProgramList($this->db);
+       		 
+       		while ($dd = $this->db->fetch_array($rows)){
+       			$list->Add($this->models->InstanceClass('ProgramItem', $dd));
+       		}
+       		return $list;
+       	}
+       	
+       	public function DepartListToJSON(){
+       		$res = $this->DepartList();
+       		return $this->ResultToJSON('departList', $res);
+       	}
+       	
+       	public function DepartList(){
+       		$list = $this->models->InstanceClass('DepartList');
+       	
+       		$rows = RecordBookQuery::DepartList($this->db);
+       	
+       		while ($d = $this->db->fetch_array($rows)){
+       			$list->Add($this->models->InstanceClass('DepartItem', $d));
+       		}
+       		return $list;
+       	}
+       	
+       	public function DepartItemToJSON($id){
+       		$res = $this->DepartItem($id);
+       		return $this->ResultToJSON('departItem', $res);
+       	}
+       	
+       	public function DepartItem($id){
+       		$id = intval($id);
+       	
+       		$rows = RecordBookQuery::DepartItem($this->db, $id);
+       	
+       		return $this->models->InstanceClass('DepartItem', $rows);
+       	}
+       	
+       	public function DepartSaveToJSON($d){
+       		$res = $this->DepartSave($d);       			
+       		return $this->ResultToJSON('departSave', $res);
+       	}
+       	
+       	public function DepartSave($d){
+       		$d->id = intval($d->id);
+       		
+       		if(!isset($d->remove)){
+       			$utmf = Abricos::TextParser(true);
+       			 
+       			$d->namedepart = $utmf->Parser($d->namedepart);
+       			$d->shortname = $utmf->Parser($d->shortname);
+       			 
+       			if($d->id > 0){
+       				RecordBookQuery::DepartUpdate($this->db, $d);
+       			} else {
+       				RecordBookQuery::DepartAppend($this->db, $d);
+       			}
+       		} else {
+       			$d->remove = intval($d->remove);
+       				RecordBookQuery::DepartRemove($this->db, $d);
+       			
+       		}
+       	
+       	}
+       	
+       	public function TeacherListToJSON($departid){
+       		$res = $this->TeacherList($departid);
+       		return $this->ResultToJSON('teacherList', $res);
+       	}
+       	
+       	public function TeacherList($departid){
+       		$departid = intval($departid);
+       	
+       		$list = $this->models->InstanceClass('TeacherList');
+       	
+       		$rows = RecordBookQuery::TeacherList($this->db, $departid);
+       	
+       		while ($d = $this->db->fetch_array($rows)){
+       			$list->Add($this->models->InstanceClass('TeacherItem', $d));
+       		}
+       		return $list;
+       	}
+       	
+       	public function TeacherSaveToJSON($d){
+       		$res = $this->TeacherSave($d);
+       		return $this->ResultToJSON('teacherSave', $res);
+       	}
+       	
+       	public function TeacherSave($d){
+       		$d->id = intval($d->id);
+       		 
+       		if(!isset($d->remove)){
+       			$d->departid = intval($d->departid);
+       			
+       			$utmf = Abricos::TextParser(true);
+       			$d->fio = $utmf->Parser($d->fio);
+       			 
+       			if($d->id > 0){
+       				RecordBookQuery::TeacherUpdate($this->db, $d);
+       			} else {
+       				RecordBookQuery::TeacherAppend($this->db, $d);
+       			}
+       		} else {
+       			$d->remove = intval($d->remove);
+       			RecordBookQuery::TeacherRemove($this->db, $d);
+       	
+       		}
+       	}
+       	
+       	public function TeacherItemToJSON($id){
+       		$res = $this->TeacherItem($id);
+       		return $this->ResultToJSON('teacherItem', $res);
+       	}
+       	
+       	public function TeacherItem($id){
+       		$id = intval($id);
+       	
+       		$rows = RecordBookQuery::TeacherItem($this->db, $id);
+       	
+       		return $this->models->InstanceClass('TeacherItem', $rows);
+       	}
 }
 
 ?>

@@ -1,112 +1,39 @@
 <!--{widget}-->
-<div class="panel panel-default">
+<span data-wait="show" class="pull-right">
+    <img src="/images/loading.gif"/>
+</span>
+     <h3>Список ведомостей</h3>
+     	<div id="{i#pagination}">
+	    	<div id="{i#pag}"></div>
+	    </div>
+	    <hr>
+		<div id="{i#sheetAddPanel}"></div>
+		<div id="{i#listSheet}"></div>
+		<div id="{i#markList}"></div>
 
-	<div class="panel-heading hidden-print">
-		<div class="row">
-            <div class="col-md-7">
-                <h3 class="panel-title">Редактор ведомости</h3>
-            </div>
-            <div class="col-md-5">
-               	 <div class="btn-toolbar pull-right"> 
-                    <button data-click="close" type="button" class=" btn btn-default" data-wait="disable">
-                        Закрыть
-                    </button>
-           		</div>
-
-                <span data-wait="show" class="pull-right">
-                    <img src="/images/loading.gif"/>
-                </span>
-            </div>
-        </div>
-	</div>
-	<div class="panel-body">
-		<div id="{i#groupRenderItem}"></div>
-		<hr>
-			<div id="{i#sheetPanel}" class="hide">
-				<div class="row" data-click="addSheet-show">
-					 <div class="col-md-3">
-					 	<button data-type="1" type="button" class="btn btn-success">
-			                +Добавить ведомость
-			            </button>
-					 </div>
-					 <div class="col-md-3">
-					 	<button data-type="2" type="button" class="btn btn-info">
-			                +Добавить доп ведомость
-			            </button>
-					 </div>
-					  <div class="col-md-3">
-					 	<button data-type="3" type="button" class="btn btn-warning">
-			                +Добавить курсовую
-			            </button>
-					 </div>
-					 <div class="col-md-3">
-					 	<button data-type="4" type="button" class="btn btn-primary">
-			                +Добавить доп курсовую
-			            </button>
-					 </div>
-				</div>
-				<div>
-					<h4>Список ведомостей</h4>
-				</div>
-					<div id="{i#listSheet}"></div>
-			</div>
-			<div id="{i#markPanel}" class="hide">
-				<div class="row">
-		            <div class="col-md-7">
-		            </div>
-		            <div class="col-md-5">
-		                <div class="btn-toolbar pull-right hidden-print">
-		                	<button data-click="print" type="button" class=" btn btn-default btn-sm" data-wait="disable">
-		                        Печать
-		                    </button>
-		                    <button data-click="cancelMark" type="button" class=" btn btn-default btn-sm" data-wait="disable">
-		                        Отмена
-		                    </button>
-		           		</div>
-		       		</div>
-		       	</div>
-		       	<span data-wait="show" class="pull-right">
-                    <img src="/images/loading.gif"/>
-                </span>
-		       	<div id="{i#tablMark}"></div>
-			</div>
-	</div>
+<!--{sheetAddPanel}-->
+<div class="row" data-click="addSheet-show">
+	 <div class="col-md-3">
+	 	<button data-type="1" type="button" class="btn btn-success">
+               +Добавить ведомость
+           </button>
+	 </div>
+	 <div class="col-md-3">
+	 	<button data-type="2" type="button" class="btn btn-info">
+               +Добавить доп ведомость
+           </button>
+	 </div>
+	  <div class="col-md-3">
+	 	<button data-type="3" type="button" class="btn btn-warning">
+               +Добавить курсовую
+           </button>
+	 </div>
+	 <div class="col-md-3">
+	 	<button data-type="4" type="button" class="btn btn-primary">
+               +Добавить доп курсовую
+           </button>
+	 </div>
 </div>
-
-<!--{groupRenderItem}-->
-<p><label>Номер группы:</label> {v#numgroup}</p>
-<p><label>Направление:</label> {v#fieldcode} {v#field} {v#note}</p>
-<p><label>Форма обучения:</label> {v#frmstudy}</p> 
-<p><label>Год поступления:</label> {v#dateline}</p>
-	<div class="row">
-		<div class="col-md-2">
-		 	<div class="input-group"> 
-				<div class="input-group-btn" id="{i#divCourse}">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Курс <span class="caret"></span></button>
-							<ul class="dropdown-menu" data-click="changeCourse">
-								<li><a href="" data-value="1">1</a></li>
-								<li><a href="" data-value="2">2</a></li>
-								<li><a href="" data-value="3">3</a></li>
-								<li><a href="" data-value="4">4</a></li>
-								<li><a href="" data-value="5">5</a></li>
-							</ul>
-				</div>
-					<input type="text" class="form-control" id="{i#inpCourse}" value="{v#numcrs}" disabled>
-			</div>
-		</div>
-		<div class="col-md-3">
-			<div class="input-group"> 
-				<div class="input-group-btn" id="{i#divSemestr}">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Семестр <span class="caret"></span></button>
-							<ul class="dropdown-menu" data-click="addSemestr">
-								<li><a href="" data-value="1">осенний</a></li>
-								<li><a href="" data-value="2">весенний</a></li>
-							</ul>
-				</div>
-					<input type="text" class="form-control" id="{i#inpSemestr}" disabled>
-			</div>
-		</div>
-	</div>
 
 <!--{tableSheet}-->
 <table class="table table-striped table-hover">
@@ -121,27 +48,30 @@
      <th></th>
     </tr>
     </thead>
-    <tbody>{v#rows}</tbody>
+    <tbody>
+    	<tr id="{i#rowAddSheet}" class="hide"></tr>
+    	{v#rows}
+    </tbody>
 </table>
 
 <!--{rowSheet}-->
-<tr>
-	<td><label class="label {v#typeClass}">#</label></td>
+<tr id="{i#rowSheet}-{v#id}">
+	<td><label class="label {v#cltype}">#</label></td>
     <td>{v#namesubject} - {v#formcontrol} {v#isRemove}</td>
     <td>{v#date}</td>
-    <td>{v#fioteacher}</td>
+    <td>{v#fio}</td>
     <td>
     	<button data-click="print" data-type="{v#type}" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
     		Печать
     	</button>
     </td>
     <td>
-    	<button data-click="showMark" data-id="{v#id}" data-ns="{v#namesubject}" data-fio="{v#fioteacher}" data-formControl="{v#formcontrol}/{v#type}/{v#project}" data-att="{v#firstattproc}-{v#secondattproc}-{v#thirdattproc}" class="btn btn-default btn-xs" data-wait="disable">
+    	<button data-click="showMark" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
     		Оценки
     	</button>
     </td>
     <td>
-        <button data-click="editSheet" data-id="{v#id}" class="btn btn-default btn-xs" data-wait="disable">
+        <button data-click="editSheet-show" data-id="{v#id}" data-type="{v#type}" class="btn btn-default btn-xs" data-wait="disable">
             Править
         </button>
     </td>
@@ -151,7 +81,7 @@
             Удалить
         </button>
          <div id="{i#removegroup}-{v#id}"  class="btn-group hide">
-            <button data-click="removeSheet"type="button" class="btn btn-danger btn-xs" data-id="{v#id}" 
+            <button data-click="sheetRemove"type="button" class="btn btn-danger btn-xs" data-id="{v#id}" 
             		data-wait="disable">
                 Удалить?
             </button>
@@ -167,53 +97,51 @@
 <span class="label label-danger">Удален из учебного плана</span>
 
 <!--{rowAddSheet}-->
-<tr>
 	<td></td>
-    <td width="40%">    
+    <td>    
     	<div class="input-group">
-		      <div class="input-group-btn" id="{i#divSubject}">
-		     		{v#ul}
-		      </div>
-		      <input type="text" class="form-control" id={i#inpSubject} disabled>
+		      <div class="input-group-btn" id="{i#divSubject}"></div>
+		      <div id="{i#nameSubject}" class="alert">{v#namesubject} - {v#formcontrol}</div>
 	    </div>
 	    <div id="{i#studList}"></div>
 	</td>
-    <td width="10%"><input type="date" class="form-control" id="{i#inpDate}"></td>
-    <td width="20%"><input type="text" class="form-control" id="{i#inpFioteacher}"></td>
+    <td><input type="date" class="form-control" id="{i#inpDate}" value="{v#date}"></td>
     <td>
-        <button data-click="saveAddSheet" class="btn btn-default btn-xs" data-wait="disable">
-            Добавить
+    	<button data-click="depart-modal-show" class="btn btn-default btn-sm" data-wait="disable">
+            Выбрать..
+        </button>
+        <div id="{i#departModal}"></div>
+        <div id="{i#teacher}">{v#fio}</div>
+    </td>
+    <td>
+        <button data-id="{v#id}" data-click="saveAddSheet" class="btn btn-default btn-sm" data-wait="disable">
+            {v#act}
         </button>
     </td>
     <td>
-         <button data-click="cancel-addSheetShow" class="btn btn-default btn-xs" data-wait="disable">
+         <button data-id="{v#id}" data-click="cancel-sheet" class="btn btn-default btn-sm" data-wait="disable">
             Отмена
         </button>
     </td>
-</tr>
-
-<!--{rowEditSheet}-->
-<tr>
-	<td></td>
-    <td width="40%">    
-	    <input type="text" class="form-control" id={i#inpSubject} value="{v#subject}" disabled>
-	    <div id="{i#studList}"></div>
-	</td>
-    <td width="10%">
-    	<input type="date" class="form-control" id="{i#inpDate}" value="{v#date}">
-    </td>
-    <td width="20%"><input type="text" class="form-control" id="{i#inpFioteacher}" value="{v#fioteacher}"></td>
-    <td>
-        <button data-id="{v#id}" data-click="saveEditSheet" class="btn btn-default btn-xs" data-wait="disable">
-            Сохранить
-        </button>
-    </td>
-    <td>
-         <button data-click="cancel-addSheetShow" class="btn btn-default btn-xs" data-wait="disable">
-            Отмена
-        </button>
-    </td>
-</tr>
+    
+<!--{departModal}-->
+<div class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: block;">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-click="depart-modal-hide" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Список преподавателей</h4>
+      </div>
+      <div class="modal-body">
+        <div id="{i#departList}"></div>
+      </div>
+      <div class="modal-footer">
+       	<button type="button" data-click="choice-teacher" class="btn btn-primary">Выбрать</button>
+        <button type="button" data-click="depart-modal-hide" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!--{ulSubject}-->
 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Предмет <span class="caret"></span></button>
@@ -224,98 +152,6 @@
 <!--{liSubject}-->
 <li><a href="" data-id="{v#id}">{v#namesubject} - {v#formcontrol}</a></li>
 
-<!--{tableMarkStud}-->
-<div>
-	<h5>Название предмета: {v#nameSubj}</h5>
-	<h5>Форма контроля: {v#formcontrol}</h5>
-	<h5>ФИО преподавателя: {v#fioteacher}</h5>
-</div>
-{v#data}
 
-<!--{tableMarkOch}-->
-<table id="{i#tableMark}" class="table table-striped table-hover table-bordered">
-	    <thead>
-		      <tr>
-		        <td rowspan="4">№</td>
-		        <td rowspan="4" width="20%">фамилия, имя, отчество студента</td>
-		        <td rowspan="4">номер зачетной книжки</td>
-		        <td>1 атт</td>
-		        <td>2 атт</td>
-		        <td>3 атт</td>
-		        <td rowspan="4">предварительная оценка</td>
-		        <td rowspan="4">дополнительные баллы</td>
-		        <td rowspan="4">кол-во долгов</td>
-		        <td rowspan="4">окончательная оценка</td>
-		   	 </tr>
-		   	 <tr>
-		        <td colspan="3">веса аттест. <span id="{i#sumProc}" class="label label-success">{v#sumProc}</span> (%)</td>
-		   	 </tr>
-		     <tr>
-		        <td><input type="text" class="form-control" id="{i#inpAtt1}" value="{v#a1}" maxlength="3"/></td>
-		        <td><input type="text" class="form-control" id="{i#inpAtt2}" value="{v#a2}" maxlength="3"/></td>
-		        <td><input type="text" class="form-control" id="{i#inpAtt3}" value="{v#a3}" maxlength="3"/></td>
-		     </tr>
-		     <tr>
-		        <td colspan="3">аттест. оценки</td>
-		     </tr>
-	    </thead>
-	    <tbody>{v#rows}</tbody>
-</table>
-
-<!--{rowMarkStudOch}-->
-<tr id="{v#id}">
-	<td>{v#n}</td>
-	<td>{v#fio}</td>
-	<td>{v#numbook}</td>
-	<td><input type="text" class="form-control" id="{i#firstatt}" value="{v#firstatt}" maxlength="3"></td>
-	<td><input type="text" class="form-control" id="{i#secondatt}" value="{v#secondatt}" maxlength="3"></td>
-	<td><input type="text" class="form-control" id="{i#thirdatt}" value="{v#thirdatt}" maxlength="3"></td>
-	<td><span id="{i#prliminary}">{v#prliminary}</span></td>
-	<td><input type="text" class="form-control" id="{i#additional}" value="{v#additional}" maxlength="3"></td>
-	<td><input type="text" class="form-control" id="{i#debts}" value="{v#debts}" maxlength="2"></td>
-	<td><span id="{i#mark}">{v#mark}</span></td>
-	<td class="visible-print"><span id="{i#tradmark}">{v#tradmark}</span></td>
-</tr>
-
-<!--{tableMarkZaoch}-->
-<table class="table table-striped table-hover table-bordered">
-	    <thead>
-		      <tr>
-		        <td>№</td>
-		        <td>фамилия, имя, отчество студента</td>
-		        <td>номер зачетной книжки</td>
-		        <td>оценка</td>
-		   	 </tr>
-	    </thead>
-	    <tbody>{v#rows}</tbody>
-</table>
-
-<!--{rowMarkStudZaoch}-->
-<tr>
-	<td>{v#n}</td>
-	<td>{v#fio}</td>
-	<td>{v#numbook}</td>
-	<td width="20%">
-		<div class="input-group"> 
-			<input type="text" class="form-control" id="{i#markZaoch}-{v#id}" value="{v#mark}" disabled>
-				<div class="input-group-btn" id="{i#divMark}-{v#id}">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> <span class="caret"></span></button>
-							<ul class="dropdown-menu pull-right">
-								<li><a href="" data-id="{v#id}" data-click="changeMarkZaoch" data-value="101">не явка</a></li>
-								{v#li}
-							</ul>
-				</div>
-			</div>
-	</td>
-</tr>
-
-<!--{tradMark}-->
-<li><a href="" data-id="{v#id}" data-click="changeMarkZaoch" data-value="103">удовлетворительно</a></li>
-<li><a href="" data-id="{v#id}" data-click="changeMarkZaoch" data-value="104">хорошо</a></li>
-<li><a href="" data-id="{v#id}" data-click="changeMarkZaoch" data-value="105">отлично</a></li>
-
-<!--{tradZachet}-->
-<li><a href="" data-id="{v#id}" data-click="changeMarkZaoch" data-value="102">зачтено</a></li>
-				
 <!--{rowStud}-->
-<input id="{v#id}" type="checkbox"/>{v#fio} - {v#numbook}<br>
+<input id="{v#id}" type="checkbox" {v#ch}/>{v#fio} - {v#numbook}<br>

@@ -17,7 +17,6 @@ Component.entryPoint = function(NS){
         },
         reloadList: function(){
         	this.set('waiting', true);
-        	
         	this.get('appInstance').fieldList('fieldList', function(err, result){
         		this.set('waiting', false);
         		this.set('fieldList', result.fieldList);
@@ -26,30 +25,36 @@ Component.entryPoint = function(NS){
         	
         },
         renderList: function(){
-        	var fieldList = this.get('fieldList');
-        	var lst = "";
-        	var tp = this.template;
+        	var fieldList = this.get('fieldList'),
+        		lst = "",
+        		tp = this.template,
+        		n = 0;
         	
         	fieldList.each(function(field){
-        		var rem = field.get('remove');
+        		var rem = field.get('remove'),
+        			frmstudy = this.get('appInstance').determFormEdu(field.get('frmstudy')),
+        			arr = [{
+		        			danger: '',
+		        			remove: 'удалить',
+		        			act: 'remove-show',
+		        			n: ++n,
+		        			frmstudy: frmstudy + this.showDanger(!frmstudy),
+		        			prDanger: this.showDanger(field.get('prremove')),
+		        			lvlDanger: this.showDanger(field.get('lvlremove'))
+        			}, field.toJSON()];
         		
         		if(rem === 1){
-            		lst += tp.replace('row', [{
-            			danger: 'class="danger"',
-            			remove: 'восстановить',
-            			act: 'restore'
-            		},field.toJSON()]);
-            		
-        		} else {
-        	 		lst += tp.replace('row', [{
-            			danger: '',
-            			remove: 'удалить',
-            			act: 'remove-show'
-            		},field.toJSON()]);
-        		}
-                
-            });
+            		arr[0].danger = 'class="danger"';
+            		arr[0].remove = 'восстановить';
+            		arr[0].act = 'restore';
+        		} 
+        		
+    	 		lst += tp.replace('row', arr);
+            }, this);
         		tp.setHTML('list', tp.replace('table', {rows: lst}));
+        },
+        showDanger: function(remove){
+        	return remove ? this.template.replace('danger') : '';
         },
         remove: function(fieldid, restore){
         	
@@ -64,7 +69,7 @@ Component.entryPoint = function(NS){
     }, {
         ATTRS: {
         	component: {value: COMPONENT},
-            templateBlockName: {value: 'widget,table,row'},
+            templateBlockName: {value: 'widget,table,row,danger'},
             fieldList: {value: null}
         },
         CLICKS: {

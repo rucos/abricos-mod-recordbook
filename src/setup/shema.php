@@ -20,7 +20,7 @@ if ($updateManager->isInstall('0.2.6.2')){
 				CREATE TABLE IF NOT EXISTS ".$pfx."rb_fieldstudy(
 					fieldid int(10) unsigned NOT NULL auto_increment,
 					edulevelid int(10) unsigned NOT NULL default 0 COMMENT 'id направления',
-					frmstudy tinyint(1) unsigned NOT NULL default 0 COMMENT 'Форма обучения'
+					frmstudy tinyint(1) unsigned NOT NULL default 0 COMMENT 'Форма обучения',
 					depart varchar(255) default NULL COMMENT 'Кафедра',
 					note varchar(50) default NULL COMMENT 'Примечание',
 					remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален?',

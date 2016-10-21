@@ -12,17 +12,15 @@ $updateManager = Ab_UpdateManager::$current;
 $db = Abricos::$db;
 $pfx = $db->prefix;
 
-if ($updateManager->isInstall('0.2.2')){
+if ($updateManager->isInstall('0.2.6.2')){
 	
 	Abricos::GetModule('recordbook')->permission->Install();
 
 		$db->query_write("
 				CREATE TABLE IF NOT EXISTS ".$pfx."rb_fieldstudy(
 					fieldid int(10) unsigned NOT NULL auto_increment,
-					fieldcode varchar(20) default NULL COMMENT 'Код направления',
-					field varchar(255) default NULL COMMENT 'Направление',
-					frmstudy varchar(15) default NULL COMMENT 'Форма обучения',
-					qual varchar(15) default NULL COMMENT 'Квалификация',
+					edulevelid int(10) unsigned NOT NULL default 0 COMMENT 'id направления',
+					frmstudy tinyint(1) unsigned NOT NULL default 0 COMMENT 'Форма обучения'
 					depart varchar(255) default NULL COMMENT 'Кафедра',
 					note varchar(50) default NULL COMMENT 'Примечание',
 					remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален?',
@@ -82,7 +80,7 @@ if ($updateManager->isInstall('0.2.2')){
 					thirdattproc tinyint(2) unsigned NOT NULL default 0 COMMENT 'вес в % 3 аттестация',
 					date int(10) unsigned NOT NULL default 0 COMMENT 'Дата проведения',
 					type tinyint(1) unsigned NOT NULL default 0 COMMENT 'Тип ведомости',
-					fioteacher varchar(255) default NULL COMMENT 'ФИО Преподавателя',
+					teacherid int(10) unsigned NOT NULL default 0 COMMENT 'id преподаваетеля',
 					PRIMARY KEY (sheetid)
 			)".$charset
 		);
@@ -102,30 +100,8 @@ if ($updateManager->isInstall('0.2.2')){
 					PRIMARY KEY (markid)
 			)".$charset
 		);
-}
-
-if ($updateManager->isUpdate('0.2.3') && !$updateManager->isInstall()){
-	$db->query_write("
-		ALTER TABLE ".$pfx."rb_fieldstudy 
-		DROP fieldcode,
-		DROP field,
-		DROP qual
-	");
-	
-	$db->query_write("
-		ALTER TABLE ".$pfx."rb_fieldstudy
-		ADD edulevelid int(10) unsigned NOT NULL default 0 COMMENT 'id направления'
-	");
-	
-	$db->query_write("
-		ALTER TABLE ".$pfx."rb_fieldstudy
-		MODIFY frmstudy tinyint(1) unsigned NOT NULL default 0 COMMENT 'Форма обучения'
-	");
-
-}
-
-if ($updateManager->isUpdate('0.2.4') && !$updateManager->isInstall()){
-	$db->query_write("
+		
+		$db->query_write("
 			CREATE TABLE IF NOT EXISTS ".$pfx."rb_departs(
 				departid int(10) unsigned NOT NULL auto_increment,
 				namedepart varchar(255) default NULL COMMENT 'Название кафедры',
@@ -133,9 +109,9 @@ if ($updateManager->isUpdate('0.2.4') && !$updateManager->isInstall()){
 				remove tinyint(1) unsigned NOT NULL default 0 COMMENT 'Удален?',
 				PRIMARY KEY (departid)
 		)".$charset
-	);
-	
-	$db->query_write("
+		);
+		
+			$db->query_write("
 			CREATE TABLE IF NOT EXISTS ".$pfx."rb_teacher(
 				teacherid int(10) unsigned NOT NULL auto_increment,
 				departid int(10) unsigned NOT NULL default 0 COMMENT 'id кафедры',
@@ -144,20 +120,5 @@ if ($updateManager->isUpdate('0.2.4') && !$updateManager->isInstall()){
 				PRIMARY KEY (teacherid)
 		)".$charset
 	);
-
-}
-
-if ($updateManager->isUpdate('0.2.5') && !$updateManager->isInstall()){
-	$db->query_write("
-		ALTER TABLE ".$pfx."rb_sheet
-		ADD teacherid int(10) unsigned NOT NULL default 0 COMMENT 'id преподаваетеля'
-	");
-}
-
-if ($updateManager->isUpdate('0.2.6.1') && !$updateManager->isInstall()){
-	$db->query_write("
-		ALTER TABLE ".$pfx."rb_sheet
-		DROP fioteacher
-	");
 }
 ?>

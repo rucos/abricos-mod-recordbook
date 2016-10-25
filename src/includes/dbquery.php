@@ -205,7 +205,7 @@ class RecordBookQuery {
     		INNER JOIN ".$db->prefix."un_edulevel e ON f.edulevelid = e.edulevelid
     		INNER JOIN ".$db->prefix."un_program p ON p.programid = e.programid
     		WHERE f.frmstudy = ".bkint($d->frmstudy)."
-    		ORDER BY id DESC
+    		ORDER BY g.remove ASC
     		LIMIT ".$from.",".$limit."
 		";
     		return $db->query_read($sql);
